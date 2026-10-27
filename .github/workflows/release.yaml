@@ -34,7 +34,7 @@ jobs:
           add-apt-repository ppa:git-core/ppa && apt-get update && apt-get install -y git
           git --version
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Bump version
