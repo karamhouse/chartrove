@@ -5,8 +5,6 @@ package database
 
 import (
 	"encoding/json"
-	"fmt"
-	goja "github.com/dop251/goja"
 	models "github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	datatypes "gorm.io/datatypes"
 	"time"
@@ -111,34 +109,11 @@ func (s *FhirAdverseEvent) PopulateAndExtractSearchParameters(resourceRaw json.R
 	if err != nil {
 		return err
 	}
-	if len(fhirPathJs) == 0 {
-		return fmt.Errorf("fhirPathJs script is empty")
-	}
-	vm := goja.New()
-	// setup the global window object
-	vm.Set("window", vm.NewObject())
-	// set the global FHIR Resource object
-	vm.Set("fhirResource", resourceRawMap)
-	// compile the fhirpath library
-	fhirPathJsProgram, err := goja.Compile("fhirpath.min.js", fhirPathJs, true)
+	vm, release, err := acquireSearchRuntime(resourceRawMap)
 	if err != nil {
 		return err
 	}
-	// compile the searchParametersExtractor library
-	searchParametersExtractorJsProgram, err := goja.Compile("searchParameterExtractor.js", searchParameterExtractorJs, true)
-	if err != nil {
-		return err
-	}
-	// add the fhirpath library in the goja vm
-	_, err = vm.RunProgram(fhirPathJsProgram)
-	if err != nil {
-		return err
-	}
-	// add the searchParametersExtractor library in the goja vm
-	_, err = vm.RunProgram(searchParametersExtractorJsProgram)
-	if err != nil {
-		return err
-	}
+	defer release()
 	// execute the fhirpath expression for each search parameter
 	// extracting Actuality
 	actualityResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'AdverseEvent.actuality')")

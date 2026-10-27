@@ -34,7 +34,14 @@ type GormRepository struct {
 }
 
 func (gr *GormRepository) Close() error {
-	return nil
+	if gr == nil || gr.GormClient == nil {
+		return nil
+	}
+	pool, err := gr.GormClient.DB()
+	if err != nil {
+		return err
+	}
+	return pool.Close()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

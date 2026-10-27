@@ -28,6 +28,7 @@ type eventBus struct {
 type EventBusListener struct {
 	ResponseChan chan string
 	UserID       string
+	Done         <-chan struct{}
 }
 
 type EventBusMessage struct {
@@ -74,7 +75,10 @@ func (bus *eventBus) listen() {
 				continue
 			} else {
 				for _, roomListener := range bus.totalRoomListeners[eventMsg.UserID] {
-					roomListener.ResponseChan <- eventMsg.Message
+					select {
+					case roomListener.ResponseChan <- eventMsg.Message:
+					case <-roomListener.Done:
+					}
 				}
 			}
 

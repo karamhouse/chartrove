@@ -26,14 +26,15 @@ import (
 )
 
 type AppEngine struct {
-	Config     config.Interface
-	Logger     *logrus.Entry
-	EventBus   event_bus.Interface
-	deviceRepo database.DatabaseRepository
+	Config      config.Interface
+	Logger      *logrus.Entry
+	EventBus    event_bus.Interface
+	deviceRepo  database.DatabaseRepository
 	StandbyMode bool
 
 	RelatedVersions map[string]string //related versions metadata provided & embedded by the build process
 	Srv             *http.Server      // Added to manage the HTTP server lifecycle
+	embedded        *EmbeddedApplication
 }
 
 // Reinitialize re-initializes the AppEngine's components, specifically the database and routes.
@@ -66,10 +67,12 @@ func (ae *AppEngine) Reinitialize() error {
 }
 
 func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
+	standbyMode := ae.StandbyMode
+	deviceRepo := ae.deviceRepo
 	r := gin.New()
 
-	if !ae.StandbyMode {
-		r.Use(middleware.RepositoryMiddleware(ae.deviceRepo))
+	if !standbyMode {
+		r.Use(middleware.RepositoryMiddleware(deviceRepo))
 	}
 	r.Use(middleware.LoggerMiddleware(ae.Logger))
 	r.Use(middleware.ConfigMiddleware(ae.Config))
@@ -89,7 +92,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 				firstRunWizard := false
 
-				if ae.StandbyMode {
+				if standbyMode {
 					dbPath := ae.Config.GetString("database.location")
 					_, err := os.Stat(dbPath)
 					if os.IsNotExist(err) {
@@ -99,8 +102,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					c.JSON(http.StatusOK, gin.H{
 						"success": true,
 						"data": gin.H{
-							"first_run_wizard":   firstRunWizard,
-							"standby_mode":       true,
+							"first_run_wizard": firstRunWizard,
+							"standby_mode":     true,
 						},
 					})
 					return
@@ -125,15 +128,19 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				c.JSON(http.StatusOK, gin.H{
 					"success": true,
 					"data": gin.H{
-						"first_run_wizard":   firstRunWizard,
-						"standby_mode":       false,
+						"first_run_wizard": firstRunWizard,
+						"standby_mode":     false,
 					},
 				})
 			})
 
 			// In standby mode, we only want to expose the encryption key setup endpoints
-			if ae.StandbyMode {
-				encryptionKeyHandler := handler.NewEncryptionKeyHandler(ae.Config, ae.Logger, ae)
+			if standbyMode {
+				var keyEngine handler.AppEngineInterface = ae
+				if ae.embedded != nil {
+					keyEngine = ae.embedded
+				}
+				encryptionKeyHandler := handler.NewEncryptionKeyHandler(ae.Config, ae.Logger, keyEngine)
 				// initial encryption key setup
 				api.GET("/encryption-key", encryptionKeyHandler.GetEncryptionKey)
 
@@ -144,7 +151,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				ae.Logger.Info("Database StandbyMode is off, skipping encryption key setup endpoints.")
 			}
 
-			if !ae.StandbyMode { // Check ae.StandbyMode for non-standby mode
+			if !standbyMode {
 				api.Use(middleware.CacheMiddleware())
 				api.POST("/auth/signup", handler.AuthSignup)
 				api.POST("/auth/signin", handler.AuthSignin)

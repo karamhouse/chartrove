@@ -2,7 +2,7 @@
   "id": "default",
   "schema_version": "1.0",
   "title": "Example Dashboard",
-  "description": "An example dashboard to show-off the power of Fasten widgets",
+  "description": "An example dashboard showing Chartrove widgets",
   "widgets": [
     {
       "title_text": "Records Summary",

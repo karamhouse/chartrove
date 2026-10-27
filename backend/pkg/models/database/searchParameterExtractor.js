@@ -1,5 +1,13 @@
+// Generated search expressions are constant across imports. Cache their parsed
+// form, never their results or resource objects. Each runtime is used exclusively.
+const searchParameterExpressions = new Map();
 function fhirpathEvaluate(fhirResource, expression){
-    return window.fhirpath.evaluate(fhirResource, expression)
+    let evaluate = searchParameterExpressions.get(expression);
+    if (!evaluate) {
+        evaluate = window.fhirpath.compile(expression);
+        searchParameterExpressions.set(expression, evaluate);
+    }
+    return evaluate(fhirResource);
 }
 
 function extractSimpleSearchParameters(fhirResource, expression){

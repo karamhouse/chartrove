@@ -70,11 +70,12 @@ func (suite *ResourceFhirHandlerTestSuite) SetupSuite() {
 	suite.MockCtrl = gomock.NewController(suite.T())
 
 	// ioutils is deprecated, used os.CreateTemp
-	dbFile, err := os.CreateTemp("", fmt.Sprintf("%s.*.db", suiteName))
+	dbFile, err := os.CreateTemp(suite.T().TempDir(), fmt.Sprintf("%s.*.db", suiteName))
 	if err != nil {
 		log.Fatal(err)
 	}
 	suite.TestDatabase = dbFile
+	require.NoError(suite.T(), dbFile.Close())
 
 	appConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	appConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
@@ -86,6 +87,9 @@ func (suite *ResourceFhirHandlerTestSuite) SetupSuite() {
 	suite.AppConfig = appConfig
 
 	appRepo, err := database.NewRepository(suite.AppConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+	t := suite.T()
+	t.Cleanup(func() { require.NoError(t, appRepo.Close()) })
 	suite.AppRepository = appRepo
 
 	suite.AppEventBus = event_bus.NewNoopEventBusServer()
@@ -124,7 +128,6 @@ func (suite *ResourceFhirHandlerTestSuite) SetupSuite() {
 // TearDownAllSuite has a TearDownSuite method, which will run after all the tests in the suite have been run.
 func (suite *ResourceFhirHandlerTestSuite) TearDownSuite() {
 	suite.MockCtrl.Finish()
-	os.Remove(suite.TestDatabase.Name())
 }
 
 func TestResourceHandlerTestSuite(t *testing.T) {

@@ -90,7 +90,7 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 	if strings.ToUpper(appConfig.GetString("log.level")) == "DEBUG" {
 		database = database.Debug() //set debug globally
 	}
-	globalLogger.Infof("Successfully connected to fasten sqlite db: %s\n", dsn)
+	globalLogger.Infof("Successfully connected to fasten sqlite db: %s\n", appConfig.GetString("database.location"))
 
 	////verify journal mode
 	//var journalMode []map[string]interface{}
@@ -111,12 +111,14 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 	if !validationMode {
 		err = fastenRepo.Migrate()
 		if err != nil {
+			_ = fastenRepo.Close()
 			return nil, err
 		}
 
 		//fail any Locked jobs. This is necessary because the job may have been locked by a process that was killed.
 		err = fastenRepo.CancelAllLockedBackgroundJobsAndFail()
 		if err != nil {
+			_ = fastenRepo.Close()
 			return nil, err
 		}
 	}

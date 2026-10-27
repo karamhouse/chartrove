@@ -165,6 +165,10 @@ func CreateManualSource(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
+	defer func() {
+		bundleFile.Close()
+		os.Remove(bundleFile.Name())
+	}()
 
 	// We cannot save the "SourceCredential" object yet, as we do not know the patientID
 
@@ -319,6 +323,8 @@ func storeFileLocally(c *gin.Context) (*os.File, error) {
 	// Upload the file to specific bundleFile.
 	err = c.SaveUploadedFile(file, bundleFile.Name())
 	if err != nil {
+		bundleFile.Close()
+		os.Remove(bundleFile.Name())
 		//c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not save temp file"})
 		return nil, fmt.Errorf("could not save temp file")
 	}

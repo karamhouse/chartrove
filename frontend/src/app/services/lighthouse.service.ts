@@ -16,6 +16,7 @@ import {Router, UrlSerializer} from '@angular/router';
 import {Location} from '@angular/common';
 import {PatientAccessBrand, PatientAccessEndpoint, PatientAccessPortal} from '../models/patient-access-brands';
 import {GetEndpointAbsolutePath} from '../../lib/utils/endpoint_absolute_path';
+import {GetDesktopBridge} from '../../lib/utils/desktop_bridge';
 
 export const sourceConnectDesktopTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
 
@@ -229,9 +230,7 @@ export class LighthouseService {
     if(environment.environment_desktop && environment.popup_source_auth){
       //@ts-ignore
 
-      OpenExternalLink(redirectUrlParts.toString(), environment.environment_desktop, state)
-
-      return this.waitForDesktopCodeOrTimeout(state)
+      return this.waitForDesktopCodeOrTimeout(state, redirectUrlParts.toString())
 
       //now wait for response from the opened window
     } else {
@@ -326,38 +325,27 @@ export class LighthouseService {
     return parts.join(separator);
   }
 
-  private waitForDesktopCodeOrTimeout(state: string): Observable<{ codeData:any, state:string }> {
-    console.log(`waiting for wails Event notification from window`)
-
-    if(typeof wails == "undefined"){
-      return throwError("wails is not defined, this is likely because you're running in a browser.")
-    }
-
-    let fromWailsEvent = bindCallback(wails.Events.Once)
-
-    //new code to listen to post message
-    return fromWailsEvent('wails:fasten-lighthouse:response')
-      .pipe(
-        //throw an error if we wait more than 2 minutes (this will close the window)
-        timeout(sourceConnectDesktopTimeout),
-        //make sure we're only listening to events from the "opened" window.
-        filter((eventPayload: any ) => eventPayload.sender == state),
-        //after filtering, we should only have one event to handle.
-        first(),
-        map((event) => {
-          console.log(`received wails event notification from ${state} window & sending acknowledgment`, event)
-          // @ts-ignore
-          return {
-            state: state,
-            codeData: event.data
-          }
-        }),
-        catchError((err) => {
-          console.warn(`timed out waiting for notification from ${state} (${sourceConnectDesktopTimeout/1000}s), closing window`)
-          wails.Application.GetWindowByName(state).Window.Close()
-          return throwError(err)
-        })
-  )
+  private waitForDesktopCodeOrTimeout(state: string, url: string): Observable<{ codeData:any, state:string }> {
+    return new Observable<{codeData: any, state: string}>(observer => {
+      let active = true;
+      let stop = () => {};
+      GetDesktopBridge().then(bridge => {
+        if (!active) return;
+        // Subscribe before opening the popup so a fast callback cannot be lost.
+        stop = bridge.onAuthResponse(state, codeData => {
+          observer.next({state, codeData});
+          observer.complete();
+        });
+        bridge.openExternal(url, state).catch(err => observer.error(err));
+      }).catch(err => observer.error(err));
+      return () => { active = false; stop(); };
+    }).pipe(
+      timeout(sourceConnectDesktopTimeout),
+      catchError(err => {
+        GetDesktopBridge().then(bridge => bridge.closeAuthWindow(state)).catch(() => {});
+        return throwError(err);
+      })
+    );
   }
 
   //after waiting for the desktop code, we need to redirect to the callback page with the code in the query params

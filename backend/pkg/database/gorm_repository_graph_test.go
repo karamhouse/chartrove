@@ -33,20 +33,18 @@ type RepositoryGraphTestSuite struct {
 func (suite *RepositoryGraphTestSuite) BeforeTest(suiteName, testName string) {
 	suite.MockCtrl = gomock.NewController(suite.T())
 
-	dbFile, err := ioutil.TempFile("", fmt.Sprintf("%s.*.db", testName))
+	dbFile, err := ioutil.TempFile(suite.T().TempDir(), fmt.Sprintf("%s.*.db", testName))
 	if err != nil {
 		log.Fatal(err)
 	}
 	suite.TestDatabase = dbFile
+	require.NoError(suite.T(), dbFile.Close())
 
 }
 
 // AfterTest has a function to be executed right after the test finishes and receives the suite and test names as input
 func (suite *RepositoryGraphTestSuite) AfterTest(suiteName, testName string) {
 	suite.MockCtrl.Finish()
-	os.Remove(suite.TestDatabase.Name())
-	os.Remove(suite.TestDatabase.Name() + "-shm")
-	os.Remove(suite.TestDatabase.Name() + "-wal")
 }
 
 // In order for 'go test' to run this suite, we need to create
@@ -66,6 +64,8 @@ func (suite *RepositoryGraphTestSuite) TestGetFlattenedResourceGraph() {
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
+	t := suite.T()
+	t.Cleanup(func() { require.NoError(t, dbRepo.Close()) })
 
 	userModel := &models.User{
 		Username: "test_username",
@@ -91,6 +91,7 @@ func (suite *RepositoryGraphTestSuite) TestGetFlattenedResourceGraph() {
 
 	bundleFile, err := os.Open("./testdata/Abraham100_Heller342_262b819a-5193-404a-9787-b7f599358035.json")
 	require.NoError(suite.T(), err)
+	defer bundleFile.Close()
 
 	testLogger := logrus.WithFields(logrus.Fields{
 		"type": "test",
@@ -136,6 +137,8 @@ func (suite *RepositoryGraphTestSuite) TestGetFlattenedResourceGraph_NDJson() {
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
+	t := suite.T()
+	t.Cleanup(func() { require.NoError(t, dbRepo.Close()) })
 
 	userModel := &models.User{
 		Username: "test_username",
@@ -161,6 +164,7 @@ func (suite *RepositoryGraphTestSuite) TestGetFlattenedResourceGraph_NDJson() {
 
 	bundleFile, err := os.Open("./testdata/epic_fhircamila.ndjson")
 	require.NoError(suite.T(), err)
+	defer bundleFile.Close()
 
 	testLogger := logrus.WithFields(logrus.Fields{
 		"type": "test",

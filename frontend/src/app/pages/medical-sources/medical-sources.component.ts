@@ -1,4 +1,7 @@
-import {Component, EventEmitter, OnInit, Optional, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Optional, Output, ViewChild} from '@angular/core';
+import {Patient} from 'fhir/r4';
+import {EpicSandboxService} from '../../services/epic-sandbox.service';
+import {MedicalSourcesConnectedComponent} from '../../components/medical-sources-connected/medical-sources-connected.component';
 import {LighthouseService} from '../../services/lighthouse.service';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {LighthouseSourceMetadata} from '../../models/lighthouse/lighthouse-source-metadata';
@@ -34,10 +37,19 @@ export class SourceListItem {
   templateUrl: './medical-sources.component.html',
   styleUrls: ['./medical-sources.component.scss']
 })
-export class MedicalSourcesComponent implements OnInit {
+export class MedicalSourcesComponent implements OnInit, OnDestroy {
   loading: boolean = false
 
   environment_name = environment.environment_name
+
+  sandboxStatus = '';
+  sandboxError = '';
+  sandboxPatient?: Patient;
+  sandboxImportedSource?: Source;
+  sandboxImporting = false;
+  sandboxController?: AbortController;
+  private destroyed = false;
+  @ViewChild(MedicalSourcesConnectedComponent) connectedSources?: MedicalSourcesConnectedComponent;
 
   uploadedFile: File[] = []
   uploadErrorMsg: string = ""
@@ -75,12 +87,66 @@ export class MedicalSourcesComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private filterService: MedicalSourcesFilterService,
     private modalService: NgbModal,
+    private epicSandbox: EpicSandboxService,
 
   ) {
   }
 
   ngOnInit(): void {
 
+  }
+
+  async connectEpicSandbox() {
+    if (this.sandboxController || this.sandboxImporting) return;
+    this.sandboxPatient = undefined;
+    this.sandboxImportedSource = undefined;
+    this.sandboxError = '';
+    const controller = this.sandboxController = new AbortController();
+    try {
+      const patient = await this.epicSandbox.connect(controller.signal, message => {
+        if (!this.destroyed) this.sandboxStatus = message;
+      });
+      if (!this.destroyed && !controller.signal.aborted) {
+        this.sandboxPatient = patient;
+        this.sandboxStatus = 'Connected to Epic sandbox. The synthetic Patient is ready to import.';
+      }
+    } catch (error) {
+      if (!this.destroyed) {
+        if (controller.signal.aborted) this.sandboxStatus = 'Connection cancelled.';
+        else { this.sandboxStatus = ''; this.sandboxError = error.message; }
+      }
+    } finally {
+      if (this.sandboxController === controller) this.sandboxController = undefined;
+    }
+  }
+
+  cancelEpicSandbox() { this.sandboxController?.abort(); }
+
+  async importEpicSandboxPatient() {
+    if (!this.sandboxPatient || this.sandboxImporting) return;
+    this.sandboxImporting = true;
+    this.sandboxError = '';
+    try {
+      const result = await this.fastenApi.importSandboxPatient(this.sandboxPatient).toPromise();
+      if (!this.destroyed) {
+        this.sandboxImportedSource = result.source;
+        this.sandboxPatient = undefined;
+        this.sandboxStatus = result.alreadyImported
+          ? 'This synthetic Patient is already imported. No existing records were changed.'
+          : 'Synthetic Patient imported. Reconnect to retrieve it again; automatic sync is not enabled.';
+        this.connectedSources?.refreshSources();
+      }
+    } catch (error) {
+      if (!this.destroyed) this.sandboxError = 'The local import failed. You can retry without signing in again.';
+    } finally {
+      this.sandboxImporting = false;
+    }
+  }
+
+  ngOnDestroy() {
+    this.destroyed = true;
+    this.sandboxController?.abort();
+    this.sandboxPatient = undefined;
   }
 
 

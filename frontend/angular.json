@@ -186,7 +186,7 @@
             "desktop_sandbox": {
               "index": {
                 "input": "src/index-desktop.html",
-                "output": "src/index.html"
+                "output": "index.html"
               },
               "fileReplacements": [
                 {
@@ -217,7 +217,7 @@
             "desktop_prod": {
               "index": {
                 "input": "src/index-desktop.html",
-                "output": "src/index.html"
+                "output": "index.html"
               },
               "fileReplacements": [
                 {

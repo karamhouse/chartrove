@@ -3,7 +3,7 @@ import { Practitioner } from 'src/app/models/fasten/practitioner';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import { Router } from '@angular/router';
-import {map} from 'rxjs/operators';
+import {concatMap, map} from 'rxjs/operators';
 import {ResponseWrapper} from '../models/response-wrapper';
 import {Source} from '../models/fasten/source';
 import {User} from '../models/fasten/user';
@@ -13,7 +13,7 @@ import {Summary} from '../models/fasten/summary';
 import {AuthService} from './auth.service';
 import {GetEndpointAbsolutePath} from '../../lib/utils/endpoint_absolute_path';
 import {environment} from '../../environments/environment';
-import {ValueSet} from 'fhir/r4';
+import {Patient, ValueSet} from 'fhir/r4';
 import {AttachmentModel} from '../../lib/models/datatypes/attachment-model';
 import {BinaryModel} from '../../lib/models/resources/binary-model';
 import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
@@ -154,6 +154,24 @@ export class FastenApiService {
           return response.data as Source
         })
       );
+  }
+
+  importSandboxPatient(patient: Patient): Observable<{source: Source, alreadyImported?: boolean}> {
+    // The pinned manual importer uses Go strings.TrimLeft(id, "Patient/")
+    // when storing source.patient. Accept that legacy key without rewriting it.
+    const patientKeys = [patient.id, patient.id?.replace(/^[Patient\/]+/, '')].filter(Boolean);
+    return this.getSources().pipe(concatMap(sources => {
+      const existing = sources.find(source => source.platform_type === 'manual' && patientKeys.includes(source.patient) && source.id);
+      if (existing) return of({source: existing, alreadyImported: true});
+      const bundle = {resourceType: 'Bundle', type: 'collection', entry: [{resource: patient}]};
+      const formData = new FormData();
+      formData.append('file', new File([JSON.stringify(bundle)], 'epic-sandbox.json', {type: 'application/fhir+json'}));
+      return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/source/manual`, formData)
+        .pipe(map(response => {
+          if (!response.success || !response.source?.id) throw new Error('The local import did not complete.');
+          return {source: response.source as Source, alreadyImported: false};
+        }));
+    }));
   }
 
   createRelatedResourcesFastenSource(resourceList: List): Observable<Source> {
