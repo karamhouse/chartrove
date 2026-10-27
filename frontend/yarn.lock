@@ -6169,6 +6169,11 @@ es-module-lexer@^0.9.0:
   resolved "https://registry.npmjs.org/es-module-lexer/-/es-module-lexer-0.9.3.tgz#6f13db00cc38417137daf74366f535c8eb438f19"
   integrity sha512-1HQ2M2sPtxwnvOvT1ZClHyQDiggdNjURWpY2we6aMKCQiUVxTmVs2UYPLIrD84sS+kMdUwfBSylbJPwNnBrnHQ==
 
+es-toolkit@^1.39.7:
+  version "1.53.0"
+  resolved "https://registry.yarnpkg.com/es-toolkit/-/es-toolkit-1.53.0.tgz#084c0372cce0f7146b26cdbcae896eceb683fe39"
+  integrity sha512-3+AYXp9fmJ/UhHBMYj2/U+RaUouMD90SzoItyDOB2Za7W6dB7fQApFGnZPl2MF6K8/Tv1koh1JyirSx/kju6Pw==
+
 es5-ext@^0.10.35, es5-ext@^0.10.50, es5-ext@^0.10.62, es5-ext@~0.10.14:
   version "0.10.62"
   resolved "https://registry.npmjs.org/es5-ext/-/es5-ext-0.10.62.tgz#5e6adc19a6da524bf3d1e02bbc8960e5eb49a9a5"
@@ -8675,11 +8680,6 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
-lodash-es@^4.17.15:
-  version "4.17.21"
-  resolved "https://registry.npmjs.org/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
-  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
-
 lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.npmjs.org/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
@@ -9216,12 +9216,12 @@ ng-zorro-antd@^14.1.1:
     date-fns "^2.16.1"
     tslib "^2.3.0"
 
-ng2-charts@^4.1.1:
-  version "4.1.1"
-  resolved "https://registry.npmjs.org/ng2-charts/-/ng2-charts-4.1.1.tgz#699bee539030b093caf54ab6111c6dea9e8e7ed3"
-  integrity sha512-iHwXDbmX86lfeH8VRcsaW2tJATsuAZo4kvvC/Yk2l35zOHjevja1qBvO6BAibiDazi9r9aS6ZRJOqWPsz1pP2w==
+ng2-charts@^11.0.0:
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/ng2-charts/-/ng2-charts-11.0.0.tgz#f181abbe4e32ee8aa895227bd5498bdc0359f1b2"
+  integrity sha512-KHFPsGSyHtluWuvyIhWQVFNWqeQJ25Jy69XajEiAuAXknc3OM9VY45hu7vwv9p51osg+E5GnPxVdPQ3c08L9KA==
   dependencies:
-    lodash-es "^4.17.15"
+    es-toolkit "^1.39.7"
     tslib "^2.3.0"
 
 ngx-dropzone@^3.1.0:
