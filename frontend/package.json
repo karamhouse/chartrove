@@ -36,7 +36,7 @@
     "@ng-select/ng-select": "9.1.0",
     "@panva/oauth4webapi": "1.2.0",
     "@swimlane/ngx-datatable": "^20.0.0",
-    "@types/fhir": "^0.0.35",
+    "@types/fhir": "^0.0.44",
     "@webcomponents/webcomponentsjs": "^2.8.0",
     "asmcrypto.js": "^2.3.2",
     "bootstrap": "^4.4.1",
