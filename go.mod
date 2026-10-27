@@ -22,7 +22,7 @@ require (
 	github.com/fastenhealth/fasten-sources v0.6.25
 	github.com/fastenhealth/gofhir-models v0.0.7
 	github.com/gin-gonic/gin v1.9.0
-	github.com/go-gormigrate/gormigrate/v2 v2.1.1
+	github.com/go-gormigrate/gormigrate/v2 v2.1.7
 	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v54 v54.0.0
@@ -40,8 +40,8 @@ require (
 	golang.org/x/mod v0.17.0
 	golang.org/x/net v0.17.0
 	gorm.io/datatypes v1.0.7
-	gorm.io/driver/sqlite v1.5.4
-	gorm.io/gorm v1.25.4
+	gorm.io/driver/sqlite v1.6.0
+	gorm.io/gorm v1.31.2
 )
 
 require (
@@ -60,7 +60,7 @@ require (
 	github.com/johnfercher/go-tree v1.0.5 // indirect
 	github.com/jung-kurt/gofpdf v1.16.2 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
-	github.com/mattn/go-sqlite3 v1.14.17 // indirect
+	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.0 // indirect
 	github.com/pdfcpu/pdfcpu v0.6.0 // indirect
@@ -128,7 +128,7 @@ require (
 	golang.org/x/oauth2 v0.11.0 // indirect
 	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/term v0.13.0 // indirect
-	golang.org/x/text v0.16.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
