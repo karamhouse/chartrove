@@ -137,3 +137,5 @@ require (
 	gorm.io/driver/mysql v1.3.2 // indirect
 	gorm.io/driver/postgres v1.5.3
 )
+
+replace github.com/fastenhealth/fasten-sources v0.6.25 => github.com/andhines/fasten-sources v0.0.0-20241106031723-18c9783658fd

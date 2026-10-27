@@ -23,17 +23,17 @@ type AppEngineInterface interface {
 
 // EncryptionKeyHandler holds dependencies for encryption key-related operations
 type EncryptionKeyHandler struct {
-	AppConfig   config.Interface
-	Logger      *logrus.Entry
-	AppEngine   AppEngineInterface
+	AppConfig config.Interface
+	Logger    *logrus.Entry
+	AppEngine AppEngineInterface
 }
 
 // NewEncryptionKeyHandler creates a new EncryptionKeyHandler
 func NewEncryptionKeyHandler(appConfig config.Interface, logger *logrus.Entry, appEngine AppEngineInterface) *EncryptionKeyHandler {
 	return &EncryptionKeyHandler{
-		AppConfig:   appConfig,
-		Logger:      logger,
-		AppEngine:   appEngine,
+		AppConfig: appConfig,
+		Logger:    logger,
+		AppEngine: appEngine,
 	}
 }
 
@@ -62,6 +62,15 @@ func (h *EncryptionKeyHandler) SetEncryptionKey(c *gin.Context) {
 		return
 	}
 
+	if embedded, ok := h.AppEngine.(interface{ UnlockDatabase(string) error }); ok {
+		if err := embedded.UnlockDatabase(payload.EncryptionKey); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"success": true})
+		return
+	}
+
 	h.AppConfig.Set("database.encryption.key", payload.EncryptionKey)
 
 	c.JSON(http.StatusOK, gin.H{"success": true})
@@ -82,8 +91,6 @@ func (h *EncryptionKeyHandler) ValidateEncryptionKey(c *gin.Context) {
 		return
 	}
 
-	h.Logger.Info(payload.EncryptionKey)
-	
 	if payload.EncryptionKey == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "encryption key is required"})
 		return
@@ -102,12 +109,13 @@ func (h *EncryptionKeyHandler) ValidateEncryptionKey(c *gin.Context) {
 	tempConfig.Set("database.validation_mode", true)
 
 	// Attempt to initialize the database with the provided encryption key
-	_, err = database.NewRepository(tempConfig, h.Logger, event_bus.NewNoopEventBusServer())
+	repository, err := database.NewRepository(tempConfig, h.Logger, event_bus.NewNoopEventBusServer())
 	if err != nil {
 		h.Logger.Errorf("failed to validate encryption key: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"success": false})
 		return
 	}
+	defer repository.Close()
 
 	c.JSON(http.StatusOK, gin.H{"success": true})
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
+import {GetDesktopBridge} from '../../../lib/utils/desktop_bridge';
 
 @Component({
   selector: 'app-desktop-callback',
@@ -13,10 +14,8 @@ export class DesktopCallbackComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(values => {
-      wails.Events.Emit({
-        name: "wails:fasten-lighthouse:response",
-        data: values,
-      })
+      const state = this.activatedRoute.snapshot.paramMap.get('state');
+      GetDesktopBridge().then(bridge => bridge.completeAuth({...values, state})).catch(console.error)
     })
   }
 }

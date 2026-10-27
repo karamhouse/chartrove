@@ -5,10 +5,11 @@ export function OpenExternalLink(url: string, desktopMode: boolean, windowId?: s
   }
 
   //check if wails exists and is defined
-  if(typeof wails !== "undefined" && desktopMode){
-    wails.Call.ByName("github.com/fastenhealth/fasten-desktop/pkg.AppService.BrowserOpenURL", url, windowId || 'external').then(console.log, console.error)
+  if(desktopMode){
+    GetDesktopBridge().then(bridge => bridge.openExternal(url, windowId || 'external')).catch(console.error)
   } else{
     window.open(url, "_blank");
   }
 
 }
+import {GetDesktopBridge} from './desktop_bridge';

@@ -32,6 +32,7 @@ func SSEEventBusServerHandler(eventBus event_bus.Interface) gin.HandlerFunc {
 		clientListener := event_bus.EventBusListener{
 			ResponseChan: make(chan string),
 			UserID:       foundUser.ID.String(),
+			Done:         c.Request.Context().Done(),
 		}
 
 		// Send new connection to event server
@@ -44,11 +45,16 @@ func SSEEventBusServerHandler(eventBus event_bus.Interface) gin.HandlerFunc {
 
 		c.Stream(func(w io.Writer) bool {
 			// Stream message to client from message channel
-			if msg, ok := <-clientListener.ResponseChan; ok {
-				c.SSEvent("message", msg)
-				return true
+			select {
+			case <-c.Request.Context().Done():
+				return false
+			case msg, ok := <-clientListener.ResponseChan:
+				if ok {
+					c.SSEvent("message", msg)
+					return true
+				}
+				return false
 			}
-			return false
 		})
 
 	}

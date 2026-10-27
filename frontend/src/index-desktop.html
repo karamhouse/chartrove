@@ -38,7 +38,12 @@
   <script src="./assets/js/webcomponents/webcomponents-loader.js"></script>
 
   <!-- wails -- this file is required in Desktop -->
-  <script type="module" src="/wails/runtime.js"></script>
+  <script type="module">
+    import * as runtime from '/wails/runtime.js';
+    import { createDesktopBridge } from './assets/desktop/bridge.mjs';
+    window.fastenDesktop = createDesktopBridge(runtime);
+    window.dispatchEvent(new Event('fasten:desktop-ready'));
+  </script>
 
   <script>
     if (!window.customElements) {
