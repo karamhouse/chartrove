@@ -94,6 +94,11 @@ if(role==='observer') {
 } else {
  try {
   const info=await bridge.getInfo();check(info.application==='Chartrove','native binding round trip');
+  const smart='github.com/karamhouse/fasten-desktop/internal/shell.SMARTService';
+  const providers=await runtime.Call.ByName(smart+'.Providers');
+  check(Array.isArray(providers)&&providers.length===0,'direct SMART disabled without registration');
+  let unavailable=false;try{await runtime.Call.ByName(smart+'.Connect','unregistered-smoke-provider');}catch{unavailable=true;}
+  check(unavailable,'direct SMART rejects unconfigured provider');
   const health=await fetch('/api/health').then(r=>r.json());check(health.data.first_run_wizard&&!health.data.standby_mode,'fresh database API');
   const account={username:'desktop-smoke',password:'synthetic-desktop-password',join_mailing_list:false};
   const send=path=>fetch('/api/auth/'+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(account)}).then(r=>r.json());

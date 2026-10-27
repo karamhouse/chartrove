@@ -31,7 +31,9 @@ For a separate development database, launch the extracted executable with an exp
 Chartrove.app/Contents/MacOS/chartrove --data-dir /path/to/private/test-directory
 ```
 
-`--unencrypted` is available only for disposable synthetic-data testing. `--frontend-dir` selects a development asset directory. Normal startup embeds the fork's `/api` routes in Wails without opening an application TCP listener or requiring hosted installation registration.
+`--unencrypted` is available only for disposable synthetic-data testing. `--frontend-dir` selects a development asset directory. Normal startup embeds the fork's `/api` routes in Wails without opening an application API TCP listener or requiring hosted installation registration.
+
+The [direct SMART foundation](DIRECT_SMART.md) adds a separate Go-host service for Chartrove-owned public registrations, system-browser authorization with S256 PKCE, and in-memory Patient retrieval. It is disabled unless `--smart-provider-config` selects an explicit public JSON profile file. An active authorization temporarily opens only its registered IPv4-loopback callback listener. The Sources UI, Keychain persistence, refresh, and record import are separate later increments; no production registration is supplied.
 
 The native bridge uses the runtime served by the pinned host. It validates external URLs, restricts privileged actions to the main window, and restricts callback completion to the popup for the matching state. OAuth callback data is delivered directly to the main window, not broadcast to other provider windows. Epic sandbox OAuth and a synthetic Patient read have been verified in an isolated native test frontend. Production provider retrieval remains blocked by the retired upstream infrastructure; see [provider validation](PROVIDER_VALIDATION.md) for the tested boundaries and reproduction steps. Hosted CCDA conversion remains unvalidated.
 
@@ -56,7 +58,7 @@ From `desktop/`, run `go test ./...` for host tests. To exercise the embedded ba
 go test github.com/fastenhealth/fasten-onprem/backend/pkg/web -run TestEmbedded -count=1 -timeout=120s
 ```
 
-The native executable supports `--smoke-test --unencrypted --data-dir <fresh-private-directory>`. Smoke mode refuses an existing database or an omitted data directory. It tests the real WebView/Go binding, fresh database API, synthetic signup/sign-in, URL rejection, JSON API errors, popup callback delivery, and isolation from an unrelated window. It prints a `DESKTOP_SMOKE` JSON result, quits automatically, and exits nonzero on failure. Its local test routes do not exist in normal mode.
+The native executable supports `--smoke-test --unencrypted --data-dir <fresh-private-directory>`. Smoke mode refuses an existing database, an omitted data directory, or configured direct SMART providers. It tests the real WebView/Go binding, disabled direct SMART service, unconfigured-provider rejection, fresh database API, synthetic signup/sign-in, URL rejection, JSON API errors, popup callback delivery, and isolation from an unrelated window. It prints a `DESKTOP_SMOKE` JSON result, quits automatically, and exits nonzero on failure. Its local test routes do not exist in normal mode.
 
 Observed on October 26, 2026: seven embedded-backend integration tests passed, including encrypted create/unlock/reopen, bad-key rejection, concurrent health polling, persistence, and synthetic FHIR import without outbound HTTP or temporary-document residue. The cancellation regression passed with the real event bus. Desktop host tests and four bridge tests passed. The frontend suite reported 286 successes and one skipped test. The packaged executable passed all eight native smoke checks after extraction and passed strict signature verification. Its encryption onboarding UI was also verified visually; a staged build's actual UI signed into the synthetic account after restart and reached the dashboard.
 
