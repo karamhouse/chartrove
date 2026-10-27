@@ -1,3 +1,7 @@
+# Chartrove provider validation
+
+This record includes historical Fasten Community artifacts and paths from before the Chartrove rebrand. Keep dated test results and hashes as historical evidence; current packages are named `Chartrove.zip` and `Chartrove.app`.
+
 # Provider connection validation
 
 Checked October 27, 2026 using a disposable database and Epic's published synthetic patient. Neither the purchased application's records nor `healthit.yaml` were used.

@@ -33,7 +33,7 @@ func main() {
 }
 
 func run() error {
-	directory := flag.String("data-dir", "", "Private community-app data directory (never the purchased app's data)")
+	directory := flag.String("data-dir", "", "Private Chartrove data directory (never the purchased app's data)")
 	unencrypted := flag.Bool("unencrypted", false, "Use an unencrypted database for disposable testing")
 	frontendDir := flag.String("frontend-dir", "", "Override built-in frontend assets for development")
 	smokeTest := flag.Bool("smoke-test", false, "Run local WebView smoke checks with an explicit fresh --data-dir and --unencrypted")
@@ -92,8 +92,8 @@ func run() error {
 		assetHandler = session.Wrap(backend)
 	}
 	app := application.New(application.Options{
-		Name:        "Fasten Community",
-		Description: "Community-maintained local personal health records",
+		Name:        shell.ApplicationName,
+		Description: "Chartrove personal health records; an independent fork of Fasten Onprem",
 		Assets:      application.AssetOptions{Handler: assetHandler},
 		OnShutdown: func() {
 			if err := backend.Close(); err != nil {
@@ -142,7 +142,7 @@ func run() error {
 			session.Complete(smoke.Report{Error: "native smoke test timed out"})
 		}()
 	}
-	app.Window.NewWithOptions(application.WebviewWindowOptions{Name: "main", Title: "Fasten Community", Width: 1280, Height: 900, MinWidth: 900, MinHeight: 650, URL: url})
-	fmt.Printf("Fasten Community %s; data directory: %s\n", shell.Version, storage.Directory)
+	app.Window.NewWithOptions(application.WebviewWindowOptions{Name: "main", Title: shell.ApplicationName, Width: 1280, Height: 900, MinWidth: 900, MinHeight: 650, URL: url})
+	fmt.Printf("%s %s; data directory: %s\n", shell.ApplicationName, shell.Version, storage.Directory)
 	return app.Run()
 }

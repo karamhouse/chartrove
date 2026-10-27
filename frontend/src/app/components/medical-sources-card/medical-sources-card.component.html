@@ -2,7 +2,7 @@
   <div (click)="onCardClick()" class="card-body" [class.border-left-danger]="status == 'failed'">
 
     <div class="h-100 d-flex align-items-center">
-      <img imageFallback [src]="'assets/sources/'+((sourceInfo?.brand?.id || sourceInfo?.source?.brand_id )+'.png')" [alt]="sourceInfo?.brand?.name" class="img-fluid">
+      <img imageFallback [src]="sourceInfo?.source?.platform_type === 'fasten' ? 'assets/branding/chartrove.svg' : 'assets/sources/'+((sourceInfo?.brand?.id || sourceInfo?.source?.brand_id )+'.png')" [alt]="sourceInfo?.brand?.name" class="img-fluid">
       <div *ngIf="status == 'failed'"  class="card-img-overlay">
         <span class="badge badge-danger">failed</span>
       </div>

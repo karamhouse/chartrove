@@ -75,7 +75,7 @@ func (s *Session) Wrap(next http.Handler) http.Handler {
 	})
 }
 
-const page = `<!doctype html><html><body><h1>Fasten Community desktop smoke test</h1><pre id="status">Starting…</pre><script type="module">
+const page = `<!doctype html><html><body><h1>Chartrove desktop smoke test</h1><pre id="status">Starting…</pre><script type="module">
 import * as runtime from '/wails/runtime.js';
 import {createDesktopBridge} from '/assets/desktop/bridge.mjs';
 const bridge=createDesktopBridge(runtime), checks=[];
@@ -93,7 +93,7 @@ if(role==='observer') {
  bridge.completeAuth({state:'smoke-one',code:'synthetic-code'}).catch(console.error);
 } else {
  try {
-  const info=await bridge.getInfo();check(info.application==='Fasten Community','native binding round trip');
+  const info=await bridge.getInfo();check(info.application==='Chartrove','native binding round trip');
   const health=await fetch('/api/health').then(r=>r.json());check(health.data.first_run_wizard&&!health.data.standby_mode,'fresh database API');
   const account={username:'desktop-smoke',password:'synthetic-desktop-password',join_mailing_list:false};
   const send=path=>fetch('/api/auth/'+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(account)}).then(r=>r.json());

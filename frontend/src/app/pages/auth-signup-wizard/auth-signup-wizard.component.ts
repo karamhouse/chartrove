@@ -9,7 +9,7 @@ import {ToastNotification, ToastType} from '../../models/fasten/toast';
 class UserWizard extends User {
   password_confirm: string = ""
   agree_terms: boolean = false
-  join_mailing_list: boolean = true
+  join_mailing_list: boolean = false
 }
 
 

@@ -9,6 +9,7 @@ import (
 )
 
 const Version = "0.1.0-dev"
+const ApplicationName = "Chartrove"
 
 type DesktopService struct{ app *application.App }
 
@@ -26,7 +27,7 @@ func (s *DesktopService) Info(ctx context.Context) (map[string]string, error) {
 	if err := host.AuthorizeWindow(caller(ctx), "info", ""); err != nil {
 		return nil, err
 	}
-	return map[string]string{"application": "Fasten Community", "version": Version}, nil
+	return map[string]string{"application": ApplicationName, "version": Version}, nil
 }
 
 func (s *DesktopService) OpenExternal(ctx context.Context, raw, state string) error {

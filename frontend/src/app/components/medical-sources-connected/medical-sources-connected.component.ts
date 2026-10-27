@@ -42,7 +42,8 @@ export class MedicalSourcesConnectedComponent implements OnInit {
     private eventBusService: EventBusService,
   ) { }
 
-  ngOnInit(): void {
+  public refreshSources(): void {
+    this.connectedSourceList = [];
     this.loading = true
     this.fastenApi.getSources().subscribe(results => {
       this.loading = false
@@ -59,7 +60,6 @@ export class MedicalSourcesConnectedComponent implements OnInit {
       }))
         .subscribe((connectedBrand) => {
           for(const ndx in connectedSources){
-            console.log(connectedSources[ndx])
             this.connectedSourceList.push({source: connectedSources[ndx], brand: connectedBrand[ndx]})
             if(connectedSources[ndx].latest_background_job?.job_status == "STATUS_LOCKED"){
               this.status[connectedSources[ndx].brand_id] = "token"
@@ -70,6 +70,11 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         })
 
     })
+
+  }
+
+  ngOnInit(): void {
+    this.refreshSources();
 
     const callbackState = this.activatedRoute.snapshot.paramMap.get('state')
     if(callbackState) {

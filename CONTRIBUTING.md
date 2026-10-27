@@ -1,290 +1,79 @@
-> This doc is a WIP and will be expanded shortly.
->
-> In the meantime, please consider looking at the extensive docs in the [Fasten Docs Repository](https://github.com/fastenhealth/docs/tree/main/technical)
+# Contributing to Chartrove
 
-# Tech Stack
+Chartrove is an independent fork of [Fasten Onprem](https://github.com/fastenhealth/fasten-onprem). Keep upstream authorship and copyright notices intact. New issues and PRs belong in [karamhouse/chartrove](https://github.com/karamhouse/chartrove).
 
-Fasten is made up of a handful of different components. Here's a summary of the technologies & languages used in Fasten:
+## Toolchain
 
-**Frontend**
-- NodeJS `v18.9.0`
-- Yarn `1.22.19`
-- Angular `v14.1.3`
+- Go 1.26 or newer; root and desktop modules retain separate dependency graphs.
+- Node 20.19.0 and the committed Yarn 1.22.22 configuration.
+- Angular 14.1.x through the local, locked CLI.
+- macOS with Xcode Command Line Tools for native desktop builds.
 
-**Backend**
-- Go `v1.22.1`
+Install only the locked frontend dependencies when needed:
 
-**Misc**
-- Docker `v20.10.17`
-
-# Development Environment Setup
-
-## Nix
-
-If you use nix, you can use the included flake:
-
-1. Make sure you have [Nix](https://nixos.org/download/) installed with flakes enabled, and optionally [direnv](https://direnv.net/) installed.
-
-2. Allow direnv to use the flake in this directory: `direnv allow`
-
-The flake will automatically set up all required dependencies.
-
-When you enter the directory, the environment will automatically activate and you'll see version information for all the tools.
-
-## Mac
-
-Alternatively if you're on a Mac, you can run the following commands to install the necessary software to get setup:
-
-```bash
-brew install node
-npm install -g @angular/cli@14.1.3
-npm install -g yarn
-
-brew install go
-
-brew install docker
-
-# Frontend tests run with ChromeHeadless browser.
-brew install --cask google-chrome
-
-# Go specific tools
-go install github.com/gzuidhof/tygo@latest
+```sh
+cd frontend
+corepack yarn install --frozen-lockfile --ignore-optional --registry https://registry.npmjs.org --network-concurrency 4
+cd ..
 ```
 
-# Running Tests
+Use the local CLI rather than installing or upgrading a global Angular CLI for a project change.
 
-Before making changes to Fasten, you'll want to run the test suites to ensure that your environment is setup correctly:
+## Repository layout
 
-```bash
-make test
+| Path | Purpose |
+| --- | --- |
+| `frontend/src/app` | Angular views and application services |
+| `frontend/src/assets/desktop` | Native bridge adapter |
+| `backend/pkg` | Go backend, FHIR handling, database, and HTTP routes |
+| `desktop/cmd/fasten-desktop` | Native Wails host entry point |
+| `desktop/internal` | Storage, window authorization, bridge, and native smoke checks |
+| `desktop/build.sh` | Chartrove app packaging |
 
-# if you only want to run the frontend tests (Angular), you can run:
-make test-frontend
+Go module/import paths and bridge service names still contain legacy Fasten identifiers. They are compatibility contracts, not display branding; a module migration needs coordinated backend, frontend, and bridge changes and is outside the branding update.
 
-# alternatively, if you only care about backend (Go) tests, you can run:
-make test-backend
+## Desktop development
+
+See [desktop/README.md](desktop/README.md) for builds, flags, and signing. Use an explicitly selected, newly created private directory for testing. Never use the purchased app's storage or an existing health-record database as a fixture.
+
+```sh
+sh desktop/build.sh
 ```
 
-**Note**: Running backend tests may take awhile to complete the first time you run
+For frontend iteration, select the existing `desktop_prod` configuration. A native executable can serve a built asset directory through `--frontend-dir`; this flag does not select or migrate a database.
 
-# Start Development Environment
+## Validation
 
-To run Fasten from source, you'll need to create 2 separate processes:
+From the repository root:
 
-- Angular Frontend
-- Go Backend
-
-First we'll create a development config file (`config.dev.yaml`)
-
-```yaml
-version: 1
-web:
-  listen:
-    port: 9090
-    host: 0.0.0.0
-    basepath: ''
-  src:
-    frontend:
-      path: ./dist
-database:
-  location: 'fasten.db'
-cache:
-  location: ''
-log:
-  file: '' #absolute or relative paths allowed, eg. web.log
-  level: INFO
+```sh
+go test ./backend/... -count=1
+cd frontend
+node --test desktop-tests/bridge.test.mjs
+node node_modules/@angular/cli/bin/ng.js test --watch=false --browsers=ChromeHeadlessCI
 ```
 
-Next we'll start the processes described above:
+From `desktop/`:
 
-```bash
-
-# In terminal #1, run the following
-make serve-frontend
-
-# In terminal #2, run the following
-make serve-backend
-
+```sh
+go test ./...
+go test github.com/fastenhealth/fasten-onprem/backend/pkg/web -run TestEmbedded -count=1 -timeout=120s
 ```
 
-_Note_: Fasten can run in 2 modes: sandbox or production (prod). In sandbox mode, it can only communicate with test servers (full of synthetic health data).
-By default, the dev environment will run in sandbox mode.
+The native `--smoke-test` mode requires `--unencrypted` and an explicit fresh `--data-dir`. It refuses an existing database. It validates the real WebView bridge and uses synthetic records only.
 
-Now you can open a browser to `http://localhost:4200` to see the Fasten UI.
+Choose checks appropriate to the change. Do not relax timeouts, encryption, or test assertions to make a failing check pass. Distinguish a source check from a successful build and a real native UI check.
 
-_Note_: By default in `dev` mode, you view the frontend server and that will proxy API requests to the backend. It is also possible to build the frontend and serve it from the backend server, but this is much slower to make changes to the frontend.
+## Branding, data, and provider boundaries
 
-### Credentials
+Use Chartrove for product-facing names and link project support to this repository. Preserve Fasten attribution and external service identities. [BRANDING.md](docs/BRANDING.md) records the compatibility names that remain intentionally stable.
 
-Fasten stores all user data locally, including your account information. That means on first start you'll need to register a new account.
-Once you've done that, you'll want to go to the Sources tab and connect a healthcare provider.
+Leave `healthit.yaml` and existing health records untouched. Keep `fasten.db`, existing storage paths, key management, and migration behavior stable unless a separately scoped data migration has been approved.
 
-See [Connecting a new Source](https://docs.fastenhealth.com/getting-started/sandbox.html#connecting-a-new-source) for credentials to use.
+The Epic sandbox connection uses published synthetic test data and upstream sandbox infrastructure. It does not grant production access. See [the provider validation record](desktop/PROVIDER_VALIDATION.md) and [Lighthouse replacement assessment](desktop/LIGHTHOUSE_REPLACEMENT.md).
 
-# Source Code Folder Structure
+## Pull requests
 
-The Fasten source code is organized into a handful of important folders, which we'll describe below:
+Keep changes focused and describe the resulting behavior and validation. Preserve commit attribution when adopting upstream contributions. Migrated draft PRs target historical bases to preserve their original comparisons; review and retarget/rebase them before merging. Existing review transcripts are historical context, not approvals for this fork.
 
-## Frontend
-
-```
-├── frontend
-│   ├── src
-│   │   ├── app
-│   │   │   ├── app-routing.module.ts
-│   │   │   ├── app.component.html
-│   │   │   ├── app.component.scss
-│   │   │   ├── app.component.spec.ts
-│   │   │   ├── app.component.ts
-│   │   │   ├── app.module.ts
-│   │   │   ├── components                        # contains shared/partial components reused on multiple pages.
-│   │   │   │   ├── components-sidebar
-│   │   │   │   ├── footer
-│   │   │   │   ├── header
-│   │   │   │   ├── list-fallback-resource
-│   │   │   │   ├── list-generic-resource         # A component containing a table view for every FHIR resource
-│   │   │   │   ├── list-patient
-│   │   │   │   ├── resource-list                 # Thin shim which populates template depending on FHIR resource type
-│   │   │   │   ├── toast                         # Toast/notification component
-│   │   │   │   └── utilities-sidebar
-│   │   │   ├── models                            # contains classes for communicating with API's and transfering data between pages.
-│   │   │   ├── pages
-│   │   │   │   ├── auth-signin                   # Login/Signin page
-│   │   │   │   ├── auth-signup                   # Signup page
-│   │   │   │   ├── dashboard                     # Dashboard, visible after logging in
-│   │   │   │   ├── medical-sources               # Medical Provider connection page
-│   │   │   │   ├── patient
-│   │   │   │   ├── resource-detail               # Page displaying detailed information about FHIR resource
-│   │   │   │   └── source-detail                 # 2 column page displaying FHIR counts, and table listing FHIR resources for selected type
-│   │   │   ├── services
-│   │   │   │   ├── auth-interceptor.service.ts   # service that looks for 401/403 API responses and triggers Logout
-│   │   │   │   ├── is-authenticated-auth-guard.ts    # service that checks if user is logged in
-│   │   │   │   ├── fasten-api.service.ts         # api service, used to commnunicate with Go backend (WILL BE REMOVED)
-│   │   │   │   ├── fasten-db.service.ts          # db service, used to communicate with CouchDB database
-│   │   │   │   ├── lighthouse.service.ts         # api service, used to communicate with auth-gateway (Lighthouse)
-│   │   │   │   └── toast.service.ts              # notifications service, used to send notifications
-│   │   ├── lib                                   # root directory for libraries
-│   │   ├── styles.scss                           # Main sylesheet
-```
-
-## Backend
-
-
-```tree
-
-backend
-├── cmd
-│   └── fasten
-│       └── fasten.go
-├── pkg
-│   ├── auth
-│   ├── config
-│   ├── constants.go
-│   ├── database                                                        # contains SQLite Database Client
-│   │   ├── migrations                                            # contains database migrations
-│   ├── event_bus                                                       # contains event bus for pub/sub in UI
-│   ├── models                                                          # contains models for application
-│   │   ├── database                                                # contains database models, generated using Jennifer and supports search parameter extraction using FHIRPath.js to SQLite columns
-│   │   │   ├── README.md
-│   │   │   ├── choiceTypePaths.json
-│   │   │   ├── fhirpath.min.js
-│   │   │   ├── generate.go
-│   │   │   ├── interface.go
-│   │   │   ├── search-parameters.json
-│   │   │   ├── searchParameterExtractor.js
-│   │   │   ├── searchParameterExtractor_test.go
-│   │   │   └── utils.go
-│   ├── version
-│   └── web
-│       ├── handler                                                    # contains code for API endpoints
-│       ├── middleware                                                # contains middleware for API endpoints
-│       └── server.go
-└── resources
-    ├── related_versions.go                                           # contains tools that help extract verion infromation for binaries
-    └── related_versions.json
-```
-
-## Distribution/Docker
-
-```tree
-├── docker-compose.yml                  # docker-compose file which can be used to compile and run "all-in-one" image
-├── Dockerfile                          # dockerfile for "all-in-one" image, containing frontend, backend & database
-├── docker
-│   ├── README.md
-│   └── rootfs                          # filesystem configs, used in Dockerfiles to setup s6-overlay service manager
-│       └── etc
-│           ├── cont-init.d
-│           │   ├── 01-timezone
-│           └── services.d
-│               └── fasten
-
-```
-
-# FAQ
-
-### How do I run individual frontend tests?
-
-From the `frontend` directory, you can run `ng test` with the `--include` argument.
-
-```bash
-ng test --include='**/badge.component.spec.ts'
-ng test --include='lib/**/*.spec.ts'
-```
-
-### How do I change the default encryption key and admin credentials
-- FASTEN_ISSUER_JWT_KEY
-
-
-### Generate JWT for local use
-```bash
-curl -X POST http://localhost:9090/api/auth/signup -H 'Content-Type: application/json' -d '{"username":"user1","password":"user1"}'
-
-curl -X POST http://localhost:9090/api/auth/signin -H 'Content-Type: application/json' -d '{"username":"user1","password":"user1"}'
-
-
-curl -H "Authorization: Bearer ${JWT_TOKEN_HERE}" http://localhost:5984/_session
-
-```
-
-
-# How do I work with Storybook?
-
-[Storybook](https://storybook.js.org) allows development and testing of frontend components in isolation.
-When running the Storybook server, each defined story can be viewed and interacted with on it's own allowing for defining and testing of various states and conditions.
-
-In order to run the Storybook server, run the following command and open the url provided:
-
-```bash
-make serve-storybook
-```
-
-If you only want to verify that all stories build properly (a check that is run on commits and PRs), you can run the following command:
-
-```bash
-make build-storybook
-```
-
-
-# Access Encrypted SQLite Database with IntelliJ
-
-- Download the latest `sqlite-jdbc-crypt` jar from https://github.com/Willena/sqlite-jdbc-crypt/releases
-- Open IntelliJ -> Data Source Properties -> Driver Tab
-- Find & Select `Sqlite` -> Right Click -> Duplicate
-- Rename to `Sqlite (Encrypted)`
-- Find `Driver Files` -> Select `sqlite-jdbc-crypt` jar that you downloaded previously
-- Remove `Xerial Sqlite JDBC` jar
-- Click `Apply` -> Click `OK`
-- Create New Data Source -> Select `Sqlite (Encrypted)` -> Change Connection Type to `Url only`
-- Specify the following connection url: `jdbc:sqlite:fasten.db?cipher=sqlcipher&legacy=3&hmac_use=0&kdf_iter=4000&legacy_page_size=1024&key=123456789012345678901234567890`
-- Replace `key` with the encryption key specified in your config file (`database.encryption_key`)
-- Click `Test Connection` -> Should be successful
-- Click `Apply` -> Click `OK`
-
-# Flush SQLite Write-Ahead-Log (WAL) to Database
-
-```sqlite
-PRAGMA wal_checkpoint(TRUNCATE);
-```
-
-See: https://sqlite.org/forum/info/fefd56014e2135589ea57825b0e2aa3e2df5daf53b5e41aa6a9d8f0c29d0b8e5
-TODO: check if https://www.sqlite.org/pragma.html#pragma_wal_checkpoint can be used to do this automatically.
+The [upstream Fasten documentation](https://github.com/fastenhealth/docs/tree/main/technical) is useful historical context. Its hosted-service, deployment, and provider-registration instructions may be outdated for Chartrove.

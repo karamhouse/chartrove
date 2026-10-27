@@ -1,6 +1,6 @@
-# Fasten Community desktop
+# Chartrove desktop
 
-An initial macOS desktop revival using this fork's current frontend and backend, with a new Wails v3 host. This is a local development build, ad hoc signed and not notarized. It does not replace the purchased Fasten app.
+Chartrove is an independent fork of Fasten Onprem, with a revived macOS Wails v3 host around the fork's frontend and backend. This is a local development build, ad hoc signed and not notarized. It does not replace the purchased Fasten app.
 
 ## Build
 
@@ -15,20 +15,20 @@ cd ..
 sh desktop/build.sh
 ```
 
-The result is `dist/FastenCommunity.zip`, containing `FastenCommunity.app` for the build machine's architecture. Signing takes place in an OS temporary directory because macOS File Provider can attach metadata to `.app` directories inside Documents that prevents signing. The ZIP preserves the signed bundle. The build does not install the app or change system trust settings.
+The result is `dist/Chartrove.zip`, containing `Chartrove.app` for the build machine's architecture. Signing takes place in an OS temporary directory because macOS File Provider can attach metadata to `.app` directories inside Documents that prevents signing. The ZIP preserves the signed bundle. The build does not install the app or change system trust settings. App menus, window titles, package name, and monogram icon use Chartrove; Fasten attribution remains in the app footer and project documentation.
 
 After a successful frontend build, `sh desktop/build.sh --skip-frontend` can rebuild only the native package when frontend inputs have not changed. It uses the existing `dist/frontend` output. A normal build regenerates frontend output and synchronizes the embedded assets to remove stale files.
 
 ## Data and startup
 
-The default data directory on macOS is `~/Library/Application Support/FastenCommunity`. The host creates it privately, keeps a persistent JWT signing key in a mode-0600 file, and locks it against a second desktop instance. This directory is separate from the purchased application's storage.
+The default data directory on macOS is `~/Library/Application Support/FastenCommunity`. The host creates it privately, keeps a persistent JWT signing key in a mode-0600 file, and locks it against a second desktop instance. This compatibility directory name is intentionally retained through the Chartrove rebrand, together with bundle identifier `house.karam.fasten-community`, database filename `fasten.db`, key files, and bridge service names. No data migration is performed. This directory is separate from the purchased application's storage.
 
 Database encryption is enabled by default. The fork's existing encryption-key setup and restore screens handle creation and unlock. Save the recovery key when prompted; the host does not persist it. Existing purchased-app databases and their migrations have not been validated and must not be used as test inputs.
 
 For a separate development database, launch the extracted executable with an explicit private directory:
 
 ```sh
-FastenCommunity.app/Contents/MacOS/fasten-community --data-dir /path/to/private/test-directory
+Chartrove.app/Contents/MacOS/chartrove --data-dir /path/to/private/test-directory
 ```
 
 `--unencrypted` is available only for disposable synthetic-data testing. `--frontend-dir` selects a development asset directory. Normal startup embeds the fork's `/api` routes in Wails without opening an application TCP listener or requiring hosted installation registration.
@@ -36,6 +36,9 @@ FastenCommunity.app/Contents/MacOS/fasten-community --data-dir /path/to/private/
 The native bridge uses the runtime served by the pinned host. It validates external URLs, restricts privileged actions to the main window, and restricts callback completion to the popup for the matching state. OAuth callback data is delivered directly to the main window, not broadcast to other provider windows. Epic sandbox OAuth and a synthetic Patient read have been verified in an isolated native test frontend. Production provider retrieval remains blocked by the retired upstream infrastructure; see [provider validation](PROVIDER_VALIDATION.md) for the tested boundaries and reproduction steps. Hosted CCDA conversion remains unvalidated.
 
 ## Tests
+
+The dated observations below describe earlier Fasten Community builds. They are historical evidence, not validation of a newly branded Chartrove package. See [current Chartrove branding validation](BRANDING_VALIDATION.md) for the new package checks.
+
 
 From the repository root:
 

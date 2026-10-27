@@ -220,3 +220,18 @@
 @import "~gridstack/dist/gridstack.min.css";
 
 @import 'custom';
+
+/* Chartrove display branding. Compatibility class names remain unchanged. */
+.az-logo { text-transform: none; }
+.chartrove-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #5b47fb;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+}

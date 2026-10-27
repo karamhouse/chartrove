@@ -25,13 +25,16 @@ export class MedicalSourcesCardComponent implements OnInit {
 
   getSourceDisplayName(sourceItem: SourceListItem): string {
     if(!sourceItem) return "Unknown"
+    if (sourceItem.source?.platform_type === 'fasten' && ['Fasten Health', 'Fasten'].includes(sourceItem.source?.display)) {
+      return 'Chartrove';
+    }
     if(sourceItem.source?.display) {
       return sourceItem.source?.display
     }
     if(sourceItem.source?.platform_type == 'manual') {
       return 'Uploaded ' + moment(sourceItem.source?.created_at).format('MMM DD, YYYY')
     } else if(sourceItem.source?.platform_type == 'fasten'){
-      return 'Fasten Health'
+      return 'Chartrove'
     }
     if(sourceItem.brand?.name) {
       return sourceItem.brand?.name

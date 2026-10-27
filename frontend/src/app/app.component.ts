@@ -10,7 +10,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'fastenhealth';
+  title = 'Chartrove';
 
   public layoutOption: string;
   showHeader:boolean = false;
