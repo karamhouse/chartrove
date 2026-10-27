@@ -19,6 +19,7 @@ import (
 	"github.com/karamhouse/fasten-desktop/assets"
 	"github.com/karamhouse/fasten-desktop/internal/host"
 	"github.com/karamhouse/fasten-desktop/internal/shell"
+	"github.com/karamhouse/fasten-desktop/internal/smart"
 	"github.com/karamhouse/fasten-desktop/internal/smoke"
 	"github.com/sirupsen/logrus"
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -37,8 +38,22 @@ func run() error {
 	unencrypted := flag.Bool("unencrypted", false, "Use an unencrypted database for disposable testing")
 	frontendDir := flag.String("frontend-dir", "", "Override built-in frontend assets for development")
 	smokeTest := flag.Bool("smoke-test", false, "Run local WebView smoke checks with an explicit fresh --data-dir and --unencrypted")
+	smartConfig := flag.String("smart-provider-config", "", "Explicit public SMART provider JSON configuration (disabled when omitted)")
 	flag.Parse()
+	profiles, err := smart.LoadProfiles(*smartConfig)
+	if err != nil {
+		return err
+	}
+	var app *application.App
+	connections, err := smart.NewManager(profiles, func(raw string) error { return app.Browser.OpenURL(raw) })
+	if err != nil {
+		return err
+	}
+	defer connections.Close()
 	if *smokeTest {
+		if len(profiles) != 0 {
+			return fmt.Errorf("smoke test requires direct SMART providers to be disabled")
+		}
 		if *directory == "" || !*unencrypted {
 			return fmt.Errorf("smoke test requires explicit --data-dir and --unencrypted")
 		}
@@ -91,8 +106,8 @@ func run() error {
 		session = &smoke.Session{}
 		assetHandler = session.Wrap(backend)
 	}
-	var app *application.App
 	shouldQuit := host.ShouldQuitAfter(func() {
+		connections.Close()
 		if err := backend.Close(); err != nil {
 			log.Print("closing database: ", err)
 		}
@@ -110,6 +125,7 @@ func run() error {
 		},
 	})
 	app.RegisterService(application.NewService(shell.NewDesktopService(app)))
+	app.RegisterService(application.NewService(shell.NewSMARTService(connections)))
 	menu := application.NewMenu()
 	menu.AddRole(application.AppMenu)
 	menu.AddRole(application.EditMenu)
