@@ -27,7 +27,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v54 v54.0.0
 	github.com/google/uuid v1.5.0
-	github.com/iancoleman/strcase v0.2.0
+	github.com/iancoleman/strcase v0.3.0
 	github.com/johnfercher/maroto/v2 v2.3.1
 	github.com/lestrrat-go/jwx/v2 v2.0.11
 	github.com/samber/lo v1.35.0
