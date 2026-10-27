@@ -37,7 +37,7 @@ jobs:
         with:
           fetch-depth: 0
       - run: cd frontend && yarn install
-      - uses: chromaui/action@v1
+      - uses: chromaui/action@v18
         with:
           workingDir: frontend
           buildScriptName: "build-storybook"
