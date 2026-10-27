@@ -12,6 +12,7 @@ import {SourceSummary} from '../models/fasten/source-summary';
 import {Summary} from '../models/fasten/summary';
 import {AuthService} from './auth.service';
 import {GetEndpointAbsolutePath} from '../../lib/utils/endpoint_absolute_path';
+import {uuidV4} from '../../lib/utils/uuid';
 import {environment} from '../../environments/environment';
 import {Patient, ValueSet} from 'fhir/r4';
 import {AttachmentModel} from '../../lib/models/datatypes/attachment-model';
@@ -164,9 +165,13 @@ export class FastenApiService {
       const existing = sources.find(source => source.platform_type === 'manual' && patientKeys.includes(source.patient) && source.id);
       if (existing) return of({source: existing, alreadyImported: true});
       const bundle = {resourceType: 'Bundle', type: 'collection', entry: [{resource: patient}]};
-      const formData = new FormData();
-      formData.append('file', new File([JSON.stringify(bundle)], 'epic-sandbox.json', {type: 'application/fhir+json'}));
-      return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/source/manual`, formData)
+      // Native WebKit drops FormData bodies on the Wails custom scheme. This
+      // JSON-only upload can use a UTF-8 multipart string with an explicit boundary.
+      const boundary = `chartrove-sandbox-${uuidV4()}`;
+      const body = `--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="epic-sandbox.json"\r\nContent-Type: application/fhir+json\r\n\r\n${JSON.stringify(bundle)}\r\n--${boundary}--\r\n`;
+      return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/source/manual`, body, {
+        headers: {'Content-Type': `multipart/form-data; boundary=${boundary}`}
+      })
         .pipe(map(response => {
           if (!response.success || !response.source?.id) throw new Error('The local import did not complete.');
           return {source: response.source as Source, alreadyImported: false};
