@@ -31,9 +31,34 @@ describe('FastenApiService', () => {
     const result = service.importSandboxPatient({resourceType: 'Patient', id: 'synthetic-patient'}).toPromise();
     http.expectOne(req => req.url.endsWith('/secure/source')).flush({success: true, data: []});
     const request = http.expectOne(req => req.url.endsWith('/secure/source/manual'));
-    const file = request.request.body.get('file') as File;
+    const decoded = await new Response(request.request.body, {headers: {'Content-Type': request.request.headers.get('Content-Type')}}).formData();
+    const file = decoded.get('file') as File;
     expect(JSON.parse(await file.text())).toEqual({resourceType: 'Bundle', type: 'collection', entry: [{resource: {resourceType: 'Patient', id: 'synthetic-patient'}}]});
     request.flush({success: true, source: {id: 'local-source'}, data: {totalResources: 1}});
+    expect((await result).source.id).toBe('local-source');
+    http.verify();
+  });
+
+  it('sends a serialized multipart Patient upload that the native transport can carry', async () => {
+    const http = TestBed.inject(HttpTestingController);
+    const patient = {resourceType: 'Patient' as const, id: 'synthetic-patient', name: [{family: 'López', given: ['Camila']}], text: {status: 'generated' as const, div: '<div>Line one\nLine two</div>'}};
+    const result = service.importSandboxPatient(patient).toPromise();
+    http.expectOne(req => req.url.endsWith('/secure/source')).flush({success: true, data: []});
+    const request = http.expectOne(req => req.url.endsWith('/secure/source/manual'));
+    const contentType = request.request.headers.get('Content-Type');
+    expect(typeof request.request.body).toBe('string');
+    expect(contentType).toMatch(/^multipart\/form-data; boundary=.+/);
+    if (typeof request.request.body === 'string' && contentType) {
+      const decoded = await new Response(request.request.body, {headers: {'Content-Type': contentType}}).formData();
+      const file = decoded.get('file') as File;
+      expect(file.name).toBe('epic-sandbox.json');
+      expect(file.type).toBe('application/fhir+json');
+      expect(JSON.parse(await file.text())).toEqual({resourceType: 'Bundle', type: 'collection', entry: [{resource: patient}]});
+      const fields: string[] = [];
+      decoded.forEach((_value, key) => fields.push(key));
+      expect(fields).toEqual(['file']);
+    }
+    request.flush({success: true, source: {id: 'local-source'}});
     expect((await result).source.id).toBe('local-source');
     http.verify();
   });

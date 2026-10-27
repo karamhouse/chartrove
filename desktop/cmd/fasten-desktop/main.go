@@ -91,16 +91,18 @@ func run() error {
 		session = &smoke.Session{}
 		assetHandler = session.Wrap(backend)
 	}
-	app := application.New(application.Options{
+	var app *application.App
+	shouldQuit := host.ShouldQuitAfter(func() {
+		if err := backend.Close(); err != nil {
+			log.Print("closing database: ", err)
+		}
+	}, func() { app.Quit() })
+	app = application.New(application.Options{
 		Name:        shell.ApplicationName,
 		Description: "Chartrove personal health records; an independent fork of Fasten Onprem",
 		Assets:      application.AssetOptions{Handler: assetHandler},
-		OnShutdown: func() {
-			if err := backend.Close(); err != nil {
-				log.Print("closing database: ", err)
-			}
-		},
-		Mac: application.MacOptions{ApplicationShouldTerminateAfterLastWindowClosed: true},
+		ShouldQuit:  shouldQuit,
+		Mac:         application.MacOptions{ApplicationShouldTerminateAfterLastWindowClosed: true},
 		PostShutdown: func() {
 			if *smokeTest && !smokeOK.Load() {
 				os.Exit(1)
