@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/sirupsen/logrus"
 )
@@ -235,7 +236,7 @@ func TestEmbeddedFreshDatabaseImportsSyntheticFHIRWithoutNetworkOrTempFileResidu
 	if err != nil {
 		t.Fatal(err)
 	}
-	io.WriteString(part, `{"resourceType":"Bundle","type":"collection","entry":[{"resource":{"resourceType":"Patient","id":"synthetic-patient","name":[{"family":"Synthetic","given":["Desktop"]}],"gender":"unknown"}}]}`)
+	io.WriteString(part, `{"resourceType":"Bundle","type":"collection","entry":[{"resource":{"resourceType":"Patient","id":"erXuFYUfucBZaryVksYEcMg3","name":[{"family":"Synthetic","given":["Desktop"]}],"gender":"unknown"}}]}`)
 	if err := form.Close(); err != nil {
 		t.Fatal(err)
 	}
@@ -247,11 +248,22 @@ func TestEmbeddedFreshDatabaseImportsSyntheticFHIRWithoutNetworkOrTempFileResidu
 	if w.Code != 200 {
 		t.Fatalf("synthetic import returned %d: %s", w.Code, w.Body)
 	}
+	var imported struct {
+		Source struct {
+			Patient string `json:"patient"`
+		} `json:"source"`
+	}
+	if err := json.Unmarshal(w.Body.Bytes(), &imported); err != nil {
+		t.Fatal(err)
+	}
+	if imported.Source.Patient != "rXuFYUfucBZaryVksYEcMg3" {
+		t.Fatalf("unexpected pinned importer patient key: %q", imported.Source.Patient)
+	}
 	req = httptest.NewRequest("GET", "/api/secure/resource/fhir?sourceResourceType=Patient", nil)
 	req.Header.Set("Authorization", "Bearer "+auth.Data)
 	w = httptest.NewRecorder()
 	app.ServeHTTP(w, req)
-	if w.Code != 200 || !strings.Contains(w.Body.String(), "synthetic-patient") {
+	if w.Code != 200 || !strings.Contains(w.Body.String(), "erXuFYUfucBZaryVksYEcMg3") {
 		t.Fatalf("imported patient missing: %d %s", w.Code, w.Body)
 	}
 	if blocked.requests != 0 {
@@ -263,5 +275,23 @@ func TestEmbeddedFreshDatabaseImportsSyntheticFHIRWithoutNetworkOrTempFileResidu
 	}
 	if len(files) != 0 {
 		t.Fatal("completed import left a temporary document behind")
+	}
+}
+
+func TestEmbeddedCloseReleasesDatabasePool(t *testing.T) {
+	app := openEmbedded(t, embeddedConfig(t, filepath.Join(t.TempDir(), "close.db"), false))
+	repo := app.engine.deviceRepo.(*database.GormRepository)
+	pool, err := repo.GormClient.DB()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := pool.Ping(); err != nil {
+		t.Fatal(err)
+	}
+	if err := app.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := pool.Ping(); err == nil {
+		t.Fatal("embedded Close left the database pool open")
 	}
 }

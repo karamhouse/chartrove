@@ -111,12 +111,14 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 	if !validationMode {
 		err = fastenRepo.Migrate()
 		if err != nil {
+			_ = fastenRepo.Close()
 			return nil, err
 		}
 
 		//fail any Locked jobs. This is necessary because the job may have been locked by a process that was killed.
 		err = fastenRepo.CancelAllLockedBackgroundJobsAndFail()
 		if err != nil {
+			_ = fastenRepo.Close()
 			return nil, err
 		}
 	}

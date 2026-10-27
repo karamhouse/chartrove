@@ -23,7 +23,7 @@ Checked October 27, 2026 using a disposable database and Epic's published synthe
 
 The live test used the rebuilt native host and the actual `bridge.mjs`, with an isolated test frontend. It exercised the provider protocol, not the normal Angular provider UI or the backend's bulk-sync and dynamic-registration paths. OAuth tokens stayed in JavaScript memory and were neither printed nor saved. The test session was closed afterward.
 
-The current fork's Medical Sources page offers manual upload; its old provider search and callback processing have been removed. A successful sandbox protocol test therefore does **not** mean provider connection has been restored in the normal application.
+At the time of this isolated protocol check, Medical Sources offered only manual upload. Chartrove now also offers an explicit Epic sandbox connection and synthetic Patient import; its Angular tests and native UI checks are recorded in [BRANDING_VALIDATION.md](BRANDING_VALIDATION.md). The complete OAuth flow through that normal UI remains unvalidated; the protocol evidence above comes from the isolated harness.
 
 ## Production blocker
 
@@ -33,10 +33,10 @@ Production revival needs a supported catalog and OAuth integration: either an au
 
 ## Reproduce the isolated sandbox protocol check
 
-Build and extract the community app first. Create a fresh directory with `mktemp -d` under the OS temporary directory, and put `testdata/provider-sandbox.html` there as `frontend/index.html`. Copy `../frontend/src/assets/desktop/bridge.mjs` into `frontend/assets/desktop/bridge.mjs` beneath that directory. Launch the extracted executable with:
+Build and extract Chartrove.app first. Create a fresh directory with `mktemp -d` under the OS temporary directory, and put `testdata/provider-sandbox.html` there as `frontend/index.html`. Copy `../frontend/src/assets/desktop/bridge.mjs` into `frontend/assets/desktop/bridge.mjs` beneath that directory. Launch the extracted executable with:
 
 ```sh
-fasten-community --unencrypted --data-dir "$test_root/data" --frontend-dir "$test_root/frontend"
+Chartrove.app/Contents/MacOS/chartrove --unencrypted --data-dir "$test_root/data" --frontend-dir "$test_root/frontend"
 ```
 
 Here `test_root` must name the newly created disposable directory, never an existing record directory. The harness is hard-coded to Epic sandbox and automatically opens its authorization popup. Use only the patient credentials published in [Epic's sandbox documentation](https://fhir.epic.com/Documentation#patientlist). Select demographics only and the shortest offered consent duration. The main window displays HTTP statuses and a synthetic-patient match, never tokens or patient details. Close the app and remove only that disposable directory after testing. This page is a test utility; it is not included in the normal frontend assets.

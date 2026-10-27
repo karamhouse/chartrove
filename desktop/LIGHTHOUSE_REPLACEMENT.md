@@ -2,7 +2,7 @@
 
 Assessment date: October 27, 2026. This is an implementation assessment, not a production deployment or authorization to register accounts, accept agreements, purchase services, or access real records. `healthit.yaml` and existing health records are excluded.
 
-Implementation status: the sandbox UI changes are written but have not passed an Angular build or a native UI test. iCloud has evicted required dependency and Git metadata files to unavailable placeholders. The existing packaged app predates these UI changes. Isolated callback and service checks pass; they do not establish UI acceptance.
+Implementation status: the sandbox UI now passes the Angular suite and production build, and its page is present in the native Chartrove package. The checkout was moved outside iCloud and its unavailable dependencies restored. See [BRANDING_VALIDATION.md](BRANDING_VALIDATION.md) for those checks. The full OAuth flow through that Angular UI remains unvalidated; the earlier live protocol evidence used an isolated native harness.
 
 ## Recommendation
 

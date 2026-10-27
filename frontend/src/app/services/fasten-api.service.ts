@@ -157,8 +157,11 @@ export class FastenApiService {
   }
 
   importSandboxPatient(patient: Patient): Observable<{source: Source, alreadyImported?: boolean}> {
+    // The pinned manual importer uses Go strings.TrimLeft(id, "Patient/")
+    // when storing source.patient. Accept that legacy key without rewriting it.
+    const patientKeys = [patient.id, patient.id?.replace(/^[Patient\/]+/, '')].filter(Boolean);
     return this.getSources().pipe(concatMap(sources => {
-      const existing = sources.find(source => source.platform_type === 'manual' && source.patient === patient.id && source.id);
+      const existing = sources.find(source => source.platform_type === 'manual' && patientKeys.includes(source.patient) && source.id);
       if (existing) return of({source: existing, alreadyImported: true});
       const bundle = {resourceType: 'Bundle', type: 'collection', entry: [{resource: patient}]};
       const formData = new FormData();

@@ -2,6 +2,8 @@
 set -eu
 desktop_root=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 repo_root=$(dirname "$desktop_root")
+build_root=$(mktemp -d "${TMPDIR:-/tmp}/chartrove-build.XXXXXX")
+trap 'rm -rf "$build_root"' EXIT HUP INT TERM
 cd "$repo_root/frontend"
 # Install the locked frontend dependencies separately; builds do not refresh them.
 if [ ! -x node_modules/.bin/ng ]; then
@@ -9,14 +11,18 @@ if [ ! -x node_modules/.bin/ng ]; then
   exit 1
 fi
 case "${1:-}" in
-  '') node node_modules/@angular/cli/bin/ng.js build --configuration desktop_prod --output-path ../dist/frontend ;;
+  '')
+    # Build into an empty directory: Finder metadata in previous output can
+    # otherwise make Angular's directory removal fail with ENOTEMPTY.
+    node node_modules/@angular/cli/bin/ng.js build --configuration desktop_prod --output-path "$build_root/frontend"
+    mkdir -p "$repo_root/dist/frontend"
+    rsync -a --delete --exclude .DS_Store "$build_root/frontend/" "$repo_root/dist/frontend/"
+    ;;
   --skip-frontend) test -f "$repo_root/dist/frontend/index.html" ;;
   *) echo 'Usage: desktop/build.sh [--skip-frontend]' >&2; exit 2 ;;
 esac
 mkdir -p "$desktop_root/assets/frontend"
 rsync -a --delete --exclude .gitkeep --exclude .DS_Store "$repo_root/dist/frontend/" "$desktop_root/assets/frontend/"
-build_root=$(mktemp -d "${TMPDIR:-/tmp}/chartrove-build.XXXXXX")
-trap 'rm -rf "$build_root"' EXIT HUP INT TERM
 bundle="$build_root/Chartrove.app"
 mkdir -p "$bundle/Contents/MacOS" "$bundle/Contents/Resources"
 cp "$desktop_root/Info.plist" "$bundle/Contents/Info.plist"

@@ -47,4 +47,15 @@ describe('FastenApiService', () => {
     http.verify();
   });
 
+  it('recognizes the pinned importer legacy patient key for the Epic sandbox patient', async () => {
+    const http = TestBed.inject(HttpTestingController);
+    const result = service.importSandboxPatient({resourceType: 'Patient', id: 'erXuFYUfucBZaryVksYEcMg3'}).toPromise();
+    http.expectOne(req => req.url.endsWith('/secure/source')).flush({success: true, data: [
+      {id: 'already-local', patient: 'rXuFYUfucBZaryVksYEcMg3', platform_type: 'manual'}
+    ]});
+    http.expectNone(req => req.url.endsWith('/secure/source/manual'));
+    expect(await result).toEqual({source: jasmine.objectContaining({id: 'already-local'}), alreadyImported: true});
+    http.verify();
+  });
+
 });

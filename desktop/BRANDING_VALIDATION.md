@@ -26,3 +26,26 @@ The same checkout was relocated outside iCloud to `/Users/osama/Code/karamhouse/
 Production provider connections, notarization, and distribution readiness are not established. The restored provider UI passed mocked tests; the full Epic OAuth flow in that UI was not repeated during this branding validation. Earlier isolated sandbox evidence remains in PROVIDER_VALIDATION.md. An earlier keyboard-quit automation attempt left a test process running; the final package exited normally through its Quit Chartrove menu item.
 
 Database names, data-directory selection, bundle identifier, encryption, migrations, provider identifiers, and bridge event names are unchanged. No `healthit.yaml` file or existing health-record database was read, copied, edited, or used as a test input. No remote publication was performed.
+
+## PR 219 review follow-up
+
+The sections above describe the earlier branding package. Review found and fixed three issues before merge:
+
+- Repository Close returned without closing its SQL pool. It now closes the underlying pool, including failed initialization cleanup. Fresh SQLite and embedded-host regressions verify that the pool rejects further use after shutdown; repeated close remains safe.
+- The pinned manual importer stores Epic's public synthetic Patient ID with a legacy leading-character trim. Repeat-import detection now recognizes both the raw and stored forms, without rewriting source identifiers. The new frontend regression failed before the fix; an actual embedded import verifies the pinned storage behavior.
+- Finder metadata could make Angular fail to remove previous generated output. Packaging now builds into an empty temporary directory, then synchronizes generated files while preserving Finder metadata and removing stale bundles.
+
+Provider documentation now distinguishes the isolated live protocol evidence from the restored Angular UI and uses the Chartrove executable path. Independent backend and desktop reviewers accepted the fixes with no outstanding critical or important findings.
+
+Validation of the reviewed sources:
+
+- Backend package coverage completed: the aggregate rerun passed every package except database, which reached the existing ten-minute limit under concurrent load. The database-only rerun then passed in 505.397 seconds with the same default timeout. No timeout, assertion, encryption, or password-cost settings were relaxed.
+- Focused race checks for Close, concurrent unlock/health polling, and configuration isolation passed: web 49.147 seconds and database 3.296 seconds, with a 120-second limit. A broader authentication race experiment reached that limit inside the existing bcrypt password check; it reported no race.
+- Angular: 303 passed and one skipped, with a clean exit using standard ChromeHeadless and coverage disabled. The earlier custom-launcher run completed all assertions but stalled during browser shutdown. Existing shallow-fixture console warnings remain.
+- Four bridge adapter tests passed.
+- Normal desktop packaging succeeded with Finder metadata present. Only the current main JavaScript bundle remained after synchronization. Shell syntax and diff whitespace checks passed.
+- The final ZIP passed strict signature verification after extraction and all eight native smoke checks using a fresh synthetic database, including synthetic signup/sign-in and callback isolation.
+
+Reviewed package SHA-256: `34738e2fd303dae2283a8838ecac7a06b1e276e57e86b45ff311d5775396d8e9`.
+
+This remains an ad hoc signed development build, not notarized. Full OAuth through the restored Angular UI and production provider access remain unvalidated. Fasten attribution, license, and history are preserved. No protected health configuration or existing health-record data was used. Publication and merge state are recorded by PR 219 itself.
