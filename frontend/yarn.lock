@@ -7596,9 +7596,9 @@ human-signals@^2.1.0:
   integrity sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==
 
 humanize-duration@^3.27.3:
-  version "3.28.0"
-  resolved "https://registry.npmjs.org/humanize-duration/-/humanize-duration-3.28.0.tgz#f79770c0bec34d3bfd4899338cc40643bc04df72"
-  integrity sha512-jMAxraOOmHuPbffLVDKkEKi/NeG8dMqP8lGRd6Tbf7JgAeG33jjgPWDbXXU7ypCI0o+oNKJFgbSB9FKVdWNI2A==
+  version "3.35.0"
+  resolved "https://registry.yarnpkg.com/humanize-duration/-/humanize-duration-3.35.0.tgz#716f60c036a39b9b070a92b49739d52593464967"
+  integrity sha512-+KYh+R85n1yadHHwy/QXF0JgPq5NPPBNrvigA5aAKrlKFd0bJpMx7wE3Xd6rM0kEaBQMCFrdMihkaDSgWERNvQ==
 
 humanize-ms@^1.2.1:
   version "1.2.1"
