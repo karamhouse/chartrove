@@ -47,7 +47,7 @@
     "humanize-duration": "^3.27.3",
     "idb": "^7.1.0",
     "jose": "^4.10.4",
-    "lforms": "34.0.0",
+    "lforms": "34.4.0",
     "moment": "^2.29.4",
     "ng2-charts": "^4.1.1",
     "ngx-dropzone": "^3.1.0",

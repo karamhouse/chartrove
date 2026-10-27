@@ -8588,10 +8588,10 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-lforms@34.0.0:
-  version "34.0.0"
-  resolved "https://registry.npmjs.org/lforms/-/lforms-34.0.0.tgz#301a77247fd3e4839901d2f2dff8fcbd4770b58b"
-  integrity sha512-rfl0vtu1WsE09xNERx9Ie8YsH7J3DoVe3gDmRZiV/meRZg2sVaHx03fEbawYmcHTn6YhpSsHtEfJ1yLRrcISmQ==
+lforms@34.4.0:
+  version "34.4.0"
+  resolved "https://registry.yarnpkg.com/lforms/-/lforms-34.4.0.tgz#a3607c9e13ba52f20ba8801169da24c00e182a83"
+  integrity sha512-zKpYFxqysIr22rQTBSqtch58D95+D9Ch4C5zCUGhNnYua05E4AbKx3vU1neN/LCimU9RZunPuC+lSB1243RTJA==
   dependencies:
     "@angular/animations" "~14.2.12"
     "@angular/common" "~14.2.12"
