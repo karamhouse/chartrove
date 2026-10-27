@@ -1,8 +1,6 @@
 module github.com/fastenhealth/fasten-onprem
 
-go 1.21.1
-
-toolchain go1.24.2
+go 1.26.0
 
 //replace github.com/fastenhealth/fasten-sources => ../fasten-sources
 
@@ -37,7 +35,7 @@ require (
 	github.com/urfave/cli/v2 v2.11.2
 	golang.org/x/crypto v0.14.0
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17
-	golang.org/x/mod v0.17.0
+	golang.org/x/mod v0.42.0
 	golang.org/x/net v0.17.0
 	gorm.io/datatypes v1.0.7
 	gorm.io/driver/sqlite v1.5.4
