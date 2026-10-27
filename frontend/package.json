@@ -43,7 +43,7 @@
     "chart.js": "^4.4.2",
     "dwv": "^0.31.0",
     "fhirpath": "^3.3.0",
-    "gridstack": "8.1.1",
+    "gridstack": "8.4.0",
     "humanize-duration": "^3.27.3",
     "idb": "^7.1.0",
     "jose": "^4.10.4",
