@@ -1,6 +1,6 @@
 module github.com/fastenhealth/fasten-onprem
 
-go 1.21.1
+go 1.23.0
 
 toolchain go1.24.2
 
@@ -32,12 +32,12 @@ require (
 	github.com/lestrrat-go/jwx/v2 v2.0.11
 	github.com/samber/lo v1.35.0
 	github.com/sirupsen/logrus v1.9.0
-	github.com/spf13/viper v1.12.0
-	github.com/stretchr/testify v1.8.4
+	github.com/spf13/viper v1.21.0
+	github.com/stretchr/testify v1.11.1
 	github.com/urfave/cli/v2 v2.11.2
 	golang.org/x/crypto v0.14.0
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17
-	golang.org/x/mod v0.17.0
+	golang.org/x/mod v0.26.0
 	golang.org/x/net v0.17.0
 	gorm.io/datatypes v1.0.7
 	gorm.io/driver/sqlite v1.5.4
@@ -50,6 +50,7 @@ require (
 	github.com/boombuler/barcode v1.0.1 // indirect
 	github.com/f-amaral/go-async v0.3.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
+	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/hhrutter/lzw v1.0.0 // indirect
 	github.com/hhrutter/tiff v1.0.1 // indirect
 	github.com/huandu/xstrings v1.3.3 // indirect
@@ -66,7 +67,10 @@ require (
 	github.com/pdfcpu/pdfcpu v0.6.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
+	github.com/sagikazarmark/locafero v0.11.0 // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
+	github.com/sourcegraph/conc v0.3.1-0.20240121214520-5f936abd7ae8 // indirect
+	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/image v0.18.0 // indirect
 )
 
@@ -80,7 +84,7 @@ require (
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.2.0 // indirect
 	github.com/dlclark/regexp2 v1.7.0 // indirect
 	github.com/fatih/color v1.13.0 // indirect
-	github.com/fsnotify/fsnotify v1.5.4 // indirect
+	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
@@ -111,24 +115,24 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
-	github.com/pelletier/go-toml/v2 v2.0.7 // indirect
+	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/seborama/govcr v4.5.0+incompatible // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
-	github.com/spf13/afero v1.8.2 // indirect
-	github.com/spf13/cast v1.5.0 // indirect
+	github.com/spf13/afero v1.15.0 // indirect
+	github.com/spf13/cast v1.10.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/subosito/gotenv v1.3.0 // indirect
+	github.com/spf13/pflag v1.0.10 // indirect
+	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/oauth2 v0.11.0 // indirect
-	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/term v0.13.0 // indirect
-	golang.org/x/text v0.16.0 // indirect
+	golang.org/x/text v0.28.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
