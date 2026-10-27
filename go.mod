@@ -1,8 +1,6 @@
 module github.com/fastenhealth/fasten-onprem
 
-go 1.21.1
-
-toolchain go1.24.2
+go 1.26
 
 //replace github.com/fastenhealth/fasten-sources => ../fasten-sources
 
@@ -20,7 +18,7 @@ require (
 	github.com/dominikbraun/graph v0.15.0
 	github.com/dop251/goja v0.0.0-20230605162241-28ee0ee714f3
 	github.com/fastenhealth/fasten-sources v0.6.25
-	github.com/fastenhealth/gofhir-models v0.0.7
+	github.com/fastenhealth/gofhir-models v0.1.1
 	github.com/gin-gonic/gin v1.9.0
 	github.com/go-gormigrate/gormigrate/v2 v2.1.1
 	github.com/golang-jwt/jwt/v4 v4.4.2
@@ -33,7 +31,7 @@ require (
 	github.com/samber/lo v1.35.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.12.0
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.11.1
 	github.com/urfave/cli/v2 v2.11.2
 	golang.org/x/crypto v0.14.0
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17
