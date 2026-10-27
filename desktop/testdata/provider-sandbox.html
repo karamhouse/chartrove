@@ -1,0 +1,45 @@
+<!doctype html><html><body><h1>Isolated Epic sandbox validation</h1><pre id="status">Starting…</pre><script type="module">
+import * as runtime from '/wails/runtime.js';
+import {createDesktopBridge} from '/assets/desktop/bridge.mjs';
+const bridge=createDesktopBridge(runtime), status=document.querySelector('#status');
+if(location.hash.startsWith('#desktop/callback/')){
+ const state=location.hash.split('/')[2].split('?')[0];
+ const data=Object.fromEntries(new URLSearchParams(location.search));
+ const fragmentQuery=location.hash.split('?')[1];
+ if(fragmentQuery)Object.assign(data,Object.fromEntries(new URLSearchParams(fragmentQuery)));
+ await bridge.completeAuth({...data,state});
+}else{
+ try{
+  const info=await bridge.getInfo();status.textContent=info.application+' native bridge connected';
+  const response=await fetch('https://lighthouse.fastenhealth.com/sandbox/connect/8e2f5de7-46ac-4067-96ba-5e3f60ad52a4');
+  const {data:m,success}=await response.json();if(!success)throw new Error('sandbox metadata failed');
+  status.textContent+='\nSandbox metadata fetched through native WebView CORS';
+  const state=crypto.randomUUID();
+  const bytes=crypto.getRandomValues(new Uint8Array(32));const b64=b=>btoa(String.fromCharCode(...b)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  const verifier=b64(bytes), challenge=b64(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier))));
+  const auth=new URL(m.authorization_endpoint);
+  for(const [k,v] of Object.entries({client_id:m.client_id,redirect_uri:m.redirect_uri,response_type:'code',response_mode:'query',scope:m.scopes_supported.join(' '),state,aud:m.aud,code_challenge:challenge,code_challenge_method:'S256'}))auth.searchParams.set(k,v);
+  const redirect=new URL('https://lighthouse.fastenhealth.com/sandbox/redirect/'+state);
+  for(const [k,v] of Object.entries({origin_url:location.origin+'/#desktop/callback/'+state,dest_url:auth.toString(),desktop_mode:'true',brand_id:'e16b9952-8885-4905-b2e3-b0f04746ed5c',portal_id:'2727ec27-67e9-475a-bea1-423102beaa1d',endpoint_id:m.id}))redirect.searchParams.set(k,v);
+  bridge.onAuthResponse(state,async data=>{
+   try{
+    if(data.state!==state||!data.code||data.error)throw new Error('callback rejected');
+    status.textContent+='\nProvider callback received';
+    const response=await fetch(m.token_endpoint,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'authorization_code',client_id:m.client_id,code:data.code,redirect_uri:m.redirect_uri,code_verifier:verifier})});
+    const tokens=await response.json();
+    status.textContent+='\nToken exchange HTTP '+response.status;
+    if(!response.ok||!tokens.access_token)throw new Error('token exchange failed: '+(tokens.error||'unknown'));
+    status.textContent+='\nAccess token received in memory only';
+    if(!tokens.patient)throw new Error('no patient context returned');
+    const patientResponse=await fetch(m.url+'Patient/'+encodeURIComponent(tokens.patient),{headers:{Authorization:'Bearer '+tokens.access_token,Accept:'application/fhir+json'}});
+    const patient=await patientResponse.json();
+    status.textContent+='\nSynthetic patient read HTTP '+patientResponse.status;
+    if(patientResponse.ok&&patient.resourceType==='Patient'&&patient.id==='erXuFYUfucBZaryVksYEcMg3')status.textContent+='\nEpic published synthetic patient verified';
+    else throw new Error('synthetic patient read failed');
+    delete tokens.access_token;delete tokens.refresh_token;delete tokens.id_token;
+   }catch(e){status.textContent+='\n'+e.name+': '+e.message;}
+  });
+  await bridge.openExternal(redirect.toString(),state);status.textContent+='\nNative authorization popup opened';
+ }catch(e){status.textContent+='\n'+e.name+': '+e.message;}
+}
+</script></body></html>
