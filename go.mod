@@ -1,8 +1,6 @@
 module github.com/fastenhealth/fasten-onprem
 
-go 1.21.1
-
-toolchain go1.24.2
+go 1.26.1
 
 //replace github.com/fastenhealth/fasten-sources => ../fasten-sources
 
@@ -26,19 +24,19 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v54 v54.0.0
-	github.com/google/uuid v1.5.0
+	github.com/google/uuid v1.6.0
 	github.com/iancoleman/strcase v0.2.0
-	github.com/johnfercher/maroto/v2 v2.3.1
+	github.com/johnfercher/maroto/v2 v2.4.4
 	github.com/lestrrat-go/jwx/v2 v2.0.11
 	github.com/samber/lo v1.35.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.12.0
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.11.1
 	github.com/urfave/cli/v2 v2.11.2
-	golang.org/x/crypto v0.14.0
+	golang.org/x/crypto v0.57.0
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17
-	golang.org/x/mod v0.17.0
-	golang.org/x/net v0.17.0
+	golang.org/x/mod v0.41.0
+	golang.org/x/net v0.58.0
 	gorm.io/datatypes v1.0.7
 	gorm.io/driver/sqlite v1.5.4
 	gorm.io/gorm v1.25.4
@@ -47,27 +45,31 @@ require (
 require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.2.0 // indirect
-	github.com/boombuler/barcode v1.0.1 // indirect
+	github.com/boombuler/barcode v1.1.0 // indirect
+	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
 	github.com/f-amaral/go-async v0.3.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/hhrutter/lzw v1.0.0 // indirect
-	github.com/hhrutter/tiff v1.0.1 // indirect
+	github.com/hhrutter/tiff v1.0.7 // indirect
 	github.com/huandu/xstrings v1.3.3 // indirect
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.4.3 // indirect
-	github.com/johnfercher/go-tree v1.0.5 // indirect
+	github.com/johnfercher/go-tree v1.1.0 // indirect
 	github.com/jung-kurt/gofpdf v1.16.2 // indirect
-	github.com/mattn/go-runewidth v0.0.15 // indirect
+	github.com/mattn/go-runewidth v0.0.30 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.0 // indirect
-	github.com/pdfcpu/pdfcpu v0.6.0 // indirect
+	github.com/pdfcpu/pdfcpu v0.16.2 // indirect
+	github.com/phpdave11/gofpdf v1.4.3 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
-	golang.org/x/image v0.18.0 // indirect
+	github.com/xdg-go/stringprep v1.0.4 // indirect
+	go.yaml.in/yaml/v3 v3.0.5 // indirect
+	golang.org/x/image v0.46.0 // indirect
 )
 
 require (
@@ -119,16 +121,16 @@ require (
 	github.com/spf13/afero v1.8.2 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/subosito/gotenv v1.3.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/oauth2 v0.11.0 // indirect
-	golang.org/x/sys v0.13.0 // indirect
-	golang.org/x/term v0.13.0 // indirect
-	golang.org/x/text v0.16.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/term v0.46.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
