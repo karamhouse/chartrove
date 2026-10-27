@@ -7377,15 +7377,10 @@ he@^1.2.0:
   resolved "https://registry.npmjs.org/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
 
-highlight.js@^11.5.1:
-  version "11.7.0"
-  resolved "https://registry.npmjs.org/highlight.js/-/highlight.js-11.7.0.tgz#3ff0165bc843f8c9bce1fd89e2fda9143d24b11e"
-  integrity sha512-1rRqesRFhMO/PRF+G86evnyJkCgaZFOI+Z6kdj15TA18funfoqJXvgPCLSf0SWq3SRfg1j3HlDs8o4s3EGq1oQ==
-
-highlightjs-line-numbers.js@^2.8.0:
-  version "2.8.0"
-  resolved "https://registry.npmjs.org/highlightjs-line-numbers.js/-/highlightjs-line-numbers.js-2.8.0.tgz#479ea8cff0c31fadc1578a66fa03e38b801f9ca6"
-  integrity sha512-TEf1gw0c8mb8nan0QwliqS7obT4cpUd9hzsGzsZLweteNnWea/VIqy5/aQqsa5wnz9lnvmtAkS1ZtDTjB/goYQ==
+highlight.js@^11.11.1:
+  version "11.12.0"
+  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-11.12.0.tgz#470d918fd556a76debc40fe5e4b540b6b9cb9890"
+  integrity sha512-nbfWpyRMcMrPMmDwJB+dhX/eiaPKtc2RB+0QZskqJ3WjRA/FDS0e9hZrx8EC/lbEv8gXy98FcDbNa/dspAaJMg==
 
 hmac-drbg@^1.0.0:
   version "1.0.1"
@@ -9231,14 +9226,13 @@ ngx-dropzone@^3.1.0:
   dependencies:
     tslib "^2.0.0"
 
-ngx-highlightjs@^7.0.1:
-  version "7.0.1"
-  resolved "https://registry.npmjs.org/ngx-highlightjs/-/ngx-highlightjs-7.0.1.tgz#52bef4e26a9707893cc2bbee20fbaff2a5f9a77a"
-  integrity sha512-ZmA6RUBRB0tqAlsGYR21kCna9ror51FZwpV7Y94yCuyVv24u5bhg9nfLnFPDBJJ1u1vfNKV1R1TNTXUm/SiRjw==
+ngx-highlightjs@^14.0.0:
+  version "14.0.1"
+  resolved "https://registry.yarnpkg.com/ngx-highlightjs/-/ngx-highlightjs-14.0.1.tgz#78b4799a34c75537cbfa39dcb5cf8936d52e6867"
+  integrity sha512-pa4YPChIho+Qs6P036oMvTt8pmTlMwberz/kGBojKVMEHSj9t4PT1YzBplM+RMK0VWgLK4zRbJbxivQrLPr1fQ==
   dependencies:
-    highlight.js "^11.5.1"
-    highlightjs-line-numbers.js "^2.8.0"
-    tslib "^2.0.0"
+    highlight.js "^11.11.1"
+    tslib "^2.3.0"
 
 ngx-infinite-scroll@^14.0.0:
   version "14.0.1"
