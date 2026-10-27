@@ -5039,10 +5039,12 @@ chownr@^2.0.0:
   resolved "https://registry.npmjs.org/chownr/-/chownr-2.0.0.tgz#15bfbe53d2eab4cf70f18a8cd68ebe5b3cb1dece"
   integrity sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==
 
-chromatic@^6.19.8:
-  version "6.19.8"
-  resolved "https://registry.npmjs.org/chromatic/-/chromatic-6.19.8.tgz#488c55452e925b7a86dc16fdc412cb676a7bbabc"
-  integrity sha512-cvQAd/BkhRscXYbHuwIYwkmqzgpLz50maBGvUDa+WdfpoxzYrUvG2uZ1YU3tS857dAwMuTL5wUFiawiffDIKvQ==
+chromatic@^18.0.0:
+  version "18.13.3"
+  resolved "https://registry.yarnpkg.com/chromatic/-/chromatic-18.13.3.tgz#aea691cdf01d68aec810b2d005b387fba746c81f"
+  integrity sha512-86wzIxGIdDMBvyYWCXF+V0RyckI+3kl6ki9lJoZem6a0UfwHtEEg5ruORpryTpu6c9dVtBk2qSTX4xtkz3gwsA==
+  dependencies:
+    semver "^7.3.5"
 
 chrome-trace-event@^1.0.2:
   version "1.0.3"
