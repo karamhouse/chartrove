@@ -3,9 +3,9 @@
 package database
 
 import (
+	"bytes"
 	"context"
 	"fmt"
-	"io"
 	"net"
 	"net/url"
 	"os"
@@ -69,10 +69,23 @@ func TestPostgresIntegration(t *testing.T) {
 		appConfig.SetDefault("database.type", "postgres")
 		appConfig.SetDefault("database.location", dsn.String())
 		appConfig.SetDefault("log.level", "INFO")
+		var connectionLogs bytes.Buffer
 		quietLogger := logrus.New()
-		quietLogger.SetOutput(io.Discard)
+		quietLogger.SetOutput(&connectionLogs)
 		repo, err := newTestRepository(t, appConfig, quietLogger, event_bus.NewNoopEventBusServer())
 		require.NoError(t, err)
+		t.Run("FreshRepositoryHasNoPlaceholderAccount", func(t *testing.T) {
+			count, err := repo.GetUserCount(context.Background())
+			require.NoError(t, err)
+			require.Zero(t, count, "a placeholder account prevents first-user administrator setup")
+		})
+		t.Run("ConnectionLogsOmitCredentials", func(t *testing.T) {
+			password, _ := dsn.User.Password()
+			if strings.Contains(connectionLogs.String(), dsn.String()) || strings.Contains(connectionLogs.String(), password) {
+				// Do not include the captured log or generated password in test output.
+				t.Fatal("connection configuration leaked to application logs")
+			}
+		})
 		user := &models.User{Username: "synthetic_postgres_user", Password: "synthetic-test-password", Email: "synthetic@example.invalid"}
 		require.NoError(t, repo.CreateUser(context.Background(), user))
 		require.NotEqual(t, uuid.Nil, user.ID)
@@ -94,6 +107,11 @@ func TestPostgresIntegration(t *testing.T) {
 
 		reopened, err := newTestRepository(t, appConfig, quietLogger, event_bus.NewNoopEventBusServer())
 		require.NoError(t, err)
+		t.Run("ReopenDoesNotCreatePlaceholderAccount", func(t *testing.T) {
+			count, err := reopened.GetUserCount(context.Background())
+			require.NoError(t, err)
+			require.Equal(t, 1, count, "reopening must retain only the explicitly created user")
+		})
 		persisted, err := reopened.GetUserByUsername(context.Background(), user.Username)
 		require.NoError(t, err)
 		require.Equal(t, user.ID, persisted.ID)
