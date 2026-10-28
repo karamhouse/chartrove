@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
@@ -29,6 +30,10 @@ func CreateRelatedResources(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
+	defer func() {
+		bundleFile.Close()
+		os.Remove(bundleFile.Name())
+	}()
 
 	//step 2: ensure Fasten source exists for this user
 	fastenSourceCredential, err := ensureFastenSource(c, databaseRepo)
