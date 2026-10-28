@@ -120,6 +120,21 @@ func TestPostgresIntegration(t *testing.T) {
 		require.NoError(t, reopened.(*GormRepository).GormClient.First(&persistedPatient, "id = ?", patient.ID).Error)
 		require.NotNil(t, persistedPatient.MetaLastUpdated)
 		require.True(t, updated.Equal(*persistedPatient.MetaLastUpdated))
+		t.Run("LegacyAdminMigrationPreservesCredentials", func(t *testing.T) {
+			admin := models.User{Username: "admin", Password: user.Password}
+			gormRepo := reopened.(*GormRepository)
+			require.NoError(t, gormRepo.GormClient.Create(&admin).Error)
+			// Replay only the placeholder-removal migration in the disposable
+			// database, preserving every other applied migration receipt.
+			removed := gormRepo.GormClient.Exec("DELETE FROM migrations WHERE id = ?", "20240212142126")
+			require.NoError(t, removed.Error)
+			require.EqualValues(t, 1, removed.RowsAffected)
+			require.NoError(t, gormRepo.Migrate())
+			persistedAdmin, err := reopened.GetUserByUsername(context.Background(), admin.Username)
+			require.NoError(t, err)
+			require.Equal(t, admin.ID, persistedAdmin.ID)
+			require.Equal(t, admin.Password, persistedAdmin.Password)
+		})
 	})
 }
 
