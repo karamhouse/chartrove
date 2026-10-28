@@ -19,6 +19,7 @@ export class DirectSmartSourcesComponent implements OnInit, OnDestroy {
   activeProvider?: SmartProvider;
   importedSource?: Source;
   importing = false;
+  disconnecting = false;
   private destroyed = false;
 
   constructor(private direct: DirectSmartService, private api: FastenApiService) {}
@@ -26,7 +27,7 @@ export class DirectSmartSourcesComponent implements OnInit, OnDestroy {
   ngOnInit(): void { void this.loadProviders(); }
 
   async loadProviders(): Promise<void> {
-    if (this.controller || this.importing || this.patient) return;
+    if (this.controller || this.importing || this.disconnecting || this.patient) return;
     this.loading = true;
     this.error = '';
     try {
@@ -39,7 +40,7 @@ export class DirectSmartSourcesComponent implements OnInit, OnDestroy {
 
   async connect(): Promise<void> {
     const provider = this.providers.find(item => item.id === this.selectedProviderID);
-    if (!provider || this.controller || this.importing || this.patient || this.destroyed) return;
+    if (!provider || this.controller || this.importing || this.disconnecting || this.patient || this.destroyed) return;
     this.activeProvider = provider;
     this.importedSource = undefined;
     this.error = '';
@@ -63,7 +64,9 @@ export class DirectSmartSourcesComponent implements OnInit, OnDestroy {
   cancel(): void { this.controller?.abort(); this.status = 'Cancelling connection…'; }
 
   async disconnect(): Promise<void> {
-    if (this.importing) return;
+    if (this.importing || this.disconnecting) return;
+    this.disconnecting = true;
+    this.status = 'Discarding preview and releasing the direct session…';
     this.controller?.abort();
     this.patient = undefined;
     const connection = this.connection;
@@ -71,7 +74,13 @@ export class DirectSmartSourcesComponent implements OnInit, OnDestroy {
     try {
       if (connection) await this.direct.disconnect(connection.id);
       if (!this.destroyed) this.status = 'Preview discarded. No records were imported.';
-    } catch { if (!this.destroyed) this.error = 'Could not release the direct session. Close Chartrove to clear it.'; }
+    } catch {
+      if (!this.destroyed) {
+        this.status = '';
+        this.error = 'Could not release the direct session. Close Chartrove to clear it.';
+      }
+    }
+    finally { this.disconnecting = false; }
   }
 
   async importPatient(): Promise<void> {

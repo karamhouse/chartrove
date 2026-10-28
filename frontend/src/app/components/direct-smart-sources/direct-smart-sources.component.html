@@ -8,11 +8,11 @@
     <div *ngIf="providers.length" class="mb-3">
       <label for="direct-smart-provider">Provider</label>
       <select #providerPicker id="direct-smart-provider" class="form-control mb-3" [value]="selectedProviderID"
-              [disabled]="!!controller || importing || !!patient" (change)="selectedProviderID = providerPicker.value">
+              [disabled]="!!controller || importing || disconnecting || !!patient" (change)="selectedProviderID = providerPicker.value">
         <option *ngFor="let provider of providers" [value]="provider.id">{{provider.display}}</option>
       </select>
       <button type="button" class="btn btn-primary mr-2" data-testid="direct-smart-connect"
-              [disabled]="!!controller || importing || !!patient" (click)="connect()">{{controller ? 'Connecting…' : 'Connect in browser'}}</button>
+              [disabled]="!!controller || importing || disconnecting || !!patient" (click)="connect()">{{disconnecting ? 'Disconnecting…' : controller ? 'Connecting…' : 'Connect in browser'}}</button>
       <button *ngIf="controller" type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancel direct connection</button>
     </div>
     <div *ngIf="patient" data-testid="direct-patient-preview" class="border rounded p-3 mb-3" aria-label="Patient preview">

@@ -90,6 +90,41 @@ describe('DirectSmartSourcesComponent', () => {
     expect(api.importSmartPatient).not.toHaveBeenCalled();
   });
 
+  it('waits for discard cleanup before allowing another connection', async () => {
+    await component.connect();
+    let release: () => void;
+    direct.disconnect.and.callFake(() => new Promise<void>(resolve => release = resolve));
+    const discard = component.disconnect();
+    fixture.detectChanges();
+    const connectDisabled = fixture.nativeElement.querySelector('[data-testid="direct-smart-connect"]').disabled;
+    const pickerDisabled = fixture.nativeElement.querySelector('#direct-smart-provider').disabled;
+    await component.connect();
+    const connectionsWhileDiscarding = direct.connect.calls.count();
+    release();
+    await discard;
+    fixture.detectChanges();
+    expect(connectDisabled).toBeTrue();
+    expect(pickerDisabled).toBeTrue();
+    expect(connectionsWhileDiscarding).toBe(1);
+    expect(fixture.nativeElement.querySelector('[data-testid="direct-smart-connect"]').disabled).toBeFalse();
+    await component.connect();
+    expect(direct.connect).toHaveBeenCalledTimes(2);
+    expect(component.status).toContain('Patient retrieved');
+    expect(api.importSmartPatient).not.toHaveBeenCalled();
+  });
+
+  it('clears discard progress and releases the UI guard when cleanup fails', async () => {
+    await component.connect();
+    direct.disconnect.and.rejectWith(new Error('private provider payload'));
+    await component.disconnect();
+    fixture.detectChanges();
+    expect(component.status).toBe('');
+    expect(component.error).toContain('Could not release the direct session');
+    expect(fixture.nativeElement.textContent).not.toContain('private provider payload');
+    expect(fixture.nativeElement.querySelector('[data-testid="direct-smart-connect"]').disabled).toBeFalse();
+    expect(api.importSmartPatient).not.toHaveBeenCalled();
+  });
+
   it('does not send a second import while confirmation is pending', async () => {
     await component.connect();
     const result = new Subject<{source: Source, alreadyImported: boolean}>();
