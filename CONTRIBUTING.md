@@ -69,6 +69,22 @@ go test github.com/fastenhealth/fasten-onprem/backend/pkg/web -run TestEmbedded 
 
 The native `--smoke-test` mode requires `--unencrypted` and an explicit fresh `--data-dir`. It refuses an existing database. It validates the real WebView bridge and uses synthetic records only.
 
+The opt-in PostgreSQL driver regression requires Docker with a local Unix socket.
+Pull its pinned PostgreSQL 17 image, then run from the repository root:
+
+```sh
+docker pull postgres:17-alpine@sha256:266d3c257594e195b309ae9d1805e54c788f1d7b375f56bf6c367aac6c917e7b
+go test -tags=postgres_integration ./backend/pkg/database -run '^TestPostgresIntegration$' -count=1
+```
+
+The test creates a loopback-only disposable container with a generated password
+and in-memory data directory, and removes it afterward. It accepts no existing
+database connection or host volume. To check the desktop dependency graph, run
+the same command from `desktop/` with the package path
+`github.com/fastenhealth/fasten-onprem/backend/pkg/database`.
+This checks driver parameter binding; full PostgreSQL application startup still
+has a separately reproduced FHIR date-column compatibility failure.
+
 Choose checks appropriate to the change. Do not relax timeouts, encryption, or test assertions to make a failing check pass. Distinguish a source check from a successful build and a real native UI check.
 
 ## Branding, data, and provider boundaries

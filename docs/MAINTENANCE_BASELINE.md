@@ -48,8 +48,10 @@ the default desktop data directory for smoke validation.
 | Auth vulnerability scan after JWT upgrade | No reachable vulnerabilities in `./backend/pkg/auth`; dependency-level findings elsewhere remain. This is not a clean whole-application security assessment. |
 | Full root vulnerability scan after JWT upgrade | 14 reachable advisories remain, involving pgx, x/net, x/text, x/image, and circl. No JWT findings remain. |
 | Go network/crypto family | Root and desktop module verification passed. The root package sweep passed its test assertions but failed three packages on newly enforced nonconstant-format vet checks. After replacing those three print calls, the affected packages passed and full `go vet ./...` exited 0. Desktop packages passed after adding the new transitive checksums; embedded backend tests passed in 45 seconds under the unchanged 120-second limit. |
-| Vulnerability scans after network/crypto upgrade | Root: six called findings; desktop: three. All three desktop findings concern pgx. The root's additional CIRCL and WebP traces end at initialization, which does not demonstrate use of their vulnerable operations. No JWT, x/net, or x/text findings remain. |
+| Vulnerability scans after network/crypto upgrade | Root: six called findings; desktop: three. All three desktop called findings concern pgx. The root's additional CIRCL and WebP traces end at initialization, which does not demonstrate use of their vulnerable operations. No called JWT, x/net, or x/text findings remain. |
 | Database fixture cleanup | Full database and handler packages passed in 127 and 29 seconds. No database, WAL, or shared-memory files remained in their private temporary directory. One `related.json` upload temporary file remained; its producing handler requires a separate repair. |
+| pgx security update | The dollar-quoted placeholder regression failed on pgx 5.4.3 in simple-protocol mode and passed on 5.9.2 in both graphs. Normal parameter binding passed before and after. Both module graphs verified, full backend tests and vet passed, desktop unit tests passed, and encrypted embedded-backend tests passed in 57 seconds under the unchanged 120-second limit. The full backend database package took 519 seconds, within its unchanged default timeout. |
+| Vulnerability scans after pgx upgrade | No pgx findings at any reported level. Three called findings remain in the root graph, all initialization-only CIRCL/WebP traces; the desktop has zero called findings. Both graphs still have imported/required dependency advisories, including Gin, jwx, protobuf, Logrus, x/crypto, and x/net. Zero called findings is not a clean dependency audit or proof of exploit absence. |
 | Frontend production dependency audit | Yarn reported 97 affected dependency paths and 65 distinct advisories, including three critical paths involving `@babel/traverse` and `elliptic`. The command exited nonzero. These are dependency findings, not demonstrated application exploits. |
 
 The packaged desktop smoke checks cover the native binding, direct SMART rejection
@@ -113,11 +115,22 @@ root module to Go 1.26.0; validation used Go 1.27.3. The root's x/mod moves to
 provider-library replacements remain intact. This is a targeted family update,
 not a general module refresh.
 
-Remaining called advisory IDs are GO-2024-2567, GO-2024-2606, and GO-2026-5004
+After the network/crypto update, remaining called advisory IDs were GO-2024-2567, GO-2024-2606, and GO-2026-5004
 (pgx, both graphs), plus GO-2025-3754, GO-2026-4550 (CIRCL), and GO-2026-5061
 (WebP) in the root graph. The CIRCL advisory entries are unreviewed and module-wide;
 their initialization-only traces require further assessment. No scan result here
 establishes that the application is free of vulnerabilities.
+
+The following pgx slice selects 5.9.2 in both graphs. Its required transitive
+changes are pgservicefile, puddle/v2 2.2.2, x/sync 0.24.0, and root Testify 1.11.1
+(already selected by the desktop). GORM, PostgreSQL driver, SQLite, and the
+SQLCipher replacement versions are unchanged. The opt-in test uses a pinned
+PostgreSQL 17 container, synthetic parameters, loopback networking, an in-memory
+data directory, and a generated password. Cleanup removed every test container.
+See CONTRIBUTING for reproduction. A separate startup probe reproduced issue
+#109's operational gap: generated FHIR columns use SQLite's `datetime` type,
+which fails on PostgreSQL with SQLSTATE 42704. Passing driver regressions do not
+establish full PostgreSQL application support.
 
 ## Dependency migration order
 
