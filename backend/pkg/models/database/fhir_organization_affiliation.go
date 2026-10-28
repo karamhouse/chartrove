@@ -17,7 +17,7 @@ type FhirOrganizationAffiliation struct {
 	Active datatypes.JSON `gorm:"column:active;type:text;serializer:json" json:"active,omitempty"`
 	// The period during which the participatingOrganization is affiliated with the primary organization
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date" json:"date,omitempty"`
 	// A value in an email contact
 	// https://hl7.org/fhir/r4/search.html#token
 	Email datatypes.JSON `gorm:"column:email;type:text;serializer:json" json:"email,omitempty"`
@@ -35,7 +35,7 @@ type FhirOrganizationAffiliation struct {
 	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`

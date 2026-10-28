@@ -5,6 +5,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"io"
 	"net"
 	"net/url"
 	"os"
@@ -14,7 +15,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	databaseModels "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -57,6 +63,46 @@ func TestPostgresIntegration(t *testing.T) {
 		}
 	})
 
+	t.Run("RepositoryPersistence", func(t *testing.T) {
+		appConfig, err := config.Create()
+		require.NoError(t, err)
+		appConfig.SetDefault("database.type", "postgres")
+		appConfig.SetDefault("database.location", dsn.String())
+		appConfig.SetDefault("log.level", "INFO")
+		quietLogger := logrus.New()
+		quietLogger.SetOutput(io.Discard)
+		repo, err := newTestRepository(t, appConfig, quietLogger, event_bus.NewNoopEventBusServer())
+		require.NoError(t, err)
+		user := &models.User{Username: "synthetic_postgres_user", Password: "synthetic-test-password", Email: "synthetic@example.invalid"}
+		require.NoError(t, repo.CreateUser(context.Background(), user))
+		require.NotEqual(t, uuid.Nil, user.ID)
+		require.NotEmpty(t, user.Password)
+		require.NotEqual(t, "synthetic-test-password", user.Password)
+		updated := time.Date(2020, 4, 5, 6, 7, 8, 123000000, time.UTC)
+		patient := databaseModels.FhirPatient{MetaLastUpdated: &updated}
+		patient.UserID = user.ID
+		patient.SourceID = uuid.New()
+		patient.SourceResourceType = "Patient"
+		patient.SourceResourceID = "synthetic-postgres-date"
+		db := repo.(*GormRepository).GormClient
+		require.NoError(t, db.Create(&patient).Error)
+		var columnType string
+		err = db.Raw("SELECT data_type FROM information_schema.columns WHERE table_name = ? AND column_name = ?", "fhir_patient", "metaLastUpdated").Scan(&columnType).Error
+		require.NoError(t, err)
+		require.Equal(t, "timestamp with time zone", columnType)
+		require.NoError(t, repo.Close())
+
+		reopened, err := newTestRepository(t, appConfig, quietLogger, event_bus.NewNoopEventBusServer())
+		require.NoError(t, err)
+		persisted, err := reopened.GetUserByUsername(context.Background(), user.Username)
+		require.NoError(t, err)
+		require.Equal(t, user.ID, persisted.ID)
+		require.Equal(t, user.Password, persisted.Password)
+		var persistedPatient databaseModels.FhirPatient
+		require.NoError(t, reopened.(*GormRepository).GormClient.First(&persistedPatient, "id = ?", patient.ID).Error)
+		require.NotNil(t, persistedPatient.MetaLastUpdated)
+		require.True(t, updated.Equal(*persistedPatient.MetaLastUpdated))
+	})
 }
 
 func disposablePostgres(t *testing.T) *url.URL {

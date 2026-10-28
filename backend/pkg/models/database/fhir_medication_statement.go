@@ -43,7 +43,7 @@ type FhirMedicationStatement struct {
 	DosageInstruction datatypes.JSON `gorm:"column:dosageInstruction;type:text;serializer:json" json:"dosageInstruction,omitempty"`
 	// Date when patient was taking (or not taking) the medication
 	// https://hl7.org/fhir/r4/search.html#date
-	Effective *time.Time `gorm:"column:effective;type:datetime" json:"effective,omitempty"`
+	Effective *time.Time `gorm:"column:effective" json:"effective,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -95,7 +95,7 @@ type FhirMedicationStatement struct {
 	Medication datatypes.JSON `gorm:"column:medication;type:text;serializer:json" json:"medication,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`

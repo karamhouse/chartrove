@@ -9,13 +9,10 @@ import (
 	"github.com/samber/lo"
 	"io/ioutil"
 	"log"
-	"os"
 	"sort"
 	"strings"
 
 	"github.com/dave/jennifer/jen"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/errors"
 	"github.com/iancoleman/strcase"
 	"golang.org/x/exp/slices"
 )
@@ -52,22 +49,6 @@ PLEASE DO NOT EDIT BY HAND
 `, "\n"), "\n")
 
 func main() {
-	// Read config file for database type
-	appconfig, err := config.Create()
-	if err != nil {
-		fmt.Printf("FATAL: %+v\n", err)
-		os.Exit(1)
-	}
-
-	// Find and read the config file
-	err = appconfig.ReadConfig("../../../../config.yaml")
-	if _, ok := err.(errors.ConfigFileMissingError); ok { // Handle errors reading the config file
-		//ignore "could not find config file"
-	} else if err != nil {
-		os.Exit(1)
-	}
-	databaseType := appconfig.GetString("database.type")
-
 	// Read the search-parameters.json file
 	searchParamsData, err := ioutil.ReadFile("search-parameters.json")
 	if err != nil {
@@ -233,17 +214,14 @@ func main() {
 					}
 				}
 
-				if databaseType == "sqlite" {
-					golangFieldStatement.Tag(map[string]string{
-						"json": fmt.Sprintf("%s,omitempty", strcase.ToLowerCamel(fieldName)),
-						"gorm": fmt.Sprintf("column:%s;%s", strcase.ToLowerCamel(fieldName), mapGormTypeSqlite(fieldInfo.FieldType)),
-					})
-				} else {
-					golangFieldStatement.Tag(map[string]string{
-						"json": fmt.Sprintf("%s,omitempty", strcase.ToLowerCamel(fieldName)),
-						"gorm": fmt.Sprintf("column:%s;%s", strcase.ToLowerCamel(fieldName), mapGormTypePostgres(fieldInfo.FieldType)),
-					})
+				gormTag := "column:" + strcase.ToLowerCamel(fieldName)
+				if options := mapGormType(fieldInfo.FieldType); options != "" {
+					gormTag += ";" + options
 				}
+				golangFieldStatement.Tag(map[string]string{
+					"json": fmt.Sprintf("%s,omitempty", strcase.ToLowerCamel(fieldName)),
+					"gorm": gormTag,
+				})
 			}
 		})
 
@@ -641,7 +619,7 @@ func mapFieldType(fieldType string) string {
 }
 
 // https://www.sqlite.org/datatype3.html
-func mapGormTypeSqlite(fieldType string) string {
+func mapGormType(fieldType string) string {
 	// gorm:"type:text;serializer:json"
 
 	switch fieldType {
@@ -652,32 +630,8 @@ func mapGormTypeSqlite(fieldType string) string {
 	case "reference":
 		return "type:text;serializer:json"
 	case "date":
-		return "type:datetime"
-	case "string":
-		return "type:text;serializer:json"
-	case "uri":
-		return "type:text"
-	case "special":
-		return "type:text;serializer:json"
-	case "quantity":
-		return "type:text;serializer:json"
-	case "keyword":
-		return "type:text"
-	default:
-		return "type:text"
-	}
-}
-
-func mapGormTypePostgres(fieldType string) string {
-	switch fieldType {
-	case "number":
-		return "type:real"
-	case "token":
-		return "type:text;serializer:json"
-	case "reference":
-		return "type:text;serializer:json"
-	case "date":
-		return "type:timestamptz"
+		// Let the driver map time.Time to datetime (SQLite) or timestamptz (PostgreSQL).
+		return ""
 	case "string":
 		return "type:text;serializer:json"
 	case "uri":

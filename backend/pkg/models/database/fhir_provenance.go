@@ -32,7 +32,7 @@ type FhirProvenance struct {
 	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`
@@ -47,7 +47,7 @@ type FhirProvenance struct {
 	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// When the activity was recorded / updated
 	// https://hl7.org/fhir/r4/search.html#date
-	Recorded *time.Time `gorm:"column:recorded;type:datetime" json:"recorded,omitempty"`
+	Recorded *time.Time `gorm:"column:recorded" json:"recorded,omitempty"`
 	// Indication of the reason the entity signed the object(s)
 	// https://hl7.org/fhir/r4/search.html#token
 	SignatureType datatypes.JSON `gorm:"column:signatureType;type:text;serializer:json" json:"signatureType,omitempty"`
@@ -59,7 +59,7 @@ type FhirProvenance struct {
 	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// When the activity occurred
 	// https://hl7.org/fhir/r4/search.html#date
-	When *time.Time `gorm:"column:when;type:datetime" json:"when,omitempty"`
+	When *time.Time `gorm:"column:when" json:"when,omitempty"`
 }
 
 func (s *FhirProvenance) GetSearchParameters() map[string]string {

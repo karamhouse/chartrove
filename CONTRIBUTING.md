@@ -82,8 +82,9 @@ and in-memory data directory, and removes it afterward. It accepts no existing
 database connection or host volume. To check the desktop dependency graph, run
 the same command from `desktop/` with the package path
 `github.com/fastenhealth/fasten-onprem/backend/pkg/database`.
-This checks driver parameter binding; full PostgreSQL application startup still
-has a separately reproduced FHIR date-column compatibility failure.
+This checks driver parameter binding, fresh repository migration, synthetic
+account and FHIR date persistence, and reopen. It does not establish compatibility
+of every advanced resource query or an existing production database.
 
 Choose checks appropriate to the change. Do not relax timeouts, encryption, or test assertions to make a failing check pass. Distinguish a source check from a successful build and a real native UI check.
 

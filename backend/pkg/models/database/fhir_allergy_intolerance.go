@@ -66,7 +66,7 @@ type FhirAllergyIntolerance struct {
 	   * [SupplyRequest](supplyrequest.html): When the request was made
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date" json:"date,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -108,13 +108,13 @@ type FhirAllergyIntolerance struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// Date(/time) of last known occurrence of a reaction
 	// https://hl7.org/fhir/r4/search.html#date
-	LastDate *time.Time `gorm:"column:lastDate;type:datetime" json:"lastDate,omitempty"`
+	LastDate *time.Time `gorm:"column:lastDate" json:"lastDate,omitempty"`
 	// Clinical symptoms/signs associated with the Event
 	// https://hl7.org/fhir/r4/search.html#token
 	Manifestation datatypes.JSON `gorm:"column:manifestation;type:text;serializer:json" json:"manifestation,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`
@@ -129,7 +129,7 @@ type FhirAllergyIntolerance struct {
 	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// Date(/time) when manifestations showed
 	// https://hl7.org/fhir/r4/search.html#date
-	Onset *time.Time `gorm:"column:onset;type:datetime" json:"onset,omitempty"`
+	Onset *time.Time `gorm:"column:onset" json:"onset,omitempty"`
 	// Who recorded the sensitivity
 	// https://hl7.org/fhir/r4/search.html#reference
 	Recorder datatypes.JSON `gorm:"column:recorder;type:text;serializer:json" json:"recorder,omitempty"`

@@ -37,7 +37,7 @@ type FhirMedication struct {
 	DosageInstruction datatypes.JSON `gorm:"column:dosageInstruction;type:text;serializer:json" json:"dosageInstruction,omitempty"`
 	// Returns medications in a batch with this expiration date
 	// https://hl7.org/fhir/r4/search.html#date
-	ExpirationDate *time.Time `gorm:"column:expirationDate;type:datetime" json:"expirationDate,omitempty"`
+	ExpirationDate *time.Time `gorm:"column:expirationDate" json:"expirationDate,omitempty"`
 	// Returns medications for a specific dose form
 	// https://hl7.org/fhir/r4/search.html#token
 	Form datatypes.JSON `gorm:"column:form;type:text;serializer:json" json:"form,omitempty"`
@@ -61,7 +61,7 @@ type FhirMedication struct {
 	Manufacturer datatypes.JSON `gorm:"column:manufacturer;type:text;serializer:json" json:"manufacturer,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`

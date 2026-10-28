@@ -17,7 +17,7 @@ type FhirDocumentManifest struct {
 	Author datatypes.JSON `gorm:"column:author;type:text;serializer:json" json:"author,omitempty"`
 	// When this document manifest created
 	// https://hl7.org/fhir/r4/search.html#date
-	Created *time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
+	Created *time.Time `gorm:"column:created" json:"created,omitempty"`
 	// Human-readable description (title)
 	// https://hl7.org/fhir/r4/search.html#string
 	Description datatypes.JSON `gorm:"column:description;type:text;serializer:json" json:"description,omitempty"`
@@ -65,7 +65,7 @@ type FhirDocumentManifest struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`

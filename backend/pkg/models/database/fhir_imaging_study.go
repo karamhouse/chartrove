@@ -74,7 +74,7 @@ type FhirImagingStudy struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`
@@ -104,7 +104,7 @@ type FhirImagingStudy struct {
 	Series datatypes.JSON `gorm:"column:series;type:text;serializer:json" json:"series,omitempty"`
 	// When the study was started
 	// https://hl7.org/fhir/r4/search.html#date
-	Started *time.Time `gorm:"column:started;type:datetime" json:"started,omitempty"`
+	Started *time.Time `gorm:"column:started" json:"started,omitempty"`
 	// The status of the study
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`

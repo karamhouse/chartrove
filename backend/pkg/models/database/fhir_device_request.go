@@ -14,7 +14,7 @@ type FhirDeviceRequest struct {
 	models.ResourceBase
 	// When the request transitioned to being actionable
 	// https://hl7.org/fhir/r4/search.html#date
-	AuthoredOn *time.Time `gorm:"column:authoredOn;type:datetime" json:"authoredOn,omitempty"`
+	AuthoredOn *time.Time `gorm:"column:authoredOn" json:"authoredOn,omitempty"`
 	// Plan/proposal/order fulfilled by this request
 	// https://hl7.org/fhir/r4/search.html#reference
 	BasedOn datatypes.JSON `gorm:"column:basedOn;type:text;serializer:json" json:"basedOn,omitempty"`
@@ -61,7 +61,7 @@ type FhirDeviceRequest struct {
 	Encounter datatypes.JSON `gorm:"column:encounter;type:text;serializer:json" json:"encounter,omitempty"`
 	// When service should occur
 	// https://hl7.org/fhir/r4/search.html#date
-	EventDate *time.Time `gorm:"column:eventDate;type:datetime" json:"eventDate,omitempty"`
+	EventDate *time.Time `gorm:"column:eventDate" json:"eventDate,omitempty"`
 	// Composite request this is part of
 	// https://hl7.org/fhir/r4/search.html#token
 	GroupIdentifier datatypes.JSON `gorm:"column:groupIdentifier;type:text;serializer:json" json:"groupIdentifier,omitempty"`
@@ -118,7 +118,7 @@ type FhirDeviceRequest struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`

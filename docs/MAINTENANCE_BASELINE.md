@@ -53,6 +53,8 @@ the default desktop data directory for smoke validation.
 | Related-resource upload cleanup | New regressions reproduced retained upload files after both a successful import and an early source-lookup failure. The handler now closes and removes its temporary upload on every return after storage. The full backend suite passed, including the handler package in 58 seconds; the private fixture directory was empty afterward. |
 | pgx security update | The dollar-quoted placeholder regression failed on pgx 5.4.3 in simple-protocol mode and passed on 5.9.2 in both graphs. Normal parameter binding passed before and after. Both module graphs verified, full backend tests and vet passed, desktop unit tests passed, and encrypted embedded-backend tests passed in 57 seconds under the unchanged 120-second limit. The full backend database package took 519 seconds, within its unchanged default timeout. |
 | Vulnerability scans after pgx upgrade | No pgx findings at any reported level. Three called findings remain in the root graph, all initialization-only CIRCL/WebP traces; the desktop has zero called findings. Both graphs still have imported/required dependency advisories, including Gin, jwx, protobuf, Logrus, x/crypto, and x/net. Zero called findings is not a clean dependency audit or proof of exploit absence. |
+| Portable FHIR date columns | Both graphs pass SQLite migration/reopen tests preserving existing dates, time zones, and nulls. Both also pass fresh PostgreSQL migration, synthetic account/date persistence, reopen, and the driver regressions. PostgreSQL integration took 53 seconds in the root graph and 40 seconds in the desktop graph. Desktop encrypted-backend checks passed in 48 seconds under the unchanged 120-second limit; vet passed for both changed Go packages. |
+| Broader checks after the date-column change | The model package passed in 32 seconds. The full database package hit its unchanged ten-minute timeout near the end of the SQLite suite, with no assertion failure reported. All five unfinished groups then passed in 43 seconds with no skips, including the full SQLite encryption/reopen suite. The whole-package run remains a timeout; the cause of its longer cumulative runtime is unverified. |
 | Frontend production dependency audit | Yarn reported 97 affected dependency paths and 65 distinct advisories, including three critical paths involving `@babel/traverse` and `elliptic`. The command exited nonzero. These are dependency findings, not demonstrated application exploits. |
 
 The packaged desktop smoke checks cover the native binding, direct SMART rejection
@@ -128,10 +130,16 @@ changes are pgservicefile, puddle/v2 2.2.2, x/sync 0.24.0, and root Testify 1.11
 SQLCipher replacement versions are unchanged. The opt-in test uses a pinned
 PostgreSQL 17 container, synthetic parameters, loopback networking, an in-memory
 data directory, and a generated password. Cleanup removed every test container.
-See CONTRIBUTING for reproduction. A separate startup probe reproduced issue
-#109's operational gap: generated FHIR columns use SQLite's `datetime` type,
-which fails on PostgreSQL with SQLSTATE 42704. Passing driver regressions do not
-establish full PostgreSQL application support.
+See CONTRIBUTING for reproduction. A separate startup probe reproduced the exact
+`datetime` / SQLSTATE 42704 failure reported in
+[#109](https://github.com/karamhouse/chartrove/issues/109), originally reported
+upstream by kehralexander. The following model-generator slice fixes that startup
+defect by letting the driver infer date-column types from `time.Time`. SQLite keeps
+`datetime`; PostgreSQL uses `timestamptz`. Generation no longer reads application
+configuration. All 56 regenerated files were compared against their previous
+contents: the only changes remove 123 hard-coded date type tags, preserving the
+search-runtime pooling and every other generated statement. This does not establish
+coverage of all PostgreSQL resource queries or migration of a production database.
 
 ## Dependency migration order
 

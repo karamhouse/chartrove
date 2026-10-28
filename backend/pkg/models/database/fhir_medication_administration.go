@@ -40,7 +40,7 @@ type FhirMedicationAdministration struct {
 	Device datatypes.JSON `gorm:"column:device;type:text;serializer:json" json:"device,omitempty"`
 	// Date administration happened (or did not happen)
 	// https://hl7.org/fhir/r4/search.html#date
-	EffectiveTime *time.Time `gorm:"column:effectiveTime;type:datetime" json:"effectiveTime,omitempty"`
+	EffectiveTime *time.Time `gorm:"column:effectiveTime" json:"effectiveTime,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -92,7 +92,7 @@ type FhirMedicationAdministration struct {
 	Medication datatypes.JSON `gorm:"column:medication;type:text;serializer:json" json:"medication,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`
