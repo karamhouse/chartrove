@@ -16,7 +16,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"io"
-	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -46,10 +45,9 @@ type SourceHandlerTestSuite struct {
 func (suite *SourceHandlerTestSuite) BeforeTest(suiteName, testName string) {
 	suite.MockCtrl = gomock.NewController(suite.T())
 
-	dbFile, err := ioutil.TempFile("", fmt.Sprintf("%s.*.db", testName))
-	if err != nil {
-		log.Fatal(err)
-	}
+	dbFile, err := os.CreateTemp(suite.T().TempDir(), fmt.Sprintf("%s.*.db", testName))
+	require.NoError(suite.T(), err)
+	require.NoError(suite.T(), dbFile.Close())
 	suite.TestDatabase = dbFile
 
 	appConfig := mock_config.NewMockInterface(suite.MockCtrl)
@@ -62,6 +60,9 @@ func (suite *SourceHandlerTestSuite) BeforeTest(suiteName, testName string) {
 	suite.AppConfig = appConfig
 
 	appRepo, err := database.NewRepository(suite.AppConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+	t := suite.T()
+	t.Cleanup(func() { require.NoError(t, appRepo.Close()) })
 	suite.AppRepository = appRepo
 
 	suite.AppEventBus = event_bus.NewNoopEventBusServer()
@@ -76,7 +77,6 @@ func (suite *SourceHandlerTestSuite) BeforeTest(suiteName, testName string) {
 // AfterTest has a function to be executed right after the test finishes and receives the suite and test names as input
 func (suite *SourceHandlerTestSuite) AfterTest(suiteName, testName string) {
 	suite.MockCtrl.Finish()
-	os.Remove(suite.TestDatabase.Name())
 }
 
 func CreateManualSourceHttpRequestFromFile(fileName string) (*http.Request, error) {

@@ -23,10 +23,11 @@ run `make prepare-backend` before backend checks. A fresh checkout otherwise
 fails to compile the executable because `related_versions.json` is absent.
 Preparation must not run a broad dependency update or vendor operation.
 
-Use a private OS temporary directory for `TMPDIR` while testing. Existing
-database-suite helpers can retain temporary databases. Keep synthetic fixtures
-and database files inside the task directory and remove them after all tests
-exit. Never use the default desktop data directory for smoke validation.
+Use a private OS temporary directory for `TMPDIR` while testing. Database-suite
+helpers now use test-scoped directories, close initial file handles, and close
+successful repository pools before directory cleanup. Keep synthetic fixtures
+inside the task directory and remove leftovers after all tests exit. Never use
+the default desktop data directory for smoke validation.
 
 ## Independently observed checks
 
@@ -48,6 +49,7 @@ exit. Never use the default desktop data directory for smoke validation.
 | Full root vulnerability scan after JWT upgrade | 14 reachable advisories remain, involving pgx, x/net, x/text, x/image, and circl. No JWT findings remain. |
 | Go network/crypto family | Root and desktop module verification passed. The root package sweep passed its test assertions but failed three packages on newly enforced nonconstant-format vet checks. After replacing those three print calls, the affected packages passed and full `go vet ./...` exited 0. Desktop packages passed after adding the new transitive checksums; embedded backend tests passed in 45 seconds under the unchanged 120-second limit. |
 | Vulnerability scans after network/crypto upgrade | Root: six called findings; desktop: three. All three desktop findings concern pgx. The root's additional CIRCL and WebP traces end at initialization, which does not demonstrate use of their vulnerable operations. No JWT, x/net, or x/text findings remain. |
+| Database fixture cleanup | Full database and handler packages passed in 127 and 29 seconds. No database, WAL, or shared-memory files remained in their private temporary directory. One `related.json` upload temporary file remained; its producing handler requires a separate repair. |
 | Frontend production dependency audit | Yarn reported 97 affected dependency paths and 65 distinct advisories, including three critical paths involving `@babel/traverse` and `elliptic`. The command exited nonzero. These are dependency findings, not demonstrated application exploits. |
 
 The packaged desktop smoke checks cover the native binding, direct SMART rejection

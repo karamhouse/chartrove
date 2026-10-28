@@ -58,7 +58,7 @@ node node_modules/@angular/cli/bin/ng.js test --watch=false --browsers=ChromeHea
 
 `make prepare-backend` generates the ignored `backend/resources/related_versions.json` required by the backend executable. It does not tidy, vendor, or upgrade dependencies. The backend test targets use this preparation step; dependency refresh remains the separate `dep-backend` target. Avoid the inherited Nix `.envrc` for this toolchain.
 
-Some inherited database tests leave temporary databases behind. Run validation with `TMPDIR` set to a newly created private task directory, and remove that directory after its processes have exited. Never point tests at an existing health-record directory.
+Database fixtures use test-scoped directories and close their repositories before cleanup. Run validation with `TMPDIR` set to a newly created private task directory so any leftovers from failed or interrupted tests can be identified and removed after their processes exit. Never point tests at an existing health-record directory.
 
 From `desktop/`:
 

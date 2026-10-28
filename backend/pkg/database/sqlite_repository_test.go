@@ -8,8 +8,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"io/ioutil"
-	"log"
 	"os"
 	"testing"
 )
@@ -27,10 +25,9 @@ type SqliteRepositoryTestSuite struct {
 func (suite *SqliteRepositoryTestSuite) BeforeTest(suiteName, testName string) {
 	suite.MockCtrl = gomock.NewController(suite.T())
 
-	dbFile, err := ioutil.TempFile("", fmt.Sprintf("%s.*.db", testName))
-	if err != nil {
-		log.Fatal(err)
-	}
+	dbFile, err := os.CreateTemp(suite.T().TempDir(), fmt.Sprintf("%s.*.db", testName))
+	require.NoError(suite.T(), err)
+	require.NoError(suite.T(), dbFile.Close())
 	suite.TestDatabase = dbFile
 
 }
@@ -38,9 +35,6 @@ func (suite *SqliteRepositoryTestSuite) BeforeTest(suiteName, testName string) {
 // AfterTest has a function to be executed right after the test finishes and receives the suite and test names as input
 func (suite *SqliteRepositoryTestSuite) AfterTest(suiteName, testName string) {
 	suite.MockCtrl.Finish()
-	os.Remove(suite.TestDatabase.Name())
-	os.Remove(suite.TestDatabase.Name() + "-shm")
-	os.Remove(suite.TestDatabase.Name() + "-wal")
 }
 
 // In order for 'go test' to run this suite, we need to create
@@ -61,7 +55,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_DefaultPragmaSet
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 
-	repo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	repo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	sqliteRepo, sqliteRepoOk := repo.(*GormRepository)
 	require.True(suite.T(), sqliteRepoOk)
@@ -97,7 +91,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(true).AnyTimes()
 
-	repo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	repo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	sqliteRepo, sqliteRepoOk := repo.(*GormRepository)
 	require.True(suite.T(), sqliteRepoOk)
@@ -144,7 +138,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig1.EXPECT().GetBool("database.encryption.enabled").Return(true).AnyTimes()
 
 	//intialize the database with a key
-	_, err := NewRepository(fakeConfig1, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	_, err := newTestRepository(suite.T(), fakeConfig1, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	fakeConfig2 := mock_config.NewMockInterface(suite.MockCtrl)
@@ -157,7 +151,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig2.EXPECT().GetBool("database.encryption.enabled").Return(true).AnyTimes()
 
 	//test
-	_, err2 := NewRepository(fakeConfig2, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	_, err2 := newTestRepository(suite.T(), fakeConfig2, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 
 	//assert
 	require.Equal(suite.T(), "failed to connect to database! encryption key may be incorrect - file is not a database", err2.Error())
@@ -176,7 +170,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig1.EXPECT().GetBool("database.encryption.enabled").Return(true).AnyTimes()
 
 	//intialize the database with a key
-	_, err := NewRepository(fakeConfig1, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	_, err := newTestRepository(suite.T(), fakeConfig1, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	fakeConfig2 := mock_config.NewMockInterface(suite.MockCtrl)
@@ -189,7 +183,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig2.EXPECT().GetBool("database.encryption.enabled").Return(true).AnyTimes()
 
 	//test
-	_, err2 := NewRepository(fakeConfig2, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	_, err2 := newTestRepository(suite.T(), fakeConfig2, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 
 	//assert
 	require.NoError(suite.T(), err2)
@@ -208,7 +202,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig1.EXPECT().GetBool("database.encryption.enabled").Return(true).AnyTimes()
 
 	//intialize the database with a key
-	_, err := NewRepository(fakeConfig1, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	_, err := newTestRepository(suite.T(), fakeConfig1, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	fakeConfig2 := mock_config.NewMockInterface(suite.MockCtrl)
@@ -220,7 +214,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig2.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 
 	//test
-	_, err2 := NewRepository(fakeConfig2, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	_, err2 := newTestRepository(suite.T(), fakeConfig2, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 
 	//assert
 	require.Equal(suite.T(), "failed to connect to database! encryption key may be incorrect - file is not a database", err2.Error())
@@ -238,7 +232,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithoutEncryptio
 	fakeConfig1.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 
 	//intialize the database with a key
-	_, err := NewRepository(fakeConfig1, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	_, err := newTestRepository(suite.T(), fakeConfig1, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	fakeConfig2 := mock_config.NewMockInterface(suite.MockCtrl)
@@ -251,7 +245,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithoutEncryptio
 	fakeConfig2.EXPECT().GetBool("database.encryption.enabled").Return(true).AnyTimes()
 
 	//test
-	_, err2 := NewRepository(fakeConfig2, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	_, err2 := newTestRepository(suite.T(), fakeConfig2, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 
 	//assert
 	require.Equal(suite.T(), "failed to connect to database! encryption key may be incorrect - file is not a database", err2.Error())
@@ -269,7 +263,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithoutEncryptio
 	fakeConfig1.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 
 	//intialize the database with a key
-	_, err := NewRepository(fakeConfig1, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	_, err := newTestRepository(suite.T(), fakeConfig1, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	fakeConfig2 := mock_config.NewMockInterface(suite.MockCtrl)
@@ -281,7 +275,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithoutEncryptio
 	fakeConfig2.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 
 	//test
-	_, err2 := NewRepository(fakeConfig2, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	_, err2 := newTestRepository(suite.T(), fakeConfig2, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 
 	//assert
 	require.NoError(suite.T(), err2)

@@ -3,8 +3,6 @@ package database
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"os"
 	"testing"
 
@@ -34,10 +32,9 @@ type RepositorySummaryTestSuite struct {
 func (suite *RepositorySummaryTestSuite) BeforeTest(suiteName, testName string) {
 	suite.MockCtrl = gomock.NewController(suite.T())
 
-	dbFile, err := ioutil.TempFile("", fmt.Sprintf("%s.*.db", testName))
-	if err != nil {
-		log.Fatal(err)
-	}
+	dbFile, err := os.CreateTemp(suite.T().TempDir(), fmt.Sprintf("%s.*.db", testName))
+	require.NoError(suite.T(), err)
+	require.NoError(suite.T(), dbFile.Close())
 	suite.TestDatabase = dbFile
 
 }
@@ -45,9 +42,6 @@ func (suite *RepositorySummaryTestSuite) BeforeTest(suiteName, testName string) 
 // AfterTest has a function to be executed right after the test finishes and receives the suite and test names as input
 func (suite *RepositorySummaryTestSuite) AfterTest(suiteName, testName string) {
 	suite.MockCtrl.Finish()
-	os.Remove(suite.TestDatabase.Name())
-	os.Remove(suite.TestDatabase.Name() + "-shm")
-	os.Remove(suite.TestDatabase.Name() + "-wal")
 }
 
 // In order for 'go test' to run this suite, we need to create
@@ -65,7 +59,7 @@ func (suite *RepositorySummaryTestSuite) TestGetInternationalPatientSummaryBundl
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -99,7 +93,7 @@ func (suite *RepositorySummaryTestSuite) TestGetInternationalPatientSummaryBundl
 
 	manualClient, err := sourceFactory.GetSourceClient(sourcePkg.FastenLighthouseEnvSandbox, authContext, testLogger, &testSourceCredential)
 	require.NoError(suite.T(), err)
-	
+
 	summary, err := manualClient.SyncAllBundle(dbRepo, bundleFile, sourcePkg.FhirVersion401)
 	require.NoError(suite.T(), err)
 	require.Equal(suite.T(), 72, summary.TotalResources)

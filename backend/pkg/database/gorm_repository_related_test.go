@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
@@ -33,8 +32,9 @@ func (suite *RepositoryRelatedTestSuite) SetupTest() {
 
 	safeTestName := strings.ReplaceAll(suite.T().Name(), "/", "_")
 	dbFileName := fmt.Sprintf("related_test_%s_*.db", safeTestName)
-	dbFile, err := ioutil.TempFile("", dbFileName)
+	dbFile, err := os.CreateTemp(suite.T().TempDir(), dbFileName)
 	require.NoError(suite.T(), err, "Failed to create temp db file")
+	require.NoError(suite.T(), dbFile.Close())
 	suite.TestDatabase = dbFile
 
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
@@ -45,7 +45,7 @@ func (suite *RepositoryRelatedTestSuite) SetupTest() {
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err, "Failed to create repository")
 
 	var ok bool
@@ -55,23 +55,6 @@ func (suite *RepositoryRelatedTestSuite) SetupTest() {
 
 func (suite *RepositoryRelatedTestSuite) TearDownTest() {
 	suite.MockCtrl.Finish()
-	if suite.DBRepo != nil && suite.DBRepo.GormClient != nil {
-		sqlDB, err := suite.DBRepo.GormClient.DB()
-		if err == nil && sqlDB != nil {
-			errClose := sqlDB.Close()
-			if errClose != nil {
-				suite.T().Logf("Warning: failed to close test DB: %v", errClose)
-			}
-		}
-	}
-	err := os.Remove(suite.TestDatabase.Name())
-
-	if err != nil {
-		suite.T().Logf("Warning: failed to remove test DB file %s: %v", suite.TestDatabase.Name(), err)
-	}
-
-	_ = os.Remove(suite.TestDatabase.Name() + "-shm")
-	_ = os.Remove(suite.TestDatabase.Name() + "-wal")
 }
 
 func TestRepositoryRelatedTestSuite(t *testing.T) {
