@@ -45,6 +45,7 @@ the default desktop data directory for smoke validation.
 | Root vulnerability scan before JWT upgrade | govulncheck 1.9.0 reported 16 reachable advisories across six modules, plus findings in imported/required dependencies not shown as called. This is static reachability, not proof of exploitation. |
 | JWT regression slice | New tests reproduced acceptance of empty verification keys and panic on missing/null expiry. Fixed unit and HTTP middleware tests pass in both graphs; targeted race tests pass. |
 | Sign-in rejection slice | Six synthetic cases cover valid sign-in, absent/nil users, wrapped not-found errors, wrong passwords, and database failures. The full root handler suite passed in 58 seconds; desktop-graph sign-in tests and embedded integration tests also passed (77 seconds for the latter, within the unchanged 120-second limit). |
+| Exact username lookup | A real, in-memory repository reproduced HTTP 200 for empty and omitted usernames supplied with the first account's password. An explicit parameterized condition fixes the omitted zero-value filter. Both module graphs pass six repository-backed sign-in cases and the existing six handler cases. The full root handler suite passed in 53 seconds; five existing repository lookup/current-user cases passed in 19 seconds. |
 | Auth vulnerability scan after JWT upgrade | No reachable vulnerabilities in `./backend/pkg/auth`; dependency-level findings elsewhere remain. This is not a clean whole-application security assessment. |
 | Full root vulnerability scan after JWT upgrade | 14 reachable advisories remain, involving pgx, x/net, x/text, x/image, and circl. No JWT findings remain. |
 | Go network/crypto family | Root and desktop module verification passed. The root package sweep passed its test assertions but failed three packages on newly enforced nonconstant-format vet checks. After replacing those three print calls, the affected packages passed and full `go vet ./...` exited 0. Desktop packages passed after adding the new transitive checksums; embedded backend tests passed in 45 seconds under the unchanged 120-second limit. |
@@ -60,11 +61,13 @@ the default desktop data directory for smoke validation.
 The packaged desktop smoke checks cover the native binding, direct SMART rejection
 without registration, fresh database API, local account creation and sign-in,
 native URL validation, API/SPA error separation, and callback ownership/isolation.
-They do not establish live provider interoperability. After the sign-in and Go
-network/crypto updates, `sh desktop/build.sh --skip-frontend` reused the unchanged,
+They do not establish live provider interoperability. After the pgx, upload-cleanup,
+and portable-date updates, `sh desktop/build.sh --skip-frontend` at source commit
+`db0a65899` reused the unchanged,
 validated frontend output. ZIP integrity, extracted app strict signature verification,
 and all 10 native smoke checks passed again. The tested ZIP SHA-256 is
-`b7ca212875aa4a616e7c8f7ce69f0a57ff2ba7195fce25b98fb9361db56e9074`.
+`0dfcb42d8f2db8b86d992d82d45a22064dc027b91c1f741265e676c6f8146db1`.
+This artifact predates the exact-username lookup change.
 The OAuth classic-script fix is included; generated HTML no longer includes the
 standalone ES module as a classic script. The native run emitted a sandbox-extension
 warning but exited 0 with all checks successful.
