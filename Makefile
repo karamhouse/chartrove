@@ -53,14 +53,18 @@ dep-backend:
 	go mod tidy && go mod vendor
 	cd scripts && go generate ./...
 
+.PHONY: prepare-backend
+prepare-backend:
+	go generate ./scripts/related_versions
+
 
 .PHONY: test-backend
-test-backend: dep-backend
+test-backend: prepare-backend
 	go vet ./...
 	go test -v ./...
 
 .PHONY: test-backend-coverage
-test-backend-coverage: dep-backend
+test-backend-coverage: prepare-backend
 	go test -coverprofile=backend-coverage.txt -covermode=atomic -v ./...
 
 .PHONY: generate-backend

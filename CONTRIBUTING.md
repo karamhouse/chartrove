@@ -6,7 +6,7 @@ Chartrove is an independent fork of [Fasten Onprem](https://github.com/fastenhea
 
 - Go 1.26 or newer; root and desktop modules retain separate dependency graphs.
 - Node 20.19.0 and the committed Yarn 1.22.22 configuration.
-- Angular 14.1.x through the local, locked CLI.
+- Angular 14.x through the local, locked CLI (currently core 14.2.12, CLI 14.2.10, and TypeScript 4.6.4).
 - macOS with Xcode Command Line Tools for native desktop builds.
 
 Install only the locked frontend dependencies when needed:
@@ -18,6 +18,8 @@ cd ..
 ```
 
 Use the local CLI rather than installing or upgrading a global Angular CLI for a project change.
+
+Node 20.19.0 is the fork's tested legacy baseline, not an officially supported Angular 14 runtime. Angular 14.2 requires TypeScript below 4.9; migrate Angular, its UI peers, TypeScript, and Node together in compatible steps. See [the maintenance baseline](docs/MAINTENANCE_BASELINE.md) for current validation limits and the migration sequence.
 
 ## Repository layout
 
@@ -47,11 +49,16 @@ For frontend iteration, select the existing `desktop_prod` configuration. A nati
 From the repository root:
 
 ```sh
-go test ./backend/... -count=1
+make prepare-backend
+go test -p 1 ./backend/... -count=1
 cd frontend
 node --test desktop-tests/bridge.test.mjs
 node node_modules/@angular/cli/bin/ng.js test --watch=false --browsers=ChromeHeadlessCI
 ```
+
+`make prepare-backend` generates the ignored `backend/resources/related_versions.json` required by the backend executable. It does not tidy, vendor, or upgrade dependencies. The backend test targets use this preparation step; dependency refresh remains the separate `dep-backend` target. Avoid the inherited Nix `.envrc` for this toolchain.
+
+Some inherited database tests leave temporary databases behind. Run validation with `TMPDIR` set to a newly created private task directory, and remove that directory after its processes have exited. Never point tests at an existing health-record directory.
 
 From `desktop/`:
 
