@@ -1,4 +1,4 @@
-# Chartrove direct SMART foundation
+# Chartrove direct SMART connections
 
 Chartrove is an independent fork of Fasten Onprem. This host foundation adds public SMART authorization without using Lighthouse, Fasten's client registrations, or bundled provider definitions. It does not change Fasten attribution or existing storage.
 
@@ -11,7 +11,11 @@ Chartrove is an independent fork of Fasten Onprem. This host foundation adds pub
 - Credentials stay in Go memory. Connection summaries contain an opaque local ID, provider ID, Patient ID, and expiry; no tokens or verifier. Disconnect forgets credentials and cancels active reads. Expired credentials are rejected and purged when accessed; shutdown clears all connections.
 - Patient retrieval is bounded to 2 MiB, verifies resource type and authorized Patient ID, and returns JSON without writing it to a database. It does not use the legacy credential API or its logging path.
 
-The existing Sources screen and synthetic Epic sandbox button are unchanged. The new foundation is exposed through a separate Wails service for the next UI increment. A successful local protocol test is not production approval or a live independent Epic test.
+The desktop Sources screen lists explicitly configured direct providers separately from the legacy Epic sandbox flow. Connect opens the system browser, then shows the authorized Patient's name, ID, birth date, gender, and provider origin. Preview does not save a record. Import Patient explicitly saves a manual snapshot; discard, cancellation, and leaving the screen release the in-memory session. An unsuccessful import can be retried from the preview.
+
+Snapshots are scoped to the local account, normalized FHIR base URL, and Patient ID. Reimporting a completed snapshot returns the existing source without overwriting it; identical Patient IDs from different origins remain separate. An incomplete import can be retried. Source details identify the provider and origin and explain that snapshots do not automatically synchronize or reconnect. Only one Patient is imported, not a full clinical chart. The optional multipart `smart_origin` metadata is validated by the backend, and direct snapshot uploads are bounded to 3 MiB. Patient payloads are not logged by the HTTP interceptor.
+
+A successful local protocol test is not production approval or a live independent Epic test.
 
 ## Explicit registration configuration
 
@@ -64,8 +68,14 @@ All methods require the trusted main application window. Authentication windows 
 
 ## Validation and remaining work
 
+For interactive native UI testing without a provider account, use `--smart-ui-test --unencrypted --data-dir <fresh-empty-directory>`. This mode refuses an omitted or nonempty data directory, a provider configuration, or simultaneous smoke mode before opening storage. It supplies three clearly labeled synthetic providers with a private local TLS trust root and a controlled authorization driver. Two providers deliberately share a Patient ID; the third delays authorization for cancellation testing. The driver can contact only that fixture and its exact minted callback URLs. This mode does not open the system browser or validate a live Epic registration. Normal startup does not enable these providers or change system trust settings.
+
 `go test -race ./internal/smart ./internal/shell ./internal/host -count=1` exercises a real local TLS synthetic provider, including the PKCE challenge/verifier, registration binding, callback validation/replay, token exchange, Patient identity, redirects, denial, cancellation, timeout, expiry, and window restrictions. No real Epic account or existing database is used by those tests. Native `--smoke-test` adds Wails service registration and disabled-provider checks and requires a fresh database and no direct provider profiles.
 
-Before production, obtain Chartrove-owned Epic registrations and verify the accepted callback at intended institutions. Build the provider UI and explicit import path, validate clinical resources and larger payloads separately, then design Keychain persistence, refresh/DCR, remote revocation, and additional vendors. Never embed a shared confidential-client secret. No provider agreements, accounts, production registrations, or real-record trials were initiated by this implementation.
+From the repository root, `go test -race ./backend/pkg/web/handler -run TestSMARTImport -count=1 -timeout=180s` checks origin separation, repeat confirmation, concurrent confirmation, failed-write retry, malformed metadata, oversized snapshots, and isolation from later plain manual imports using fresh synthetic databases.
+
+On October 27, 2026, the packaged Sources UI was exercised with the local TLS fixture and fresh databases: preview and discard, explicit import and resource viewing, unchanged repeat imports, two origins sharing a Patient ID, cancellation, screen teardown, normal quit, and persistence after restart. The final package also verified the text-only Patient name and missing-address display fallback. Normal restart without test mode showed no configured direct providers while retaining the imported snapshot. These observations validate the native UI and local protocol boundary, not live Epic authorization or production interoperability.
+
+Before production, obtain Chartrove-owned Epic registrations and verify the accepted callback at intended institutions. Validate clinical resources and larger payloads separately, then design Keychain persistence, refresh/DCR, remote revocation, and additional vendors. Never embed a shared confidential-client secret. No provider agreements, accounts, production registrations, or real-record trials were initiated by this implementation.
 
 References: [SMART App Launch](https://hl7.org/fhir/smart-app-launch/STU2.2/app-launch.html), [SMART discovery](https://hl7.org/fhir/smart-app-launch/STU2.2/conformance.html), [native OAuth](https://www.rfc-editor.org/rfc/rfc8252.html), [Epic app documentation](https://fhir.epic.com/Documentation?docId=patientfacingfhirapps&section=AutomaticClientDistribution).

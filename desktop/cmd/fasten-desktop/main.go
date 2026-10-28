@@ -20,6 +20,7 @@ import (
 	"github.com/karamhouse/fasten-desktop/internal/host"
 	"github.com/karamhouse/fasten-desktop/internal/shell"
 	"github.com/karamhouse/fasten-desktop/internal/smart"
+	"github.com/karamhouse/fasten-desktop/internal/smarttest"
 	"github.com/karamhouse/fasten-desktop/internal/smoke"
 	"github.com/sirupsen/logrus"
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -39,13 +40,29 @@ func run() error {
 	frontendDir := flag.String("frontend-dir", "", "Override built-in frontend assets for development")
 	smokeTest := flag.Bool("smoke-test", false, "Run local WebView smoke checks with an explicit fresh --data-dir and --unencrypted")
 	smartConfig := flag.String("smart-provider-config", "", "Explicit public SMART provider JSON configuration (disabled when omitted)")
+	smartUITest := flag.Bool("smart-ui-test", false, "Use local synthetic SMART providers; requires a fresh explicit data directory and --unencrypted")
 	flag.Parse()
+	if *smartUITest {
+		if err := validateSMARTUITest(*directory, *unencrypted, *smartConfig, *smokeTest); err != nil {
+			return err
+		}
+	}
 	profiles, err := smart.LoadProfiles(*smartConfig)
 	if err != nil {
 		return err
 	}
 	var app *application.App
-	connections, err := smart.NewManager(profiles, func(raw string) error { return app.Browser.OpenURL(raw) })
+	openBrowser := func(raw string) error { return app.Browser.OpenURL(raw) }
+	client := http.DefaultClient
+	if *smartUITest {
+		fixture, err := smarttest.New()
+		if err != nil {
+			return err
+		}
+		defer fixture.Close()
+		profiles, openBrowser, client = fixture.Profiles(), fixture.OpenBrowser, fixture.Client()
+	}
+	connections, err := smart.NewManagerWithHTTPClient(profiles, openBrowser, client)
 	if err != nil {
 		return err
 	}
@@ -163,4 +180,18 @@ func run() error {
 	app.Window.NewWithOptions(application.WebviewWindowOptions{Name: "main", Title: shell.ApplicationName, Width: 1280, Height: 900, MinWidth: 900, MinHeight: 650, URL: url})
 	fmt.Printf("%s %s; data directory: %s\n", shell.ApplicationName, shell.Version, storage.Directory)
 	return app.Run()
+}
+
+func validateSMARTUITest(directory string, unencrypted bool, providerConfig string, smoke bool) error {
+	if directory == "" || !unencrypted || providerConfig != "" || smoke {
+		return fmt.Errorf("SMART UI testing requires fresh explicit --data-dir, --unencrypted, no provider config, and no smoke mode")
+	}
+	entries, err := os.ReadDir(directory)
+	if err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("cannot validate synthetic SMART data directory")
+	}
+	if len(entries) != 0 {
+		return fmt.Errorf("SMART UI testing refuses an existing nonempty data directory")
+	}
+	return nil
 }

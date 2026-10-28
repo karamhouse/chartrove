@@ -100,12 +100,10 @@ func newFixture(t *testing.T) *fixture {
 
 func (f *fixture) manager(t *testing.T, open func(string) error) *Manager {
 	t.Helper()
-	m, err := NewManager([]Profile{f.profile}, open)
+	m, err := NewManagerWithHTTPClient([]Profile{f.profile}, open, f.server.Client())
 	if err != nil {
 		t.Fatal(err)
 	}
-	m.client = f.server.Client()
-	m.client.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
 	t.Cleanup(m.Close)
 	return m
 }

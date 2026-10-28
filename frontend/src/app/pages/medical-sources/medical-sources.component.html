@@ -27,11 +27,13 @@
 
       <h2 class="az-content-title mg-t-40">Medical Record Sources</h2>
 
+      <app-direct-smart-sources *ngIf="environment_name.startsWith('desktop')" (imported)="connectedSources?.refreshSources()"></app-direct-smart-sources>
+
       <section *ngIf="environment_name.startsWith('desktop')" class="card mb-4" aria-labelledby="epic-sandbox-title">
         <div class="card-body">
           <h3 id="epic-sandbox-title" class="h5">Epic sandbox <span class="badge badge-info">Synthetic test data only</span></h3>
           <p>Connect with Epic’s published test account to retrieve one synthetic Patient, then import it into this app.</p>
-          <p class="text-muted">Production provider connections are unavailable. This sandbox connection does not enable automatic sync.</p>
+          <p class="text-muted">This separate sandbox uses Fasten’s test registration. It does not enable production access or automatic sync.</p>
           <p><a href="https://fhir.epic.com/Documentation#patientlist" externalLink>Epic sandbox test account instructions</a></p>
           <button type="button" class="btn btn-primary mr-2" data-testid="connect-epic-sandbox"
                   [disabled]="!!sandboxController || sandboxImporting" (click)="connectEpicSandbox()">

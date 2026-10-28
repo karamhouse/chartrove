@@ -18,7 +18,7 @@
     </button>
   </div>
 
-  <div *ngIf="modalSelectedSourceListItem?.source?.platform_type != 'fasten'; else fastenSourceDescription" class="modal-body">
+  <div *ngIf="modalSelectedSourceListItem?.source?.platform_type != 'fasten' && modalSelectedSourceListItem?.source?.platform_type != 'manual'" class="modal-body">
     <h6>Manage Source</h6>
     <p>Existing connections can be "Synced", "Reconnected" or "Deleted"</p>
     <ul>
@@ -27,7 +27,12 @@
       <li><p><strong>Delete</strong> - Delete all resources for this healthcare provider. This will ONLY effect data stored in Chartrove</p></li>
     </ul>
   </div>
-  <ng-template #fastenSourceDescription>
+  <div *ngIf="modalSelectedSourceListItem?.source?.platform_type == 'manual'" class="modal-body">
+    <h6>Imported snapshot</h6>
+    <p class="text-break">{{modalSelectedSourceListItem?.source?.display}}</p>
+    <p>This source contains imported records. Automatic sync and reconnect are not available for snapshots. Use the direct provider panel to retrieve another Patient preview.</p>
+  </div>
+  <ng-container *ngIf="modalSelectedSourceListItem?.source?.platform_type == 'fasten'">
     <div class="modal-body">
       <h6>Chartrove</h6>
       <p>This source contains all medical records that are created manually in the Chartrove app.
@@ -36,7 +41,7 @@
         <li><p><strong>Explore</strong> - View the medical records that you have created</p></li>
       </ul>
     </div>
-  </ng-template>
+  </ng-container>
 
   <div class="modal-footer">
 

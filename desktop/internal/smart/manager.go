@@ -45,11 +45,24 @@ type Manager struct {
 }
 
 func NewManager(profiles []Profile, openBrowser func(string) error) (*Manager, error) {
+	return NewManagerWithHTTPClient(profiles, openBrowser, http.DefaultClient)
+}
+
+// NewManagerWithHTTPClient permits an explicitly scoped transport (for example,
+// a private TLS test root). It clones the client and always enforces the same
+// timeout and no-redirect policy; the caller's client is not modified.
+func NewManagerWithHTTPClient(profiles []Profile, openBrowser func(string) error, client *http.Client) (*Manager, error) {
 	if openBrowser == nil {
 		return nil, errors.New("system browser is unavailable")
 	}
+	if client == nil {
+		return nil, errors.New("SMART HTTP client is unavailable")
+	}
+	strictClient := *client
+	strictClient.Timeout = 15 * time.Second
+	strictClient.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
 	ctx, cancel := context.WithCancel(context.Background())
-	m := &Manager{profiles: map[string]Profile{}, pending: map[string]context.CancelFunc{}, connections: map[string]credential{}, ctx: ctx, cancel: cancel, openBrowser: openBrowser, client: &http.Client{Timeout: 15 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}}
+	m := &Manager{profiles: map[string]Profile{}, pending: map[string]context.CancelFunc{}, connections: map[string]credential{}, ctx: ctx, cancel: cancel, openBrowser: openBrowser, client: &strictClient}
 	for _, p := range profiles {
 		if err := p.validate(); err != nil {
 			cancel()
