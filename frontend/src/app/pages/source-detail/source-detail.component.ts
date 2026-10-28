@@ -53,8 +53,12 @@ export class SourceDetailComponent implements OnInit {
 
   //functions to call on patient
   getPatientName(){
-    // @ts-ignore
-    return `${getPath(this.selectedPatient?.resource_raw, 'name.0.family')}, ${(getPath(this.selectedPatient?.resource_raw, 'name.0.given')||[]).join(' ')}`
+    const text = getPath(this.selectedPatient?.resource_raw, 'name.0.text')
+    if (typeof text === 'string' && text) return text
+    const family = getPath(this.selectedPatient?.resource_raw, 'name.0.family')
+    const given = getPath(this.selectedPatient?.resource_raw, 'name.0.given')
+    const givenNames = Array.isArray(given) ? given.filter(value => typeof value === 'string').join(' ') : ''
+    return [family, givenNames].filter(value => typeof value === 'string' && value).join(', ') || 'Name not provided'
   }
   getPatientGender(){
     return getPath(this.selectedPatient?.resource_raw, 'gender')
@@ -93,7 +97,10 @@ export class SourceDetailComponent implements OnInit {
     const city = getPath(this.selectedPatient?.resource_raw, 'address.0.city')
     const state = getPath(this.selectedPatient?.resource_raw, 'address.0.state')
     const zip = getPath(this.selectedPatient?.resource_raw, 'address.0.postalCode')
-    return [`${line}`, `${city}, ${state} ${zip}`]
+    const country = getPath(this.selectedPatient?.resource_raw, 'address.0.country')
+    const region = [state, zip].filter(value => typeof value === 'string' && value).join(' ')
+    const locality = [city, region].filter(value => typeof value === 'string' && value).join(', ')
+    return [...(Array.isArray(line) ? line : []), locality, country].filter(value => typeof value === 'string' && value)
   }
 
 }

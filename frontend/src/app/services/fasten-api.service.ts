@@ -32,6 +32,7 @@ import {
 import {FormRequestHealthSystem} from '../models/fasten/form-request-health-system';
 import { UpdateResourcePayload } from '../models/fasten/resource_update';
 import { Favorite } from '../pages/practitioner-list/practitioner-list.component';
+import {SmartImportOrigin} from '../models/direct-smart';
 
 @Injectable({
   providedIn: 'root'
@@ -162,21 +163,35 @@ export class FastenApiService {
     // when storing source.patient. Accept that legacy key without rewriting it.
     const patientKeys = [patient.id, patient.id?.replace(/^[Patient\/]+/, '')].filter(Boolean);
     return this.getSources().pipe(concatMap(sources => {
-      const existing = sources.find(source => source.platform_type === 'manual' && patientKeys.includes(source.patient) && source.id);
+      const existing = sources.find(source => source.platform_type === 'manual' &&
+        (!source.endpoint_id || source.endpoint_id === '00000000-0000-0000-0000-000000000000') &&
+        patientKeys.includes(source.patient) && source.id);
       if (existing) return of({source: existing, alreadyImported: true});
+      return this.postPatientSnapshot(patient);
+    }));
+  }
+
+  importSmartPatient(patient: Patient, origin: SmartImportOrigin): Observable<{source: Source, alreadyImported: boolean}> {
+    // The backend scopes identity to FHIR origin plus raw Patient ID, and is
+    // authoritative for completed imports and safe retries of failed snapshots.
+    return this.postPatientSnapshot(patient, origin);
+  }
+
+  private postPatientSnapshot(patient: Patient, origin?: SmartImportOrigin): Observable<{source: Source, alreadyImported: boolean}> {
       const bundle = {resourceType: 'Bundle', type: 'collection', entry: [{resource: patient}]};
       // Native WebKit drops FormData bodies on the Wails custom scheme. This
       // JSON-only upload can use a UTF-8 multipart string with an explicit boundary.
       const boundary = `chartrove-sandbox-${uuidV4()}`;
-      const body = `--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="epic-sandbox.json"\r\nContent-Type: application/fhir+json\r\n\r\n${JSON.stringify(bundle)}\r\n--${boundary}--\r\n`;
+      const metadata = origin ? `--${boundary}\r\nContent-Disposition: form-data; name="smart_origin"\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(origin)}\r\n` : '';
+      const filename = origin ? 'direct-smart-patient.json' : 'epic-sandbox.json';
+      const body = `${metadata}--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="${filename}"\r\nContent-Type: application/fhir+json\r\n\r\n${JSON.stringify(bundle)}\r\n--${boundary}--\r\n`;
       return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/source/manual`, body, {
         headers: {'Content-Type': `multipart/form-data; boundary=${boundary}`}
       })
         .pipe(map(response => {
           if (!response.success || !response.source?.id) throw new Error('The local import did not complete.');
-          return {source: response.source as Source, alreadyImported: false};
+          return {source: response.source as Source, alreadyImported: response.already_imported === true};
         }));
-    }));
   }
 
   createRelatedResourcesFastenSource(resourceList: List): Observable<Source> {

@@ -14,6 +14,8 @@ import {EpicSandboxService} from '../../services/epic-sandbox.service';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {of, throwError} from 'rxjs';
 import {Source} from '../../models/fasten/source';
+import {DirectSmartSourcesComponent} from '../../components/direct-smart-sources/direct-smart-sources.component';
+import {DirectSmartService} from '../../services/direct-smart.service';
 
 describe('MedicalSourcesComponent', () => {
   let component: MedicalSourcesComponent;
@@ -21,9 +23,10 @@ describe('MedicalSourcesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MedicalSourcesComponent, MedicalSourcesFilterComponent, MedicalSourcesConnectedComponent ],
+      declarations: [ MedicalSourcesComponent, MedicalSourcesFilterComponent, MedicalSourcesConnectedComponent, DirectSmartSourcesComponent ],
       imports: [HttpClientTestingModule, RouterTestingModule, FormsModule, ReactiveFormsModule, LoadingSpinnerComponent, NgxDropzoneModule],
       providers: [
+        {provide: DirectSmartService, useValue: {providers: async () => []}},
         {
           provide: HTTP_CLIENT_TOKEN,
           useClass: HttpClient,

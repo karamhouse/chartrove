@@ -83,4 +83,30 @@ describe('FastenApiService', () => {
     http.verify();
   });
 
+  it('does not reuse a direct provider snapshot as a legacy sandbox source', async () => {
+    const http = TestBed.inject(HttpTestingController);
+    const result = service.importSandboxPatient({resourceType: 'Patient', id: 'synthetic-patient'}).toPromise();
+    http.expectOne(req => req.url.endsWith('/secure/source')).flush({success: true, data: [
+      {id: 'direct-source', patient: 'synthetic-patient', platform_type: 'manual', endpoint_id: 'provider-scoped-id'}
+    ]});
+    http.expectOne(req => req.url.endsWith('/secure/source/manual')).flush({success: true, source: {id: 'sandbox-source'}});
+    expect((await result).source.id).toBe('sandbox-source');
+    http.verify();
+  });
+
+  it('sends a direct Patient snapshot with provider provenance and reads backend deduplication', async () => {
+    const http = TestBed.inject(HttpTestingController);
+    const patient = {resourceType: 'Patient' as const, id: 'patient-one'};
+    const origin = {fhir_base_url: 'https://example.invalid/fhir', display: 'Example hospital'};
+    const result = service.importSmartPatient(patient, origin).toPromise();
+    http.expectNone(req => req.url.endsWith('/secure/source'));
+    const request = http.expectOne(req => req.url.endsWith('/secure/source/manual'));
+    const form = await new Response(request.request.body, {headers: {'Content-Type': request.request.headers.get('Content-Type')}}).formData();
+    expect(JSON.parse(String(form.get('smart_origin')))).toEqual(origin);
+    expect(JSON.parse(await (form.get('file') as File).text())).toEqual({resourceType: 'Bundle', type: 'collection', entry: [{resource: patient}]});
+    request.flush({success: true, already_imported: true, source: {id: 'existing-direct-source'}});
+    expect(await result).toEqual({source: jasmine.objectContaining({id: 'existing-direct-source'}), alreadyImported: true});
+    http.verify();
+  });
+
 });

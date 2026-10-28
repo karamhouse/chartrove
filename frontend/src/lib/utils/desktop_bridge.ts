@@ -1,4 +1,7 @@
+import {SmartBridge} from '../../app/models/direct-smart';
+
 export interface DesktopBridge {
+  readonly smart?: SmartBridge;
   openExternal(url: string, state?: string): Promise<void>;
   closeAuthWindow(state: string): Promise<void>;
   completeAuth(data: Record<string, string>): Promise<void>;

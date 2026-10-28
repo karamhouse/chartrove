@@ -1010,10 +1010,9 @@ func (gr *GormRepository) CreateSource(ctx context.Context, sourceCreds *models.
 
 	//Assign will **always** update the source credential in the DB with data passed into this function.
 	return gr.GormClient.WithContext(ctx).
-		Where(models.SourceCredential{
-			UserID:     sourceCreds.UserID,
-			EndpointID: sourceCreds.EndpointID,
-			Patient:    sourceCreds.Patient}).
+		// Include zero endpoints: a plain manual import must not match a provider
+		// source merely because its Patient ID happens to be the same.
+		Where("user_id = ? AND endpoint_id = ? AND patient = ?", sourceCreds.UserID, sourceCreds.EndpointID, sourceCreds.Patient).
 		Assign(*sourceCreds).FirstOrCreate(sourceCreds).Error
 }
 

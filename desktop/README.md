@@ -33,9 +33,9 @@ Chartrove.app/Contents/MacOS/chartrove --data-dir /path/to/private/test-director
 
 `--unencrypted` is available only for disposable synthetic-data testing. `--frontend-dir` selects a development asset directory. Normal startup embeds the fork's `/api` routes in Wails without opening an application API TCP listener or requiring hosted installation registration.
 
-The [direct SMART foundation](DIRECT_SMART.md) adds a separate Go-host service for Chartrove-owned public registrations, system-browser authorization with S256 PKCE, and in-memory Patient retrieval. It is disabled unless `--smart-provider-config` selects an explicit public JSON profile file. An active authorization temporarily opens only its registered IPv4-loopback callback listener. The Sources UI, Keychain persistence, refresh, and record import are separate later increments; no production registration is supplied.
+The [direct SMART connection UI](DIRECT_SMART.md) uses a separate Go-host service for Chartrove-owned public registrations, system-browser authorization with S256 PKCE, and in-memory Patient retrieval. It is disabled unless `--smart-provider-config` selects an explicit public JSON profile file. An active authorization temporarily opens only its registered IPv4-loopback callback listener. Sources shows a Patient preview before an explicit import saves a provider-scoped manual snapshot. Cancellation, discard, and screen teardown release the session. Snapshots do not automatically synchronize. Keychain persistence and refresh remain future work; no production registration is supplied.
 
-The native bridge uses the runtime served by the pinned host. It validates external URLs, restricts privileged actions to the main window, and restricts callback completion to the popup for the matching state. OAuth callback data is delivered directly to the main window, not broadcast to other provider windows. Epic sandbox OAuth and a synthetic Patient read have been verified in an isolated native test frontend. Production provider retrieval remains blocked by the retired upstream infrastructure; see [provider validation](PROVIDER_VALIDATION.md) for the tested boundaries and reproduction steps. Hosted CCDA conversion remains unvalidated.
+The native bridge uses the runtime served by the pinned host. It validates external URLs, restricts privileged actions to the main window, and restricts legacy callback completion to the popup for the matching state. Legacy OAuth callback data is delivered directly to the main window, not broadcast to other provider windows. Epic sandbox OAuth and a synthetic Patient read have been verified in an isolated native test frontend. The legacy production workflow still depends on retired upstream infrastructure; see [provider validation](PROVIDER_VALIDATION.md) for its tested boundaries. Direct SMART avoids that dependency but requires Chartrove-owned registrations and live interoperability validation. Hosted CCDA conversion remains unvalidated.
 
 ## Tests
 
@@ -49,7 +49,7 @@ go test ./backend/pkg/web ./backend/pkg/event_bus -count=1 -timeout=120s
 go test -race ./backend/pkg/web ./backend/pkg/event_bus -count=1 -timeout=120s
 cd frontend
 node --test desktop-tests/bridge.test.mjs
-node node_modules/@angular/cli/bin/ng.js test --watch=false --browsers=ChromeHeadlessCI
+node node_modules/@angular/cli/bin/ng.js test --watch=false --browsers=ChromeHeadless
 ```
 
 From `desktop/`, run `go test ./...` for host tests. To exercise the embedded backend against the desktop module's actual dependency graph, also run:
