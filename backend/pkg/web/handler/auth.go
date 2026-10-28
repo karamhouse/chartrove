@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"fmt"
+	"errors"
 	"net/http"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
@@ -12,6 +12,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 type UserWizard struct {
@@ -86,14 +87,18 @@ func AuthSignin(c *gin.Context) {
 	}
 
 	foundUser, err := databaseRepo.GetUserByUsername(c, user.Username)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not sign in"})
+		return
+	}
 	if err != nil || foundUser == nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": fmt.Sprintf("could not find user: %s", user.Username)})
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "username or password does not match"})
 		return
 	}
 
 	err = foundUser.CheckPassword(user.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": fmt.Sprintf("username or password does not match: %s", user.Username)})
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "username or password does not match"})
 		return
 	}
 
