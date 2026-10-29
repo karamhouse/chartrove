@@ -259,6 +259,24 @@ OpenPGP fork; this evidence does not establish the security of that fork or
 justify removing other uses of x/crypto. These are module-level scan results,
 not a new whole-application reachability assessment.
 
+The CIRCL slice selects 1.6.5 in both graphs, superseding #205's historical
+1.3.7 target. Only CIRCL's version and checksums change; Go minimums and the
+distinct ProtonMail versions selected by each graph remain unchanged. The
+[1.6.5 release](https://github.com/cloudflare/circl/releases/tag/v1.6.5) includes
+stricter Ed25519/Ed448 key parsing and point validation beyond the fixes in
+1.6.3. Production imports use CIRCL's X25519, X448, Ed25519, and Ed448 through
+ProtonMail and the GitHub client. The previously flagged Kyber, FourQ, and P-384
+operations were not demonstrated as application exploit paths.
+
+Nine upstream crypto packages pass in each graph: those four CIRCL packages,
+Goldilocks, P-384, and ProtonMail ECDH/ECDSA/EdDSA. Root authentication, JWK,
+and all web packages pass; desktop host tests and encrypted embedded-backend
+checks pass (10.382 seconds, unchanged 120-second limit). Both graphs verify.
+Fresh module scans explicitly select CIRCL 1.6.5 and report no CIRCL findings:
+11 root advisory IDs and the same one desktop OpenPGP ID remain. The native
+package recorded above predates this patch; application tests here are not a
+new packaged-native smoke result.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in
