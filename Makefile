@@ -79,7 +79,7 @@ generate-backend:
 ########################################################################################################################
 .PHONY: dep-frontend
 dep-frontend:
-	cd frontend && $(YARN) install --frozen-lockfile --ignore-optional --registry https://registry.npmjs.org --network-concurrency 4
+	cd frontend && $(YARN) install --frozen-lockfile --registry https://registry.npmjs.org --network-concurrency 4
 
 .PHONY: build-frontend-sandbox
 build-frontend-sandbox: dep-frontend
@@ -114,4 +114,4 @@ test-frontend-coverage: dep-frontend
 .PHONY: test-frontend-coverage-ci
 # reduce logging, disable angular-cli analytics for ci environment
 test-frontend-coverage-ci: dep-frontend
-	cd frontend && npx ng test --watch=false --code-coverage --browsers=ChromeHeadlessCI
+	cd frontend && $(NG) test --watch=false --code-coverage --browsers=ChromeHeadlessCI

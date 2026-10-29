@@ -9,15 +9,15 @@
 #
 # instead, we use https://depot.dev/ to do our multi-arch builds on native ARM and AMD nodes.
 
-FROM node:20 as frontend-build
+FROM node:26.13.0 AS frontend-build
 ARG FASTEN_ENV=sandbox
 WORKDIR /usr/src/fastenhealth/frontend
 COPY frontend/package.json frontend/yarn.lock ./
 
-RUN yarn install --frozen-lockfile
+RUN npm exec --yes --package=corepack@0.35.0 -- corepack yarn install --frozen-lockfile --registry https://registry.npmjs.org --network-concurrency 4
 COPY frontend/ ./
 RUN --mount=type=cache,target=/tmp/lock,sharing=locked \
-    yarn run build -- --configuration ${FASTEN_ENV} --output-path=../dist
+    node node_modules/@angular/cli/bin/ng.js build --configuration ${FASTEN_ENV} --output-path=../dist
 
 #########################################################################################################
 # Backend Build

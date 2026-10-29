@@ -56,7 +56,7 @@ node --test desktop-tests/bridge.test.mjs
 node node_modules/@angular/cli/bin/ng.js test --watch=false --browsers=ChromeHeadlessCI
 ```
 
-`make prepare-backend` generates the ignored `backend/resources/related_versions.json` required by the backend executable. It does not tidy, vendor, or upgrade dependencies. The backend test targets use this preparation step; dependency refresh remains the separate `dep-backend` target. Avoid the inherited Nix `.envrc` for this toolchain.
+`make prepare-backend` generates the ignored `backend/resources/related_versions.json` required by the backend executable. It does not tidy, vendor, or upgrade dependencies. The backend test targets use this preparation step; dependency refresh remains the separate `dep-backend` target. Mise selects Node through your shell activation; `.envrc` no longer activates the historical Nix flake. The retained flake is not the supported development baseline.
 
 Database fixtures use test-scoped directories and close their repositories before cleanup. Run validation with `TMPDIR` set to a newly created private task directory so any leftovers from failed or interrupted tests can be identified and removed after their processes exit. Never point tests at an existing health-record directory.
 
