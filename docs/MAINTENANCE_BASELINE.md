@@ -941,6 +941,28 @@ disposable database. It uses its dedicated smoke page; the Angular form checks
 above were browser checks, not a full native Angular UI walkthrough. This is a
 local test package, not a notarized or published release.
 
+### Post-migration dependency audit (2026-10-29)
+
+The final Yarn audit exits 30 and reports 299 dependency-path findings: 19 critical,
+147 high, 103 moderate and 30 low, spanning 148 distinct advisory IDs. These are
+registry findings, not 299 independently demonstrated application exploits.
+The response incorrectly categorizes all dependencies as non-development, so
+use the manifest's top-level dependency groups and actual import paths for triage.
+
+Critical paths include Compodoc's old Handlebars/Babel/WebSocket/PDF dependencies,
+Karma coverage's older Babel tree, Protractor's request/form-data tree, and the
+pinned webcrypto-liner Elliptic fork. PDF.js is under Compodoc, not the application's
+PDF card. Old Angular findings trace to LForms 34's bundled Angular 14.2.12 rather
+than the migrated application framework. Prioritize development-tool refreshes
+separately from LForms compatibility and source-level crypto-fork assessment;
+do not replace the fork or weaken encryption based only on its registry version.
+Relevant upstream records include
+[PDF.js](https://github.com/advisories/GHSA-wgrm-67xf-hhpq),
+[Babel](https://github.com/advisories/GHSA-67hx-6x53-jw92),
+[form-data](https://github.com/advisories/GHSA-fjxv-7rqg-78g4), and
+[Elliptic](https://github.com/advisories/GHSA-vjh7-7g9h-fjfh).
+The compatibility passes above do not resolve this remaining security backlog.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in
