@@ -29,15 +29,18 @@
         [(questionnaire)]="questionnaire"
         [options]="options"
         [fhirVersion]="format"
-        (onFormReady)="onFormReady($event)"
-        (onError)="onError($event)"
+        (onFormReady)="onFormReady()"
+        (onError)="onError()"
       ></wc-lhc-form>
     </div>
   }
   @if (loading) {
     <app-loading-spinner></app-loading-spinner>
   }
+  @if (formError) {
+    <div class="alert alert-danger" role="alert">{{formError}}</div>
+  }
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-az-primary" (click)="submit()">Create Lab Results</button>
+  <button type="button" class="btn btn-az-primary" [disabled]="!formReady || loading" (click)="submit()">Create Lab Results</button>
 </div>

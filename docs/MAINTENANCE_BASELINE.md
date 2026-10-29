@@ -881,6 +881,31 @@ not a clean form-console result. No record is saved to the database. Ordinary
 HTTP still lacks the expected Wails module. Native packaging remains at the
 Angular 16 checkpoint until the final source and form repair are rebuilt.
 
+### Lab-form lifecycle and validation repair (2026-10-29)
+
+Fix the missing LForms ready/error handlers in both add and edit dialogs. Disable
+submission until the selected form is ready, clear readiness on panel changes,
+and keep the modal open on load/export failure with a generic retry message.
+Do not log widget errors or their potentially sensitive payloads.
+
+The real-widget check also reproduces a validation defect: LForms 34's
+`checkValidity` returns null for the custom-element host even with invalid numeric
+input. It requires a containing element. Pass the dialog's dedicated form
+container to both validation and FHIR export, avoiding the default first form
+elsewhere on the page. A first repair attempt exposed this through a browser
+export failure; mocked API tests alone did not establish correct library usage.
+
+Fourteen new regression tests cover both dialogs: ready/error DOM events, initial
+and replacement-panel readiness, invalid values, scoped export, failed requests,
+and throwing exports. The final full suite passes 390 tests with the existing
+skip and exits 0. The optimized production build exits 0 with hash
+`97242fb40192fd4c`. Browser verification against this bundle confirms submission
+is initially disabled, invalid numeric input keeps the dialog open with the
+widget's validation message, and a corrected synthetic value exports into the
+unsaved wizard. No new console/page errors occur during this form flow and no
+record is saved. The edit dialog has regression coverage; a full persisted-record
+edit flow is not claimed.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in
