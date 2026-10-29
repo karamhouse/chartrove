@@ -628,6 +628,54 @@ appears in the ordinary browser. Storybook's own build remains unverified at
 this checkpoint. Existing test-fixture warnings and the 2 MB bundle warning
 remain; GitHub Actions are still disabled and no changes are published.
 
+The native package for source `0257d4881` embeds frontend build
+`0f9c03545569b0b5`. The retained `dist/Chartrove.zip` SHA-256 is
+`771d489fba80bf99f873536b282620f16990e5891e24e41c4d30c329dae9bd46`.
+ZIP integrity, strict signature verification, and all ten native smoke checks
+pass with process exit 0. The extracted app and disposable smoke database were
+removed after exit and open-file checks. The existing macOS sandbox/heartbeat
+diagnostics remain. These smoke checks use a dedicated page, not every Angular
+screen.
+
+## Angular 17 and Bootstrap 5.3 (2026-10-29)
+
+The next intermediate family is Angular 17.3.12, CLI/build tooling 17.3.17,
+CDK 17.3.10, TypeScript 5.4.5, and Zone.js 0.14.10. Related UI packages move
+to ng-bootstrap 16.0.0, ng-select 12.0.7, angular-fontawesome 0.14.1, and
+infinite-scroll 17.0.1. Bootstrap advances to 5.3.8 for ng-bootstrap 16's
+documented 5.3 family. Storybook remains at 7.6.24, whose Angular peer range
+includes 17 and 18. Node 26.13.0 remains the only runtime used; it is still
+outside Angular 17's official support matrix.
+
+Official CLI migrations rename development-server and extraction targets to
+`buildTarget`; Storybook retains its own `browserTarget` schema. The core
+migration escapes a literal template `@`, preserving the rendered text.
+Zone.js imports use the package's public entry points, including `zone.js/testing`.
+
+The first build and test compilation failed in Babel before assertions ran.
+A redundant nested helper-compilation-targets 7.29.7 resolved lru-cache 10.4.3
+instead of its declared 5.1.1 range. Its 17 package files exactly matched the
+root helper, whose own cache dependency was correct. Isolating that exact
+installed duplicate fixed a small browser-transform reproducer. A subsequent
+frozen-lockfile install with `--check-files` and the same reproducer passed.
+This is the second observed stale nested-package problem during incremental
+Yarn Classic migration; a clean locked dependency installation remains needed
+at the final supported-framework checkpoint to establish reproducibility.
+No global cache version override or compiler bypass was introduced.
+
+The full frontend suite exits 0 with 368 successes and one existing skip.
+All five bridge tests pass. The production build exits 0 with hash
+`98225fefaddd15da`, a 9.45 MB initial bundle, and unchanged source maps,
+optimization, and budgets. Browser checks pass for synthetic sign-in, empty
+Medical History and Labs, nested encounter creation dialogs, and selecting
+`2026-10-29` at a 390-pixel viewport with no horizontal overflow. Both dialogs
+dismiss normally. Ten observed API responses are 200; the only console error
+is the expected missing Wails runtime in the ordinary HTTP browser.
+The retained native ZIP still corresponds to Angular 16, as recorded above.
+Storybook's production build also exits 0 after generating Compodoc metadata;
+its asset-size and unused-TypeScript-file warnings remain. This verifies the
+build, not every story's interactions.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in
