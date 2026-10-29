@@ -1,6 +1,6 @@
 # Maintenance baseline
 
-This records independent checks on October 28, 2026, starting at main
+This records independent checks on October 28–29, 2026, starting at main
 `de7818a9174b24884ad55ce81ad21a5f3a2a6f8b`. GitHub remains the issue and PR
 ledger; this document describes reproduction and technical decisions, not a
 second backlog.
@@ -63,6 +63,8 @@ the default desktop data directory for smoke validation.
 | Legacy account migration | Replaying migration `20240212142126` on disposable data reproduced deletion of a password-bearing account named `admin`. The deletion now targets only the historical empty-password placeholder. Both SQLite module graphs preserve real account IDs, hashes, and roles while still removing the placeholder. Both PostgreSQL graphs preserve the real admin account and credentials; their integration suites passed in 25 seconds. Desktop encrypted-backend checks passed in 27 seconds within the unchanged 120-second limit. |
 | Full backend after account fixes | `go test -json -p 1 ./backend/... -count=1` exited 0: 14 tested packages, 265 test/subtest pass events, no test skips or failures. The database package took 252 seconds and handlers took 40 seconds. No timeout was changed; the earlier broad-run timeout remains unexplained. |
 | Initialization failures (October 29) | A disposable schema collision reproduced SQLite and PostgreSQL startup succeeding after final FHIR migration failed. The error now propagates. PostgreSQL also closes its pool after migration or job-recovery failure; tests verify zero remaining connections for each failed initialization. Both module graphs pass the regressions and existing PostgreSQL persistence checks. SQLite recovery preserves an unrelated synthetic patient. The full root database suite passed in 411 seconds under the unchanged ten-minute timeout; desktop encrypted-backend checks passed in 38 seconds under the unchanged 120-second limit. |
+| JWX v3 migration (October 29) | Red regressions reproduced custom-field injection and wrong-key-type panics on v2.0.11. They pass on v3.4.0 in both graphs, as do legacy key round trips and independently verified RS256 assertions. Module verification and full vet pass in both graphs. The full backend sweep exited 0: 14 tested packages, 274 test/subtest pass events, no test skips or failures. The database package took 600.404 seconds during high system load; no timeout was changed. Desktop host tests pass with existing linker warnings, and encrypted embedded-backend checks pass in 74 seconds under the unchanged 120-second limit. |
+| Vulnerability scans after JWX migration | govulncheck 1.9.0, database updated October 27: no JWX findings at any reported level in either graph. Root: three called advisories, all initialization-only CIRCL/WebP traces; nine advisories at imported-or-called level, 19 across all reported levels. Desktop: zero called, four imported, six across all levels. Imported/required Gin, Logrus, protobuf, x/crypto, x/net, and root OAuth2 findings still require review. JSON scan exit 0 is not a clean vulnerability result. |
 | Frontend production dependency audit | Yarn reported 97 affected dependency paths and 65 distinct advisories, including three critical paths involving `@babel/traverse` and `elliptic`. The command exited nonzero. These are dependency findings, not demonstrated application exploits. |
 
 The packaged desktop smoke checks cover the native binding, direct SMART rejection
@@ -150,6 +152,24 @@ configuration. All 56 regenerated files were compared against their previous
 contents: the only changes remove 123 hard-coded date type tags, preserving the
 search-runtime pooling and every other generated statement. This does not establish
 coverage of all PostgreSQL resource queries or migration of a production database.
+
+The JWX slice selects v3.4.0 in both module graphs. The old v2.1.7 Renovate
+target in #268 is insufficient: the upstream
+[v3.3.0 security release](https://github.com/lestrrat-go/jwx/releases/tag/v3.3.0)
+fixes GHSA-4cf7-xm37-g63h and identifies v2 as unmaintained. Before upgrading,
+synthetic tests reproduced JSON field-name injection and a panic when a public
+or symmetric JWK was deserialized as an RSA private key. The migration uses the
+v3 import/getter/algorithm APIs and returns an error for the wrong key type.
+Existing serialized RSA fixtures still round trip. Dynamic-client assertions
+retain RS256, key IDs, issuer/subject/audience, UUID IDs, and a two-minute expiry;
+an independent JWT implementation verifies them and rejects altered claims or
+the wrong key. No provider connection or real credential is used by these tests.
+
+Required JWX family changes include blackmagic 1.0.4, dsig 1.4.0, httprc/v3
+3.0.6, option/v2 2.0.0, secp256k1/v4 4.4.1, go-json 0.11.2, asm 1.2.1,
+fastjson 1.6.10, and Testify 1.12.1 with go.yaml.in/yaml/v3 3.0.5. Three
+obsolete v2 helper requirements were removed after checking both module graphs.
+The Go minimum, SQLCipher, Wails, OAuth2, and provider replacements are unchanged.
 
 ## Dependency migration order
 

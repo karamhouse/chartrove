@@ -6,17 +6,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/lestrrat-go/jwx/v2/jwk"
+	"github.com/lestrrat-go/jwx/v3/jwk"
 )
 
-//see https://github.com/lestrrat-go/jwx/blob/v2/docs/04-jwk.md#working-with-key-specific-methods
+// see https://github.com/lestrrat-go/jwx/blob/v3.4.0/docs/04-jwk.md
 func JWKGenerate() (jwk.RSAPrivateKey, error) {
 	raw, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate RSA private key: %s\n", err)
 	}
 
-	key, err := jwk.FromRaw(raw)
+	key, err := jwk.Import(raw)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create jwk.Key from RSA private key: %s\n", err)
 	}
@@ -25,7 +25,9 @@ func JWKGenerate() (jwk.RSAPrivateKey, error) {
 	if !ok {
 		return nil, fmt.Errorf("failed to convert jwk.Key into jwk.RSAPrivateKey (was %T)\n", key)
 	}
-	rsakey.Set("kid", uuid.New().String())
+	if err := rsakey.Set("kid", uuid.New().String()); err != nil {
+		return nil, fmt.Errorf("failed to set generated key ID: %w", err)
+	}
 
 	//_ = rsakey.D()
 	//_ = rsakey.DP()
@@ -50,8 +52,8 @@ func JWKSerialize(privateKey jwk.RSAPrivateKey) (map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	if privateKey.KeyID() != "" {
-		dict["kid"] = privateKey.KeyID()
+	if keyID, present := privateKey.KeyID(); present && keyID != "" {
+		dict["kid"] = keyID
 	}
 
 	return dict, err
@@ -66,5 +68,9 @@ func JWKDeserialize(privateKeyDict map[string]string) (jwk.RSAPrivateKey, error)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create jwk.Key from RSA private key: %s\n", err)
 	}
-	return key.(jwk.RSAPrivateKey), nil
+	privateKey, ok := key.(jwk.RSAPrivateKey)
+	if !ok {
+		return nil, fmt.Errorf("expected RSA private JWK, got %T", key)
+	}
+	return privateKey, nil
 }

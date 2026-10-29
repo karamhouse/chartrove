@@ -1,7 +1,7 @@
 package jwk
 
 import (
-	"github.com/lestrrat-go/jwx/v2/jwa"
+	"github.com/lestrrat-go/jwx/v3/jwa"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -20,7 +20,9 @@ func TestJWKSerialize(t *testing.T) {
 	}
 
 	//assert
-	require.NotEmpty(t, keypair.KeyID())
+	keyID, present := keypair.KeyID()
+	require.True(t, present)
+	require.NotEmpty(t, keyID)
 	require.ElementsMatch(t, []string{"d", "dp", "dq", "e", "kty", "n", "p", "q", "qi", "kid"}, keys)
 	require.Equal(t, "RSA", dict["kty"])
 }
@@ -48,9 +50,10 @@ func TestJWKDeserialize(t *testing.T) {
 	require.NoError(t, err)
 
 	//assert
-	require.NotEmpty(t, keypair.KeyID())
-	require.Equal(t, keypair.KeyID(), "cc34c0a0-bd5a-4a3c-a50d-a2a7db7643df")
-	require.Equal(t, keypair.KeyType(), jwa.KeyType("RSA"))
+	keyID, present := keypair.KeyID()
+	require.True(t, present)
+	require.Equal(t, "cc34c0a0-bd5a-4a3c-a50d-a2a7db7643df", keyID)
+	require.Equal(t, jwa.RSA(), keypair.KeyType())
 
 	require.Equal(t, keypairDict, serialized)
 
