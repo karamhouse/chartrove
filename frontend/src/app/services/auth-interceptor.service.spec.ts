@@ -1,4 +1,4 @@
-import {HttpHandler, HttpRequest, HttpResponse} from '@angular/common/http';
+import { HttpHandler, HttpRequest, HttpResponse } from '@angular/common/http';
 import {Router} from '@angular/router';
 import {of} from 'rxjs';
 import {AuthInterceptorService} from './auth-interceptor.service';

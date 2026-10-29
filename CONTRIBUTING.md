@@ -6,7 +6,7 @@ Chartrove is an independent fork of [Fasten Onprem](https://github.com/fastenhea
 
 - Go 1.26 or newer; root and desktop modules retain separate dependency graphs.
 - Node 26.13.0, pinned in `mise.toml`, with the committed Yarn 1.22.22 configuration.
-- Angular 17.x through the local, locked CLI (currently core 17.3.12, CLI 17.3.17, CDK 17.3.10, and TypeScript 5.4.5).
+- Angular 18.x through the local, locked CLI (currently core 18.2.14, CLI 18.2.21, CDK 18.2.14, and TypeScript 5.5.4).
 - macOS with Xcode Command Line Tools for native desktop builds.
 
 Install only the locked frontend dependencies when needed:
@@ -19,7 +19,7 @@ cd ..
 
 Node 26 does not bundle Corepack. The command above invokes a pinned Corepack through npm and preserves the committed Yarn selection. Use `npm exec --yes --package=corepack@0.35.0 -- corepack yarn exec ng <command>` for the local CLI without a global Yarn or Angular CLI installation. The Angular workspace explicitly selects Yarn.
 
-The Angular 14-to-22 migration is in progress. Angular 17 reports Node 26 as unsupported; Angular 22 is the first release family in the current official matrix supporting Node 26. Run migration steps on Node 26 and report concrete failures; do not reinstall retired Node runtimes as a workaround. Keep TypeScript within the selected Angular compiler's supported range. See [the maintenance baseline](docs/MAINTENANCE_BASELINE.md) for current validation limits and the migration sequence.
+The Angular 14-to-22 migration is in progress. Node 26 remains outside Angular 18's official support matrix; Angular 22 is the first release family in the current official matrix supporting Node 26. Run migration steps on Node 26 and report concrete failures; do not reinstall retired Node runtimes as a workaround. Keep TypeScript within the selected Angular compiler's supported range. See [the maintenance baseline](docs/MAINTENANCE_BASELINE.md) for current validation limits and the migration sequence.
 
 ## Repository layout
 

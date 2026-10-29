@@ -676,6 +676,43 @@ Storybook's production build also exits 0 after generating Compodoc metadata;
 its asset-size and unused-TypeScript-file warnings remain. This verifies the
 build, not every story's interactions.
 
+## Angular 18 and HTTP provider migration (2026-10-29)
+
+Advance to Angular/CDK 18.2.14, CLI/build tooling 18.2.21, TypeScript 5.5.4,
+ng-bootstrap 17.0.1, ng-select 13.9.1, angular-fontawesome 0.15.0, and
+infinite-scroll 18.0.0. Zone.js remains 0.14.10. The optional application-builder
+migration is deferred so this checkpoint retains the existing desktop asset
+layout and webpack configuration. Node 26.13.0 remains in use, still outside
+Angular 18's official support matrix.
+
+The official HTTP migration replaces module-based registration with
+`provideHttpClient(withInterceptorsFromDi())` and the matching testing provider.
+Seven new tests import the actual AppModule and verify both HTTP-client tokens:
+local API requests receive the synthetic authorization token, unrelated origins
+do not, API 401/403 responses end the session and redirect, and a 500 remains
+an error without logging out. These tests exercise the registered interceptor
+chain rather than constructing the interceptor directly.
+
+Test compilation initially exposed six remaining imports of Angular's removed
+`async` helper. Replace those with `waitForAsync`, leaving JavaScript async
+functions intact. An editing-tool scope error briefly changed additional files;
+all 275 accidental replacements were reversed before the targeted repair.
+Git verified that backend, desktop, Go modules, bridge tests, and `healthit.yaml`
+had no remaining changes, and both build and full tests were rerun afterward.
+
+The final frontend suite exits 0 with 375 successes and one existing skip.
+All five bridge tests pass. The production build exits 0 with hash
+`4d92d8d86bcc397d` and a reported 9.91 MB initial bundle under unchanged budgets.
+Angular 18 reports decimal units, so this figure is not directly comparable
+with the preceding CLI's size display. Browser checks pass for synthetic
+sign-in, empty reports, nested encounter dialogs, mobile date selection, and
+dialog dismissal; 24 observed authenticated API responses are 200. The mobile
+viewport has no horizontal overflow. A browser accessibility warning about
+focus retained inside an aria-hidden nested modal remains to investigate.
+The expected missing Wails module error occurs only in this ordinary HTTP
+browser check. Native packaging and Storybook were last verified on Angular 16
+and 17 respectively; neither is represented as validated on Angular 18 yet.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in
