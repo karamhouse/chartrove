@@ -11,7 +11,7 @@
               [disabled]="!!controller || importing || disconnecting || !!patient" (change)="selectedProviderID = providerPicker.value">
         <option *ngFor="let provider of providers" [value]="provider.id">{{provider.display}}</option>
       </select>
-      <button type="button" class="btn btn-primary mr-2" data-testid="direct-smart-connect"
+      <button type="button" class="btn btn-primary me-2" data-testid="direct-smart-connect"
               [disabled]="!!controller || importing || disconnecting || !!patient" (click)="connect()">{{disconnecting ? 'Disconnecting…' : controller ? 'Connecting…' : 'Connect in browser'}}</button>
       <button *ngIf="controller" type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancel direct connection</button>
     </div>
@@ -26,12 +26,12 @@
         <dt>Gender</dt><dd>{{gender}}</dd>
       </dl>
       <p>This preview has not been saved. Importing creates a local snapshot associated with this provider.</p>
-      <button type="button" class="btn btn-success mr-2" data-testid="direct-smart-import" [disabled]="importing" (click)="importPatient()">{{importing ? 'Importing…' : 'Import Patient'}}</button>
+      <button type="button" class="btn btn-success me-2" data-testid="direct-smart-import" [disabled]="importing" (click)="importPatient()">{{importing ? 'Importing…' : 'Import Patient'}}</button>
       <button type="button" class="btn btn-outline-secondary" [disabled]="importing" (click)="disconnect()">Discard preview and disconnect</button>
     </div>
     <p *ngIf="status" role="status" aria-live="polite">{{status}}</p>
     <p *ngIf="error" class="alert alert-danger" role="alert">{{error}}</p>
     <button *ngIf="error && !providers.length && !loading" class="btn btn-outline-secondary" type="button" (click)="loadProviders()">Retry loading providers</button>
-    <a *ngIf="importedSource" class="btn btn-link pl-0" [routerLink]="['/explore', importedSource.id]">View imported Patient</a>
+    <a *ngIf="importedSource" class="btn btn-link ps-0" [routerLink]="['/explore', importedSource.id]">View imported Patient</a>
   </div>
 </section>

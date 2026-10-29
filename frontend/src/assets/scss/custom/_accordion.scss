@@ -7,7 +7,7 @@
     position: relative;
     @include transition($transition-base);
 
-    @include hover-focus() {
+    &:hover, &:focus {
       cursor: pointer;
       background-color: darken($gray-100, 1%);
       border-color: darken($az-border-base, 10%);

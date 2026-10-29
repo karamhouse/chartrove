@@ -34,7 +34,7 @@
                         </td>
                         <td>{{backgroundJob.job_type}}</td>
                         <td container="body" [ngbTooltip]="backgroundJob.created_at | amDateFormat:'YYYY-MM-DD HH:mm'">{{backgroundJob.created_at | amDateFormat:'LL'}}</td>
-                        <td><label class="badge badge-pill" [ngClass]="{
+                        <td><label class="badge rounded-pill" [ngClass]="{
                                       'badge-secondary': backgroundJob.job_status == 'STATUS_READY',
                                      'badge-success': backgroundJob.job_status == 'STATUS_DONE',
                                      'badge-warning': backgroundJob.job_status == 'STATUS_LOCKED',
@@ -71,7 +71,7 @@
   <div class="modal-body">
     <div class="row">
       <div class="col-6"><strong>Status</strong></div>
-      <div class="col-6"><label class="badge badge-pill" [ngClass]="{
+      <div class="col-6"><label class="badge rounded-pill" [ngClass]="{
                                       'badge-secondary': selectedBackgroundJob.job_status == 'STATUS_READY',
                                      'badge-success': selectedBackgroundJob.job_status == 'STATUS_DONE',
                                      'badge-warning': selectedBackgroundJob.job_status == 'STATUS_LOCKED',

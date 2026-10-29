@@ -39,7 +39,7 @@
       background-size: 65%;
       background-repeat: no-repeat;
       background-position: 55% 45%;
-      background-color: theme-color('primary');
+      background-color: map-get($theme-colors, 'primary');
       line-height: 17px;
       display: none;
     }
@@ -122,7 +122,7 @@
     &:checked {
       + span:before {
         border-color: transparent;
-        background-color: theme-color('primary');
+        background-color: map-get($theme-colors, 'primary');
       }
       + span:after { display: block; }
     }

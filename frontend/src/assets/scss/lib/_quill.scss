@@ -134,7 +134,7 @@
 
       .ql-stroke { stroke-width: 2px; }
 
-      @include hover-focus() {
+      &:hover, &:focus {
         border-color: $gray-400;
         color: lighten($body-color, 15%);
 
@@ -169,7 +169,7 @@
 
     &:not(.ql-color-picker):not(.ql-icon-picker) svg { right: 3px; }
 
-    @include hover-focus() {
+    &:hover, &:focus {
       .ql-picker-label {
         color: $gray-900;
         .ql-stroke { stroke: $body-color; }

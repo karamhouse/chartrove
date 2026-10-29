@@ -113,7 +113,7 @@ select > optgroup > .divider {
         color: $gray-600;
         border: 1px solid $gray-300;
 
-        @include hover-focus() {
+        &:hover, &:focus {
           background-color: $gray-100;
           border-color: $gray-300;
         }

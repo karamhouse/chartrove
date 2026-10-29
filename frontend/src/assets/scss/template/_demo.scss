@@ -199,7 +199,7 @@
       font-size: 24px;
       color: rgba(#fff, .5);
 
-      @include hover-focus() { color: #fff; }
+      &:hover, &:focus { color: #fff; }
 
       + a { margin-left: 8px; }
     }
@@ -271,7 +271,7 @@
 
     figure {
       margin-bottom: 0;
-      @include hover-focus() {
+      &:hover, &:focus {
         img { transform: scale(1.75,1.75); }
         figcaption { opacity: 1; }
       }
@@ -348,7 +348,7 @@
 
   a {
     color: rgba(#fff, .5);
-    @include hover-focus() { color: #fff; }
+    &:hover, &:focus { color: #fff; }
   }
 }
 
@@ -570,7 +570,7 @@
 
       + .nav-link { margin-top: 5px; }
 
-      @include hover() { color: $az-color-primary; }
+      &:hover { color: $az-color-primary; }
 
       &.active {
         color: $az-color-primary;
@@ -594,7 +594,7 @@
     a {
       color: $az-color-headline;
       @include transition($transition-base);
-      @include hover() { color: $gray-500; }
+      &:hover { color: $gray-500; }
     }
 
     &.active { color: $blue; }

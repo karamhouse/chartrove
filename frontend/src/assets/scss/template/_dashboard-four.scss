@@ -560,7 +560,7 @@
       font-weight: 500;
       font-size: 11px;
 
-      @include hover-focus() { color: $gray-700; }
+      &:hover, &:focus { color: $gray-700; }
     }
   }
 }

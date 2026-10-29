@@ -172,7 +172,7 @@ ng-fullcalendar {
       text-shadow: none;
       @include border-radius(0);
 
-      @include hover-focus() {
+      &:hover, &:focus {
         background-color: $gray-200;
       }
 

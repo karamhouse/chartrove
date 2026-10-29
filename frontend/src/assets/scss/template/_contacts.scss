@@ -82,7 +82,7 @@
     }
   }
 
-  @include hover-focus() {
+  &:hover, &:focus {
     background-color: $gray-100;
     border-top-color: $gray-200;
     border-bottom-color: $gray-200;
@@ -118,7 +118,7 @@
   font-size: 16px;
   color: $gray-500;
 
-  @include hover-focus() { color: $gray-600; }
+  &:hover, &:focus { color: $gray-600; }
 
   &.active { color: $yellow }
 }
@@ -179,7 +179,7 @@
       box-shadow: 0 0 0 2px #fff;
       @include border-radius(100%);
 
-      @include hover-focus() { background-color: $az-color-secondary; }
+      &:hover, &:focus { background-color: $az-color-secondary; }
     }
   }
 
@@ -226,7 +226,7 @@
         }
       }
 
-      @include hover-focus() {
+      &:hover, &:focus {
         color: $az-color-secondary;
       }
 
@@ -254,7 +254,7 @@
     color: $gray-600;
     font-size: 12px;
 
-    @include hover-focus() { color: $az-color-secondary; }
+    &:hover, &:focus { color: $az-color-secondary; }
 
     i {
       font-size: 21px;

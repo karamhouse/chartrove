@@ -58,11 +58,11 @@
 
 
 // Border colors
-.bd-primary { border-color: theme-color('primary'); }
-.bd-success { border-color: theme-color('success'); }
-.bd-warning { border-color: theme-color('warning'); }
-.bd-danger { border-color: theme-color('danger'); }
-.bd-info { border-color: theme-color('info'); }
+.bd-primary { border-color: map-get($theme-colors, 'primary'); }
+.bd-success { border-color: map-get($theme-colors, 'success'); }
+.bd-warning { border-color: map-get($theme-colors, 'warning'); }
+.bd-danger { border-color: map-get($theme-colors, 'danger'); }
+.bd-info { border-color: map-get($theme-colors, 'info'); }
 .bd-white { border-color: #fff; }
 
 // Gray border color

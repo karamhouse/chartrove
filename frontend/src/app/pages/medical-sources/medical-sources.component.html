@@ -6,9 +6,7 @@
       </div>
 
       <div class="alert alert-info" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
+        <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
         <strong>Work-in-Progress!</strong> Some sources may not be implemented correctly.
         Some sources may require frequent re-connection, as background refresh has not been implemented yet.
         <br/>
@@ -31,11 +29,11 @@
 
       <section *ngIf="environment_name.startsWith('desktop')" class="card mb-4" aria-labelledby="epic-sandbox-title">
         <div class="card-body">
-          <h3 id="epic-sandbox-title" class="h5">Epic sandbox <span class="badge badge-info">Synthetic test data only</span></h3>
+          <h3 id="epic-sandbox-title" class="h5">Epic sandbox <span class="badge text-bg-info">Synthetic test data only</span></h3>
           <p>Connect with Epic’s published test account to retrieve one synthetic Patient, then import it into this app.</p>
           <p class="text-muted">This separate sandbox uses Fasten’s test registration. It does not enable production access or automatic sync.</p>
           <p><a href="https://fhir.epic.com/Documentation#patientlist" externalLink>Epic sandbox test account instructions</a></p>
-          <button type="button" class="btn btn-primary mr-2" data-testid="connect-epic-sandbox"
+          <button type="button" class="btn btn-primary me-2" data-testid="connect-epic-sandbox"
                   [disabled]="!!sandboxController || sandboxImporting" (click)="connectEpicSandbox()">
             {{sandboxController ? 'Connecting…' : 'Connect Epic sandbox'}}
           </button>
@@ -44,7 +42,7 @@
                   (click)="importEpicSandboxPatient()">{{sandboxImporting ? 'Importing…' : 'Import synthetic Patient'}}</button>
           <p *ngIf="sandboxStatus" class="mt-3 mb-0" role="status" aria-live="polite">{{sandboxStatus}}</p>
           <p *ngIf="sandboxError" class="alert alert-danger mt-3 mb-0" role="alert">{{sandboxError}}</p>
-          <a *ngIf="sandboxImportedSource" class="btn btn-link pl-0" [routerLink]="['/explore', sandboxImportedSource.id]">View imported Patient</a>
+          <a *ngIf="sandboxImportedSource" class="btn btn-link ps-0" [routerLink]="['/explore', sandboxImportedSource.id]">View imported Patient</a>
         </div>
       </section>
 
@@ -109,7 +107,7 @@
               <span *ngIf="status[endpoint.id] == 'authorize'" class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
               {{portal.name}}
             </h5>
-            <span class="badge badge-primary badge-pill">{{endpoint.platform_type}}</span>
+            <span class="badge text-bg-primary rounded-pill">{{endpoint.platform_type}}</span>
           </div>
           <p class="mb-1">{{portal.description}}</p>
           <small>{{portal.portal_website | shortDomain}}</small>

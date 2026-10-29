@@ -441,6 +441,40 @@ renders without the earlier count exception. Only the expected missing native
 Wails module diagnostic remains in this ordinary-browser flow. This does not
 establish native packaging or all record persistence paths for the new frontend.
 
+## Bootstrap 5 and Angular 14 widget peers (2026-10-29)
+
+ng-bootstrap 13.1.1, Bootstrap 5.2.3, Popper 2.11.8, and RxJS 6.6.7 now
+replace the incompatible Angular 12 widget peers and RxJS 6.5 baseline. This
+advances the related work represented by
+[#294](https://github.com/karamhouse/chartrove/pull/294),
+[#298](https://github.com/karamhouse/chartrove/pull/298), and
+[#250](https://github.com/karamhouse/chartrove/pull/250) through compatible
+intermediate versions; it does not adopt the ng-bootstrap 21 destination yet.
+Templates use Bootstrap 5 spacing, badges, close buttons, and input groups.
+Theme Sass no longer calls removed Bootstrap 4 hover/theme helpers, and six
+invalid `:hover-focus()` selectors are corrected.
+
+On Node 26.13.0, dependency installation exits 0 without forcing peer or engine
+checks. Karma exits 0 with 347 successful tests and one skip. The final
+`desktop_prod` build exits 0 with hash `8944fc02ed10b108`, a 9.52 MB initial
+bundle, unchanged budgets, and no former invalid-selector warnings. Existing
+CommonJS, size, legacy test-fixture, and developer-tool peer warnings remain.
+
+Playwright exercised synthetic sign-in, the record wizard, nested encounter
+creation dialog, datepicker selection, dismissal, navigation, dark mode, and
+the profile menu. Both 1200x900 and 390x844 views were inspected. Browser
+testing caught a theme stacking rule that placed dialogs behind the new
+backdrop; removing the two inherited z-index overrides restores normal clicks
+using Bootstrap's stacking rules. The final replay used rebuilt assets with
+no injected CSS or forced clicks. Both dialogs detach after dismissal.
+
+The browser still reports a nested-dialog focus/aria-hidden warning and the
+expected absent Wails runtime when desktop assets run over HTTP. Empty-account
+navigation additionally exposes a Medical History request with no resource
+IDs (400) and a Labs request with an empty code filter (500). These are concrete
+follow-ups, not passing behavior. This check does not establish record saving,
+all charts/imports, accessibility conformance, or native-host behavior.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in
@@ -460,9 +494,11 @@ establish native packaging or all record persistence paths for the new frontend.
    SQLCipher replacement by updating its original module version alone.
 5. Align Angular core/compiler/CLI/CDK and UI peers within the current major,
    then migrate one major at a time. Angular 14.2's TypeScript ceiling is below
-   4.9, so the standalone TypeScript 4.9 PR is ineligible. Select Node from each
-   destination's supported range and verify forms, charts, imports, and native
-   bridge behavior at every step. Follow the official
+   4.9, so the standalone TypeScript 4.9 PR is ineligible. Keep the explicitly
+   requested Node 26.13.0 runtime through sequential source migrations toward
+   Angular 22, the first version with documented Node 26 support. Report
+   intermediate compatibility failures without reinstalling retired runtimes.
+   Verify forms, charts, imports, and native bridge behavior at each step. Follow the official
    [version matrix](https://angular.dev/reference/versions) and
    [sequential update policy](https://angular.dev/reference/releases).
 6. Handle independent library majors and developer tooling after framework

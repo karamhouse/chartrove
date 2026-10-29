@@ -16,24 +16,24 @@ export class BadgeComponent implements OnInit {
   getBadgeStatusColor(status): string {
     let lookup = {
       // condition
-      active: 'badge-primary',
+      active: 'text-bg-primary',
       recurrence: '',
-      relapse: 'badge-info',
-      inactive: 'badge-secondary',
-      remission: 'badge-info',
-      resolved: 'badge-primary',
+      relapse: 'text-bg-info',
+      inactive: 'text-bg-secondary',
+      remission: 'text-bg-info',
+      resolved: 'text-bg-primary',
       // immunization
-      'in-progress': 'badge-warning',
-      'on-hold': 'badge-secondary',
-      completed: 'badge-success',
-      'entered-in-error': 'badge-error',
-      stopped: 'badge-secondary',
-      'not-done': 'badge-warning',
+      'in-progress': 'text-bg-warning',
+      'on-hold': 'text-bg-secondary',
+      completed: 'text-bg-success',
+      'entered-in-error': 'text-bg-danger',
+      stopped: 'text-bg-secondary',
+      'not-done': 'text-bg-warning',
       // procedure
-      preparation: 'badge-primary',
+      preparation: 'text-bg-primary',
       suspended: '',
       aborted: '',
-      unknown: 'badge-secondary',
+      unknown: 'text-bg-secondary',
       // practitioner
       // allergy intolerance
       unconfirmed: '',
@@ -111,7 +111,7 @@ export class BadgeComponent implements OnInit {
       'temporarily-closed-to-accrual-and-intervention': '',
       withdrawn: '',
     };
-    return lookup[status] || 'badge-secondary'
+    return lookup[status] || 'text-bg-secondary'
   }
 
 }

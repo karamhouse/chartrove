@@ -79,7 +79,7 @@
 
     @include media-breakpoint-up(lg) { display: block; }
 
-    @include hover-focus() { color: $gray-900; }
+    &:hover, &:focus { color: $gray-900; }
 
     i { @include media-breakpoint-up(lg) { display: none; } }
   }

@@ -37,19 +37,19 @@
           margin-right: 4px;
         }
         &:nth-child(5n+1) {
-          background: theme-color(primary);
+          background: map-get($theme-colors, primary);
         }
         &:nth-child(5n+2) {
-          background: theme-color(success);
+          background: map-get($theme-colors, success);
         }
         &:nth-child(5n+3) {
-          background: theme-color(info);
+          background: map-get($theme-colors, info);
         }
         &:nth-child(5n+4) {
-          background: theme-color(danger);
+          background: map-get($theme-colors, danger);
         }
         &:nth-child(5n+5) {
-          background: theme-color(warning);
+          background: map-get($theme-colors, warning);
         }
       }
     }
@@ -57,9 +57,9 @@
 }
 
 // Alert State
-.has-success .select2-container--default .select2-selection--single { border-color: theme-color('success'); }
-.has-warning .select2-container--default .select2-selection--single { border-color: theme-color('warning'); }
-.has-danger .select2-container--default .select2-selection--single { border-color: theme-color('danger'); }
+.has-success .select2-container--default .select2-selection--single { border-color: map-get($theme-colors, 'success'); }
+.has-warning .select2-container--default .select2-selection--single { border-color: map-get($theme-colors, 'warning'); }
+.has-danger .select2-container--default .select2-selection--single { border-color: map-get($theme-colors, 'danger'); }
 
 
 // Size

@@ -26,7 +26,7 @@
     @include border-radius();
     @include transition($transition-base);
 
-    @include hover-focus() {
+    &:hover, &:focus {
       color: #fff;
       background-color: rgba(#fff, .1);
     }
@@ -39,7 +39,7 @@
 
   .az-iconbar-help {
     color: rgba(#fff, .5);
-    @include hover-focus() { color: #fff; }
+    &:hover, &:focus { color: #fff; }
   }
 }
 
@@ -69,7 +69,7 @@
     .nav-sub-item + .nav-sub-item { border-top-color: $gray-300; }
 
     .nav-link {
-      @include hover-focus() { color: $blue; }
+      &:hover, &:focus { color: $blue; }
       &.active { color: $blue; }
     }
   }

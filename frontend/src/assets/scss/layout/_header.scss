@@ -78,7 +78,7 @@
     transition: color 0.2s ease-in-out;
   }
 
-  @include hover-focus() {
+  &:hover, &:focus {
     .theme-icon {
       color: $az-color-primary;
     }
@@ -108,7 +108,7 @@
   position: relative;
   top: -2px;
 
-  @include hover-focus() { color: $az-color-primary; }
+  &:hover, &:focus { color: $az-color-primary; }
 
   i {
     display: block;
@@ -255,7 +255,7 @@
         font-size: $font-size-base;
       }
 
-      @include hover() {
+      &:hover {
         color: $az-color-primary;
         i { color: $az-color-primary; }
       }
@@ -376,7 +376,7 @@
       border-top: 1px dotted $gray-200;
     }
 
-    @include hover-focus() { color: $az-color-primary; }
+    &:hover, &:focus { color: $az-color-primary; }
 
     &.active {
       color: $az-color-primary;
@@ -499,7 +499,7 @@
     font-size: 16px;
     padding-right: 13px;
 
-    @include hover-focus() { color: $gray-900; }
+    &:hover, &:focus { color: $gray-900; }
   }
 }
 
@@ -516,7 +516,7 @@
     @include border-radius();
     @include transition($transition-base);
 
-    @include hover-focus() {
+    &:hover, &:focus {
       color: $gray-700;
     }
 
@@ -542,7 +542,7 @@
     @include transition($transition-base);
     margin-left: 20px;
 
-    @include hover-focus() { background-color: darken($indigo, 5%); }
+    &:hover, &:focus { background-color: darken($indigo, 5%); }
   }
 }
 
@@ -561,7 +561,7 @@
 
   i { line-height: 0; }
 
-  @include hover-focus() { color: $gray-700; }
+  &:hover, &:focus { color: $gray-700; }
 }
 
 .az-header-message,
@@ -689,7 +689,7 @@
 
     &.new { color: $gray-900; }
 
-    @include hover-focus() {
+    &:hover, &:focus {
       cursor: pointer;
       z-index: 1;
 
@@ -807,7 +807,7 @@
       &.typcn { line-height: .9; }
     }
 
-    @include hover-focus() {
+    &:hover, &:focus {
       background-color: transparent;
       color: $az-color-primary;
     }

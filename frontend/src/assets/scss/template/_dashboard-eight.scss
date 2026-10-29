@@ -27,7 +27,7 @@ $dash-eight-primary:          darken($blue, 5%);
 
     .btn {
       font-size: 14px;
-      @include hover-focus() { color: #fff; }
+      &:hover, &:focus { color: #fff; }
     }
   }
 
@@ -136,7 +136,7 @@ $dash-eight-primary:          darken($blue, 5%);
   }
 
   .nav-sub-link {
-    @include hover() { color: $blue; }
+    &:hover { color: $blue; }
   }
 
   .nav-sub-mega {
