@@ -2494,10 +2494,12 @@
     read-package-json-fast "^2.0.3"
     which "^2.0.2"
 
-"@panva/oauth4webapi@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.npmjs.org/@panva/oauth4webapi/-/oauth4webapi-1.2.0.tgz#f0bce0da0953dd8f8c091af77d559fddf44f1b0f"
-  integrity sha512-OmwAE3fzlSJsA0zzCWA/ob7Nwb7nwzku8vbAjgmnkkVYbpyokBsaVrrzog9cM0RMytXexpNNcbQbMF/UNa71mg==
+"@panva/oauth4webapi@1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@panva/oauth4webapi/-/oauth4webapi-1.2.1.tgz#dc271692353bdd4023051d5a8bfe56cb9cb27174"
+  integrity sha512-cIqO3PZO2fqWWWe/7NG7dzEcMq1xZDOjWWVlH7l8xCk+j7bAHlpVoVAKUCRNnqSH1hG2E7TQZqcB9WqmC9mwJQ==
+  dependencies:
+    oauth4webapi "^1.2.1"
 
 "@peculiar/asn1-schema@^2.1.6":
   version "2.3.3"
@@ -9509,6 +9511,11 @@ oauth-sign@~0.9.0:
   version "0.9.0"
   resolved "https://registry.npmjs.org/oauth-sign/-/oauth-sign-0.9.0.tgz#47a7b016baa68b5fa0ecf3dee08a85c679ac6455"
   integrity sha512-fexhUFFPTGV8ybAtSIGbV6gOkSv8UtRbDBnAyLQw4QPKkgNlsH2ByPGtMUqdWkos6YCRmAqViwgZrJc/mRDzZQ==
+
+oauth4webapi@^1.2.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/oauth4webapi/-/oauth4webapi-1.4.1.tgz#ca3804850bad324dea44cd2d348df7c2ba0721cf"
+  integrity sha512-OjdXyMSoNpMUP9/2TsYQZEuUkKTUboi1tmDSkVP4Awx46K0V75oRLa1OmdQHVpbl8ejwfFt1s5tQiHOYKBgJ9g==
 
 object-assign@^4, object-assign@^4.0.1, object-assign@^4.1.1, object-assign@latest:
   version "4.1.1"
