@@ -906,6 +906,41 @@ unsaved wizard. No new console/page errors occur during this form flow and no
 record is saved. The edit dialog has regression coverage; a full persisted-record
 edit flow is not claimed.
 
+### Node 26 build entry points and final native package (2026-10-29)
+
+Pin the Docker frontend stage, devcontainer and disabled Node workflow steps to
+26.13.0. Use the local Angular CLI and pinned Corepack/Yarn install path, retain
+optional platform dependencies, and replace the HTTP registry setting with HTTPS.
+Remove the obsolete global Angular 14 devcontainer feature. `.envrc` no longer
+automatically enters the historical Nix flake; the shell's Mise activation owns
+runtime selection. JSONC/YAML parse checks, shell syntax and Make command expansion
+pass. The restarted TypeScript server family runs under Mise Node 26.13.0.
+
+The Linux arm64 Docker frontend stage passes a fresh frozen install with engine
+checks enabled and an optimized production build, exiting 0. Its running image
+reports Node 26.13.0, Angular 22.2.4 and TypeScript 6.0.3. A follow-up BuildKit
+invocation unexpectedly misses the dependency cache and is stopped. Reuse the
+verified image with networking disabled and only the final tracked source mounted
+read-only: the final-source production compile exits 0 with hash
+`0eb03dc0dce3aa77`, without installing dependencies again.
+
+This validates the frontend container stage only. The inherited backend image,
+devcontainer Go and cloud workflow still pin Go 1.21 and need separate alignment
+and validation. The inherited publishing workflows also still need review.
+GitHub Actions remain disabled, verified through the repository permissions API;
+no workflow, issue or PR is published, enabled, closed or merged by these changes.
+
+Build the macOS package from source commit `6d53079b9` and the validated Angular
+bundle `97242fb40192fd4c` (9,920,898 initial webpack asset bytes). The retained
+artifact is `dist/Chartrove.zip`, SHA-256
+`e5001df397e63baf4aca4fbe989657b356a1351a9802d351a00ec92205026a5f`.
+ZIP integrity, strict ad-hoc signature verification, and all ten native smoke
+checks pass; build and smoke processes exit 0. The native smoke harness exercises
+the real WebView/Go bridge, account API, URL and callback isolation using a fresh
+disposable database. It uses its dedicated smoke page; the Angular form checks
+above were browser checks, not a full native Angular UI walkthrough. This is a
+local test package, not a notarized or published release.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in
