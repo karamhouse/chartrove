@@ -303,6 +303,38 @@ was regenerated: it now records the JPEG byte prefix/size and its actual height.
 Root handler tests and desktop encrypted-backend tests also pass (10.956 seconds
 for the latter, unchanged 120-second limit). No real patient data was used.
 
+The OAuth2 slice selects 0.37.0 in both graphs, changing only that module and its
+checksums. The Go minimum and provider replacement are unchanged. The server
+previously selected 0.11.0; the desktop selected 0.35.0. The difference from
+0.35.0 is the Go minimum plus a Google-specific endpoint correction; neither
+production graph imports the Google subpackage. GO-2025-3488 affects the JWS
+parser before 0.27.0; that subpackage is also absent from both production graphs.
+
+Four synthetic compatibility cases exercise the real provider factory and real
+application credential setters against a local TLS server, without enabling the
+library's refresh-bypassing test mode. They cover valid-token reuse, rotation
+with a changed access token, preservation of an omitted refresh token, and a
+rejected grant leaving stored credentials unchanged. The tests also fetch a
+synthetic FHIR Patient with the expected bearer token. Remote discovery is
+replaced by an explicit local definition. All cases pass on the old root version
+and on 0.37.0 in both graphs. They do not establish live provider interoperability
+or same-access-token rotation behavior. Upstream OAuth2 and JWS tests pass.
+
+The full combined backend sweep exits 0 with 14 tested packages and 296
+test/subtest pass events, no test skips or failures, and the database package
+finishing in 134.539 seconds under its unchanged timeout. Desktop host, model,
+and encrypted-backend tests pass (10.164 seconds for the latter, unchanged
+120-second limit). Both module graphs verify and full vet passes in each.
+
+Fresh full `govulncheck -json ./...` scans after the combined updates include
+110 root modules across 30 package roots and 109 desktop modules across seven
+package roots. Both report zero called or imported advisories and exactly one
+module-only finding, GO-2026-5932 for deprecated x/crypto OpenPGP. The scans
+explicitly identify Gin 1.12.0, CIRCL 1.6.5, x/image 0.47.0, and OAuth2 0.37.0.
+The absence of package/call traces agrees with the separate production import
+inventory. This does not establish whole-application security: frontend
+advisories, legacy integration behavior, and unexamined execution paths remain.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in
