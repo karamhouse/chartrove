@@ -105,11 +105,14 @@ The [maintenance baseline](MAINTENANCE_BASELINE.md) records commands, toolchain,
 | `d53929b93` | Reject failed final FHIR migration and close PostgreSQL pools after initialization failure |
 | `e4319b94e` | Migrate both graphs to JWX v3.4.0, reject wrong key types, and verify persisted-key signing independently |
 | `30a37e635` | Stop automatic request/response body capture while preserving HTTP behavior and access metadata |
+| `32f40d4bf` | Update Logrus to v1.10.2 in both graphs and verify removal of its module-level advisory |
 
 These commits are local and unpublished. The full backend checkpoint at `0fbb2755b` passed 14 tested packages and 265 test/subtest events without test skips or failures. SQLite/PostgreSQL regressions pass in both module graphs; desktop encrypted-backend checks passed within the unchanged 120-second limit. The earlier broad-suite timeout remains unexplained.
 
 The initialization-failure slice at `d53929b93` passed the full root database package in 411 seconds, focused SQLite/PostgreSQL regressions in both graphs, and desktop encrypted-backend checks in 38 seconds. It uses schema faults only inside disposable fixtures.
 
-The next dependency families are authentication/OAuth/JOSE, followed by coordinated Angular alignment and sequential major upgrades. Preserve synthetic rejection tests, encrypted persistence, native desktop behavior, and provider provenance at each step. Review workflow ownership and permissions before any enablement; disabled Actions provide no CI evidence.
+The JWX checkpoint passed all 14 tested backend packages and 274 test/subtest events without skips or failures. Subsequent body-logging and Logrus slices passed authentication/web tests, desktop host and encrypted-backend checks, and relevant vet/race checks. The production frontend and macOS package were rebuilt at executable source `32f40d4bf`; archive/signature checks and all ten native smoke checks passed. The baseline records the artifact hash and limits.
+
+The next bounded security candidates include x/net v0.62.0, Gin, and protobuf. The x/net target retains Go 1.26 and requires the already selected crypto/sys/term/text versions, so it can be updated independently. The unmaintained OpenPGP finding requires dependency-use analysis rather than a blind version bump. Continue OAuth/provider review, then coordinated Angular alignment and sequential major upgrades. Preserve synthetic rejection tests, encrypted persistence, native desktop behavior, and provider provenance at each step. Review workflow ownership and permissions before any enablement; disabled Actions provide no CI evidence.
 
 Assess an optional Medplum FHIR adapter after reliable local import, authorization, encrypted persistence, and reproducible checks are established. Production ownership, identifiers, provenance, consent, offline sync/conflicts, and rollback need an explicit decision before any real-data write or migration.

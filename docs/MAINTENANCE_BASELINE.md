@@ -82,6 +82,21 @@ The OAuth classic-script fix is included; generated HTML no longer includes the
 standalone ES module as a classic script. The native run emitted a sandbox-extension
 warning but exited 0 with all checks successful.
 
+On October 29, a fresh `sh desktop/build.sh` at executable source commit
+`32f40d4bf6aa4cdebad38aa83d5bc1f3add1f236` rebuilt the production frontend with
+Node 20.19.0 and packaged all subsequent account, initialization, JWX, body-logging,
+and Logrus fixes. The retained artifact is `dist/Chartrove.zip`, SHA-256
+`372c1ffaf13c0e25df1c85a207a7ada455dde235e835b90ed6984b519f87ffaa`.
+Archive integrity, extracted-app strict signature verification, and all ten native
+smoke checks passed; the process exited 0. Build metadata confirms JWX v3.4.0 and
+Logrus v1.10.2. Its modified-worktree flag reflects the preserved unrelated
+`.DS_Store` and `.serena` residue; there were no uncommitted source changes.
+Existing bundle-budget, CSS/CommonJS, sandbox-extension, and heartbeat warnings
+remain. The extracted app and fresh mode-0700 synthetic database directory were
+removed after process exit and an open-file check. The smoke run uses an
+unencrypted disposable database; encrypted persistence is covered separately by
+the desktop-graph integration tests, not by this native smoke mode.
+
 The successful frontend diagnostic command used the documented Node 20.19.0
 runtime and `ng test --watch=false --progress=false --browsers=ChromeHeadlessCI
 --reporters=dots`. A temporary Karma wrapper preserved the repository config,
