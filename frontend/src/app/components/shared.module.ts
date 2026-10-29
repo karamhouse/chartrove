@@ -16,10 +16,8 @@ import { NlmTypeaheadComponent } from './nlm-typeahead/nlm-typeahead.component';
 import { ReportHeaderComponent } from './report-header/report-header.component';
 import { ReportLabsObservationComponent } from './report-labs-observation/report-labs-observation.component';
 import { ReportMedicalHistoryConditionComponent } from './report-medical-history-condition/report-medical-history-condition.component';
-import { ReportMedicalHistoryEditorComponent } from './report-medical-history-editor/report-medical-history-editor.component';
 import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medical-history-explanation-of-benefit/report-medical-history-explanation-of-benefit.component';
 import { ToastComponent } from './toast/toast.component';
-import { TreeModule } from '@circlon/angular-tree-component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {GridstackComponent} from './gridstack/gridstack.component';
 import {GridstackItemComponent} from './gridstack/gridstack-item.component';
@@ -51,7 +49,6 @@ import { FormRequestHealthSystemComponent } from './form-request-health-system/f
     FormsModule,
     ReactiveFormsModule,
     MomentModule,
-    TreeModule,
     NgChartsModule,
     HighlightModule,
     PipesModule,
@@ -78,7 +75,6 @@ import { FormRequestHealthSystemComponent } from './form-request-health-system/f
     UtilitiesSidebarComponent,
     ToastComponent,
     ReportHeaderComponent,
-    ReportMedicalHistoryEditorComponent,
     ReportMedicalHistoryConditionComponent,
     ReportLabsObservationComponent,
     ReportMedicalHistoryTimelinePanelComponent,
@@ -97,7 +93,6 @@ import { FormRequestHealthSystemComponent } from './form-request-health-system/f
         ReportHeaderComponent,
         ReportLabsObservationComponent,
         ReportMedicalHistoryConditionComponent,
-        ReportMedicalHistoryEditorComponent,
         ReportMedicalHistoryExplanationOfBenefitComponent,
         ToastComponent,
         UtilitiesSidebarComponent,

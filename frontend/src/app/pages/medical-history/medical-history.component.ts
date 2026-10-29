@@ -2,7 +2,6 @@ import {Component, Input, OnInit} from '@angular/core';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {ReportMedicalHistoryEditorComponent} from '../../components/report-medical-history-editor/report-medical-history-editor.component';
 import {forkJoin} from 'rxjs';
 import {ResourceGraphResponse} from '../../models/fasten/resource-graph-response';
 // import {ReportEditorRelatedComponent} from '../../components/report-editor-related/report-editor-related.component';
@@ -121,13 +120,6 @@ export class MedicalHistoryComponent implements OnInit {
 
   }
 
-  //
-  // openEditorRelated(): void {
-  //   const modalRef = this.modalService.open(ReportMedicalHistoryEditorComponent, {
-  //     size: 'xl',
-  //   });
-  //   modalRef.componentInstance.conditions = this.conditions;
-  // }
 
 
   // recPopulateResourceLookup(resourceFhir: ResourceFhir) {

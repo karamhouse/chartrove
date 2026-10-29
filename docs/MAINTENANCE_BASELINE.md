@@ -546,6 +546,34 @@ migrated before dropping the compatibility compiler in Angular 16. Existing
 CommonJS, bundle-size, test-fixture, and developer-tool peer diagnostics remain.
 No inherited workflow was enabled and no changes were published.
 
+The Angular 15 native package for source `07a0f7605` embeds frontend build
+`4d242df4e4e261f5`. The retained `dist/Chartrove.zip` SHA-256 is
+`c309bc37706d52b72de4a25fb9e4d8cf56b660412df3e1b47cf0c99d6241be51`.
+ZIP integrity, strict signature verification, and all ten native smoke checks
+pass, with process exit 0. The extracted app and synthetic smoke database were
+removed after process exit and open-file checks. Existing macOS diagnostics
+remain; the smoke page is not coverage of every Angular interaction.
+
+## Retired tree editor removal (2026-10-29)
+
+The Circlon tree library's sole consumer was `ReportMedicalHistoryEditorComponent`,
+already explicitly marked deprecated and no longer used. A full frontend
+reference search found module registration, its creation-only test, unused
+imports, and commented-out calls. The active resource-creation and timeline
+editing paths both open `MedicalRecordWizardComponent`. Remove the retired
+editor, stale references, stylesheet, and the tree/MobX dependencies while
+preserving the active wizard and backend composition APIs. Git retains the
+removed source and historical authorship; no historical branch is changed.
+
+The remaining full frontend suite exits 0 with 356 successful tests and one
+existing skip. The count falls by one because the retired component's sole
+creation test is removed with it; no active test is skipped or weakened.
+The production build exits 0 with hash `218939895c6e4f84` and a 9.44 MB initial
+bundle, approximately 100 KB below the previous step, under unchanged budgets.
+No View Engine library warning remains. The Angular 15 native ZIP above
+predates this removal. Karma required SIGKILL to finish shutting down its
+Chrome child after the assertions; the runner still terminated with exit 0.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in
