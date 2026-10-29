@@ -1,4 +1,4 @@
-import { Component, ComponentFactoryResolver, EmbeddedViewRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, EmbeddedViewRef, OnInit, ViewChild, ViewContainerRef, ChangeDetectionStrategy } from '@angular/core';
 import {Source} from '../../models/fasten/source';
 import {Router} from '@angular/router';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
@@ -19,6 +19,7 @@ let ids = 1;
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DashboardComponent implements OnInit {
@@ -45,7 +46,6 @@ export class DashboardComponent implements OnInit {
     private lighthouseApi: LighthouseService,
     private fastenApi: FastenApiService,
     private router: Router,
-    private componentFactoryResolver: ComponentFactoryResolver,
     private vcRef: ViewContainerRef,
     private modalService: NgbModal,
   ) { }

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {
   LighthouseSourceSearchAggregation,
 } from '../../models/lighthouse/lighthouse-source-search';
@@ -8,6 +8,7 @@ import {MedicalSourcesFilterService} from '../../services/medical-sources-filter
     selector: 'app-medical-sources-filter',
     templateUrl: './medical-sources-filter.component.html',
     styleUrls: ['./medical-sources-filter.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MedicalSourcesFilterComponent implements OnInit {

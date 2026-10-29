@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
 import {Patient} from 'fhir/r4';
 import {DirectSmartCleanupError, DirectSmartService} from '../../services/direct-smart.service';
 import {FastenApiService} from '../../services/fasten-api.service';
@@ -7,6 +7,7 @@ import {Source} from '../../models/fasten/source';
 
 @Component({
     selector: 'app-direct-smart-sources', templateUrl: './direct-smart-sources.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DirectSmartSourcesComponent implements OnInit, OnDestroy {

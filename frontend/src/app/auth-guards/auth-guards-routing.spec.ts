@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
@@ -9,7 +9,8 @@ import { EncryptionStatusGuard } from './encryption-status.guard';
 import { IsAdminAuthGuard } from './is-admin-auth-guard';
 import { IsAuthenticatedAuthGuard } from './is-authenticated-auth-guard';
 
-@Component({ standalone: true, template: '<p>Protected synthetic record</p>' })
+@Component({ standalone: true, changeDetection: ChangeDetectionStrategy.Eager,
+ template: '<p>Protected synthetic record</p>' })
 class ProtectedPage {
   static activations = 0;
 
@@ -18,7 +19,8 @@ class ProtectedPage {
   }
 }
 
-@Component({ standalone: true, template: '<p>Public destination</p>' })
+@Component({ standalone: true, changeDetection: ChangeDetectionStrategy.Eager,
+ template: '<p>Public destination</p>' })
 class PublicPage {}
 
 describe('Route guard integration', () => {

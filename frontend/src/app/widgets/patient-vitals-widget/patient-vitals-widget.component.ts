@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {NgChartsModule} from 'ng2-charts';
 import {DashboardWidgetComponent} from '../dashboard-widget/dashboard-widget.component';
 import {DashboardWidgetConfig} from '../../models/widget/dashboard-widget-config';
@@ -13,6 +13,7 @@ import {EmptyWidgetComponent} from '../empty-widget/empty-widget.component';
     imports: [NgChartsModule, CommonModule, MomentModule, LoadingWidgetComponent, EmptyWidgetComponent],
     selector: 'patient-vitals-widget',
     templateUrl: './patient-vitals-widget.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./patient-vitals-widget.component.scss']
 })
 export class PatientVitalsWidgetComponent extends DashboardWidgetComponent implements OnInit {

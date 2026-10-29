@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {FastenApiService} from '../../services/fasten-api.service';
 import * as fhirpath from 'fhirpath';
@@ -9,6 +9,7 @@ import {Summary} from '../../../app/models/fasten/summary';
     selector: 'report-header',
     templateUrl: './report-header.component.html',
     styleUrls: ['./report-header.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ReportHeaderComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
@@ -23,7 +23,7 @@ describe('Report requests for empty pages', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
     imports: [RouterTestingModule],
-    providers: [{ provide: HTTP_CLIENT_TOKEN, useExisting: HttpClient }, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+    providers: [{ provide: HTTP_CLIENT_TOKEN, useExisting: HttpClient }, provideHttpClient(withXhr(), withInterceptorsFromDi()), provideHttpClientTesting()]
 });
     http = TestBed.inject(HttpTestingController);
     api = TestBed.inject(FastenApiService);

@@ -1,7 +1,7 @@
 import {TestBed} from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import {EpicSandboxService, EPIC_SANDBOX} from './epic-sandbox.service';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 
 describe('Epic sandbox connection', () => {
   let service: EpicSandboxService;
@@ -21,7 +21,7 @@ describe('Epic sandbox connection', () => {
   };
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ imports: [], providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()] });
+    TestBed.configureTestingModule({ imports: [], providers: [provideHttpClient(withXhr(), withInterceptorsFromDi()), provideHttpClientTesting()] });
     service = TestBed.inject(EpicSandboxService);
     http = TestBed.inject(HttpTestingController);
     stopped = closed = false;

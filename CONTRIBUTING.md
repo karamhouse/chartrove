@@ -6,20 +6,20 @@ Chartrove is an independent fork of [Fasten Onprem](https://github.com/fastenhea
 
 - Go 1.26 or newer; root and desktop modules retain separate dependency graphs.
 - Node 26.13.0, pinned in `mise.toml`, with the committed Yarn 1.22.22 configuration.
-- Angular 21.x through the local, locked CLI (currently core 21.2.25, CLI 21.2.29, CDK 21.2.14, and TypeScript 5.9.3).
+- Angular 22.x through the local, locked CLI (currently core 22.2.4, CLI/CDK 22.2.5, and TypeScript 6.0.3).
 - macOS with Xcode Command Line Tools for native desktop builds.
 
 Install only the locked frontend dependencies when needed:
 
 ```sh
 cd frontend
-npm exec --yes --package=corepack@0.35.0 -- corepack yarn install --frozen-lockfile --ignore-optional --registry https://registry.npmjs.org --network-concurrency 4
+npm exec --yes --package=corepack@0.35.0 -- corepack yarn install --frozen-lockfile --registry https://registry.npmjs.org --network-concurrency 4
 cd ..
 ```
 
-Node 26 does not bundle Corepack. The command above invokes a pinned Corepack through npm and preserves the committed Yarn selection. Use `npm exec --yes --package=corepack@0.35.0 -- corepack yarn exec ng <command>` for the local CLI without a global Yarn or Angular CLI installation. The Angular workspace explicitly selects Yarn.
+Node 26 does not bundle Corepack. The command above invokes a pinned Corepack through npm and preserves the committed Yarn selection. Use `node node_modules/@angular/cli/bin/ng.js <command>` for the local CLI without a global Yarn or Angular CLI installation. The Angular workspace explicitly selects Yarn.
 
-The Angular 14-to-22 migration is in progress. Node 26 remains outside Angular 21's official support matrix; Angular 22 is the first release family in the current official matrix supporting Node 26. Run migration steps on Node 26 and report concrete failures; do not reinstall retired Node runtimes as a workaround. Keep TypeScript within the selected Angular compiler's supported range. See [the maintenance baseline](docs/MAINTENANCE_BASELINE.md) for current validation limits and the migration sequence.
+Angular 22 officially supports Node 26 and TypeScript 6.0. Keep TypeScript within the selected Angular compiler's supported range and report concrete compatibility failures; do not reinstall retired Node runtimes or bypass engine checks. See [the maintenance baseline](docs/MAINTENANCE_BASELINE.md) for validation evidence and the sequential migration history.
 
 ## Repository layout
 

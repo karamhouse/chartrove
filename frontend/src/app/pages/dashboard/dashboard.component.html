@@ -52,7 +52,7 @@
             <br/>
             @if (dashboardConfigs?.[selectedDashboardConfigNdx]?.source) {
               <span>
-                <strong>Source:</strong> <a [href]="dashboardConfigs?.[selectedDashboardConfigNdx]?.source" externalLink> {{dashboardConfigs?.[selectedDashboardConfigNdx]?.source}}</a>
+                <strong>Source:</strong> <a [href]="$safeNavigationMigration(dashboardConfigs?.[selectedDashboardConfigNdx]?.source)" externalLink> {{dashboardConfigs?.[selectedDashboardConfigNdx]?.source}}</a>
               </span>
             }
           </div>

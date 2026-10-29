@@ -36,7 +36,7 @@ import {PatientComponent} from '../resources/patient/patient.component';
 
 @Component({
     selector: 'fhir-card',
-    changeDetection: ChangeDetectionStrategy.Default,
+    changeDetection: ChangeDetectionStrategy.Eager,
     templateUrl: './fhir-card.component.html',
     styleUrls: ['./fhir-card.component.scss'],
     standalone: false

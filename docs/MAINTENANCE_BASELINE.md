@@ -842,6 +842,45 @@ errors. The ordinary HTTP app still reports the expected absent Wails module;
 static Storybook retains bundle-size and optional-document warnings. Native
 packaging still corresponds to Angular 16 pending the final Angular 22 rebuild.
 
+### Angular 22 and TypeScript 6 on Node 26 (2026-10-29)
+
+Complete the sequential framework migration with core/compiler 22.2.4,
+CLI/build/CDK 22.2.5, TypeScript 6.0.3, ng-bootstrap 21.0.0,
+ng-select 23.11.0, angular-fontawesome 5.1.0, and infinite-scroll 22.
+Storybook remains 10.6.5 and RxJS remains 7.8.2. Angular and the selected
+ng-select release explicitly support Node 26.13.0. A fresh dependency tree
+installs with engine checks enabled; the final frozen install exits 0 with
+the lockfile already up to date. No retired runtime is installed.
+
+Required CLI/core/CDK migrations pass. They explicitly retain eager change
+detection, XHR transport and optional-navigation semantics. Keep the existing
+non-strict template setting; remove the migration-generated extended-diagnostic
+suppression block because Angular rejects that block without strict templates.
+Remove obsolete TypeScript `baseUrl`/`downlevelIteration`, replacing the former
+with the specific `src/*` mapping. Remove the unused dashboard factory-resolver
+injection and replace an obsolete factory-type test stub with a real component
+render/destruction test. An AST comparison of all 181 migrated TypeScript files,
+before these two manual repairs, finds no changes outside imports, decorators
+and the required `withXhr` feature.
+
+The complete browser suite passes 376 tests with one existing skip, exits 0,
+and all five bridge tests pass. The optimized production build exits 0 with
+hash `064f77e0dbd87a05` and 9,919,662 initial webpack asset bytes. Existing
+budgets and optimization are unchanged. Storybook's normal Compodoc build exits
+0; browser checks cover Lab Results expansion, encounter details and source-card
+rendering. Webpack/Karma, legacy lint/e2e tooling, LForms peers, Sass and bundle
+size still produce warnings; no comprehensive lint/e2e claim is made.
+
+Production browser checks pass sign-in, empty Medical History/Labs, nested
+encounter creation and mobile date selection without horizontal overflow.
+NHS/NLM responses are intercepted with synthetic terminology and a synthetic
+lab panel. LForms renders an editable numeric field and exports a lab report
+into the unsaved wizard, but its ready event exposes a missing `onFormReady`
+handler in the application. This is an open, reproduced form-lifecycle defect,
+not a clean form-console result. No record is saved to the database. Ordinary
+HTTP still lacks the expected Wails module. Native packaging remains at the
+Angular 16 checkpoint until the final source and form repair are rebuilt.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in

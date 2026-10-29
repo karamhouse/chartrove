@@ -7,7 +7,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { SetupEncryptionKeyComponent } from './setup-encryption-key.component';
 import { FastenApiService } from '../../services/fasten-api.service';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 
 describe('SetupEncryptionKeyComponent', () => {
   let component: SetupEncryptionKeyComponent;
@@ -36,7 +36,7 @@ describe('SetupEncryptionKeyComponent', () => {
         { provide: Router, useValue: mockRouter },
         { provide: FastenApiService, useValue: mockFastenApiService },
         { provide: ChangeDetectorRef, useValue: mockChangeDetectorRef },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting()
     ]
 }).compileComponents();
