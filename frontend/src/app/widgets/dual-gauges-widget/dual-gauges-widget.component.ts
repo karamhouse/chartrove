@@ -14,7 +14,7 @@ import {PipesModule} from '../../pipes/pipes.module';
   templateUrl: './dual-gauges-widget.component.html',
   styleUrls: ['./dual-gauges-widget.component.scss']
 })
-export class DualGaugesWidgetComponent extends DashboardWidgetComponent implements OnInit  {
+export class DualGaugesWidgetComponent extends DashboardWidgetComponent<'doughnut'> implements OnInit  {
 
   ngOnInit(): void {
     super.ngOnInit()

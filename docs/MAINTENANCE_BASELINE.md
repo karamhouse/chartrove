@@ -501,6 +501,51 @@ observed API responses return 200, and the former 400/500 requests disappear.
 Only the ordinary-browser missing-Wails-module error remains in that flow.
 The native ZIP above predates this separate page-logic repair.
 
+## Angular 15 migration checkpoint (2026-10-29)
+
+The next sequential step selects Angular 15.2.10, CLI/build tooling 15.2.11,
+CDK 15.2.9, TypeScript 4.9.5, Zone 0.12.0, ng-bootstrap 14.2.0, ng-select
+10.0.4, angular-fontawesome 0.12.1, and ngx-infinite-scroll 15.0.0. Node
+26.13.0 and Yarn 1.22.22 remain selected. Angular's CLI still reports Node 26
+as unsupported at this intermediate step. Installation and the CLI/core/CDK
+migrations exit 0 without `--force` or ignored engines. The CLI migration
+removes the obsolete Karma `require.context` loader and sets ES2022 with
+`useDefineForClassFields: false`; application strictness settings are unchanged.
+
+Three concrete build failures were resolved: old and new caniuse data disagreed
+on an Opera Mobile target; ngx-datatable 20's CSS files lack package subpath
+exports; and the new TypeScript compiler rejects doughnut options inherited
+through a generic chart type. The official
+[Browserslist updater](https://github.com/browserslist/update-db) synchronizes
+the locked browser data. Relative stylesheet file imports preserve their order,
+and the widget base now carries the chart type as a generic parameter. Browser
+font loading confirms the datatable icon asset resolves. No browser exclusion,
+budget increase, or relaxed compiler check was used to hide these failures.
+
+Four new tests render populated donut, dual-gauge, line, and grouped-bar charts
+with synthetic data through the actual Chart.js canvases. They verify plotted
+geometry and chart disposal, not just component construction. All four pass.
+The full suite initially caught a test declaring the now-standalone NgbCollapse;
+moving it to test imports fixes that compatibility error. The final full Karma
+run exits 0 with 357 successful tests and one skip. All five native bridge tests
+also pass on Node 26.
+
+The production build exits 0 with hash `4d242df4e4e261f5`, a 9.54 MB initial
+bundle, and unchanged budgets. Playwright replays synthetic sign-in, empty
+Medical History and Labs, the record wizard, encounter Find/Create, mobile
+datepicker selection, and dismissal of both dialogs. The date becomes
+`2026-10-29`; no dialogs remain after dismissal. Only the expected missing
+Wails module error remains in this ordinary-browser flow; the prior nested
+modal focus warning was not reproduced. These checks do not establish all
+record persistence, imports, providers, or accessibility behavior.
+
+Remaining migration constraints include the View Engine-only Circlon tree
+widget, Storybook's older Angular peer range, legacy Codelyzer, and lforms 34's
+separate Angular 14 dependency family. The tree widget must be replaced or
+migrated before dropping the compatibility compiler in Angular 16. Existing
+CommonJS, bundle-size, test-fixture, and developer-tool peer diagnostics remain.
+No inherited workflow was enabled and no changes were published.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in

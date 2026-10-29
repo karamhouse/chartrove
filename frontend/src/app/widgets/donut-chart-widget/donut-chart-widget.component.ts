@@ -13,7 +13,7 @@ import {EmptyWidgetComponent} from '../empty-widget/empty-widget.component';
   templateUrl: './donut-chart-widget.component.html',
   styleUrls: ['./donut-chart-widget.component.scss']
 })
-export class DonutChartWidgetComponent extends DashboardWidgetComponent implements OnInit {
+export class DonutChartWidgetComponent extends DashboardWidgetComponent<'doughnut'> implements OnInit {
 
   doughnutChartDatasets: ChartConfiguration<'doughnut'>['data']['datasets'] = [];
 

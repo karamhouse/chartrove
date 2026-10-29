@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ChartConfiguration, ChartDataset, ChartOptions} from 'chart.js';
+import {ChartConfiguration, ChartDataset, ChartOptions, ChartType} from 'chart.js';
 import {DashboardWidgetConfig} from '../../models/widget/dashboard-widget-config';
 import {NgChartsModule} from 'ng2-charts';
 import {CommonModule} from '@angular/common';
@@ -23,7 +23,7 @@ import {map} from 'rxjs/operators';
   templateUrl: './dashboard-widget.component.html',
   styleUrls: ['./dashboard-widget.component.scss'],
 })
-export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponentInterface {
+export class DashboardWidgetComponent<TType extends ChartType = ChartType> implements OnInit, DashboardWidgetComponentInterface {
 
   @Input() widgetConfig: DashboardWidgetConfig;
   loading: boolean = true;
@@ -47,7 +47,7 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
   chartDatasetsDefaults = [];
   chartDatasets: ChartConfiguration<'line'>['data']['datasets'] = [];
   chartLabels: any[] | string[] = [];
-  chartOptions: ChartOptions = {}
+  chartOptions = {} as ChartOptions<TType>
   // chartColors: any;
 
   constructor(public fastenApi: FastenApiService) {
