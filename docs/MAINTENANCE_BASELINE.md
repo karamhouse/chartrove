@@ -277,6 +277,21 @@ Fresh module scans explicitly select CIRCL 1.6.5 and report no CIRCL findings:
 package recorded above predates this patch; application tests here are not a
 new packaged-native smoke result.
 
+The image slice selects x/image 0.47.0 in both graphs, changing only that module
+and its checksums. Its Go 1.26, x/sys 0.49, and x/text 0.43 requirements are
+already selected. The server previously selected 0.18.0; the desktop selected
+0.45.0. Upstream's 0.45.0-to-0.47.0 comparison changes only go.mod/go.sum.
+CCITT, RIFF, and WebP upstream tests pass; imported VP8/VP8L packages compile but
+have no standalone test files (WebP exercises their decoding paths). Existing
+PDF component-tree and handler tests pass, as do desktop-graph PDF component and
+embedded-backend tests (12.363 seconds, unchanged 120-second limit). These
+component tests do not establish successful full PDF rendering from an installed
+application; a follow-up full-render test exposed a missing source-relative logo.
+Both modules verify. Fresh module scans explicitly select x/image 0.47.0 and
+report no image findings, leaving OAuth2 and deprecated OpenPGP in the root
+graph, and only deprecated OpenPGP in the desktop graph. The packaged artifact
+above predates the CIRCL and image slices.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in

@@ -111,6 +111,7 @@ The [maintenance baseline](MAINTENANCE_BASELINE.md) records commands, toolchain,
 | `32f40d4bf` | Update Logrus to v1.10.2 in both graphs and verify removal of its module-level advisory |
 | `bdc2434e6` | Patch x/net to v0.62.0 in both graphs and verify upstream HTML and application behavior |
 | `2cce0bcec` | Migrate Gin and required serialization dependencies, including the QUIC security backport |
+| `8b7fa0ae0` | Update CIRCL to v1.6.5 and test imported crypto packages under both ProtonMail graphs |
 
 These commits are local and unpublished. The full backend checkpoint at `0fbb2755b` passed 14 tested packages and 265 test/subtest events without test skips or failures. SQLite/PostgreSQL regressions pass in both module graphs; desktop encrypted-backend checks passed within the unchanged 120-second limit. The earlier broad-suite timeout remains unexplained.
 
@@ -120,6 +121,6 @@ The JWX checkpoint passed all 14 tested backend packages and 274 test/subtest ev
 
 The subsequent Gin family passed all 14 tested backend packages and 290 test/subtest events without test skips or failures, plus desktop host and encrypted-backend checks. Its packaged native build passed signature verification and all ten smoke checks at `2cce0bcec`. The baseline records the artifact hash, dependency choices, and remaining module findings. Neither production graph imports the deprecated x/crypto OpenPGP package named by the desktop's remaining advisory; both use the separate ProtonMail fork.
 
-The following CIRCL slice selects v1.6.5 in both graphs and passes upstream crypto compatibility and application checks. Next, review the remaining image-decoding and OAuth findings against the versions already selected by the desktop, then coordinate Angular alignment and sequential major upgrades. Preserve synthetic rejection tests, encrypted persistence, native desktop behavior, and provider provenance at each step. Review workflow ownership and permissions before any enablement; disabled Actions provide no CI evidence.
+The following CIRCL slice selects v1.6.5 in both graphs and passes upstream crypto compatibility and application checks. The x/image slice selects v0.47.0 in both graphs and removes the nine image advisory IDs from the root module scan; upstream decoder and existing application tests pass. Full PDF rendering revealed a separate source-relative logo defect to repair before the next native checkpoint. Continue the remaining OAuth review, then coordinate Angular alignment and sequential major upgrades. Preserve synthetic rejection tests, encrypted persistence, native desktop behavior, and provider provenance at each step. Review workflow ownership and permissions before any enablement; disabled Actions provide no CI evidence.
 
 Assess an optional Medplum FHIR adapter after reliable local import, authorization, encrypted persistence, and reproducible checks are established. Production ownership, identifiers, provenance, consent, offline sync/conflicts, and rollback need an explicit decision before any real-data write or migration.
