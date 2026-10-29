@@ -16,9 +16,11 @@ import (
 	"time"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
+	mock_config "github.com/fastenhealth/fasten-onprem/backend/pkg/config/mock"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	databaseModels "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
+	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
@@ -134,6 +136,49 @@ func TestPostgresIntegration(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, admin.ID, persistedAdmin.ID)
 			require.Equal(t, admin.Password, persistedAdmin.Password)
+		})
+		t.Run("FailedStartupClosesConnections", func(t *testing.T) {
+			for _, fault := range []struct {
+				name    string
+				prepare []string
+				repair  []string
+			}{
+				{"FinalFHIRMigration", []string{"DROP TABLE fhir_account", "CREATE VIEW fhir_account AS SELECT 1 AS id"}, []string{"DROP VIEW fhir_account"}},
+				{"JobRecovery", []string{"ALTER TABLE background_jobs RENAME TO synthetic_saved_jobs"}, []string{"ALTER TABLE synthetic_saved_jobs RENAME TO background_jobs"}},
+			} {
+				t.Run(fault.name, func(t *testing.T) {
+					control := reopened.(*GormRepository).GormClient
+					for _, sql := range fault.prepare {
+						require.NoError(t, control.Exec(sql).Error)
+					}
+					t.Cleanup(func() {
+						for _, sql := range fault.repair {
+							require.NoError(t, control.Exec(sql).Error)
+						}
+						require.NoError(t, control.AutoMigrate(&databaseModels.FhirAccount{}))
+					})
+					connection := *dsn
+					query := connection.Query()
+					applicationName := "chartrove-failure-" + uuid.NewString()
+					query.Set("application_name", applicationName)
+					connection.RawQuery = query.Encode()
+					ctrl := gomock.NewController(t)
+					faultConfig := mock_config.NewMockInterface(ctrl)
+					faultConfig.EXPECT().GetString("database.location").Return(connection.String()).AnyTimes()
+					faultConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+					failed, err := newPostgresRepository(faultConfig, quietLogger, event_bus.NewNoopEventBusServer())
+					if failed != nil {
+						t.Cleanup(func() { require.NoError(t, failed.Close()) })
+					}
+					require.Error(t, err, "startup must reject incomplete initialization")
+					require.Nil(t, failed)
+					require.Eventually(t, func() bool {
+						var count int64
+						err := control.Raw("SELECT count(*) FROM pg_stat_activity WHERE application_name = ?", applicationName).Scan(&count).Error
+						return err == nil && count == 0
+					}, 2*time.Second, 25*time.Millisecond, "failed startup left a database connection open")
+				})
+			}
 		})
 	})
 }

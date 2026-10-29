@@ -45,12 +45,14 @@ func newPostgresRepository(appConfig config.Interface, globalLogger logrus.Field
 	//TODO: automigrate for now, this should be replaced with a migration tool once the DB has stabilized.
 	err = fastenRepo.Migrate()
 	if err != nil {
+		_ = fastenRepo.Close()
 		return nil, err
 	}
 
 	//fail any Locked jobs. This is necessary because the job may have been locked by a process that was killed.
 	err = fastenRepo.CancelAllLockedBackgroundJobsAndFail()
 	if err != nil {
+		_ = fastenRepo.Close()
 		return nil, err
 	}
 

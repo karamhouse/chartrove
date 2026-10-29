@@ -5,6 +5,9 @@ This records independent checks on October 28, 2026, starting at main
 ledger; this document describes reproduction and technical decisions, not a
 second backlog.
 
+The dated [backlog review](MAINTENANCE_BACKLOG_REVIEW.md) retains the complete
+classification for review before publication to GitHub.
+
 ## Environment and preparation
 
 The isolated macOS arm64 worktree used Go 1.27.3, Node 20.19.0, and Yarn
@@ -59,6 +62,7 @@ the default desktop data directory for smoke validation.
 | PostgreSQL startup | Disposable tests reproduced connection credentials in application Info logs and creation of an empty-password placeholder account that interfered with first-user setup. Startup now omits the connection string and does not create that account. Both graphs pass fresh/reopened account counts, date persistence, and parameter-binding regressions in about ten seconds each. This tests successful connection logging, not every driver error message. |
 | Legacy account migration | Replaying migration `20240212142126` on disposable data reproduced deletion of a password-bearing account named `admin`. The deletion now targets only the historical empty-password placeholder. Both SQLite module graphs preserve real account IDs, hashes, and roles while still removing the placeholder. Both PostgreSQL graphs preserve the real admin account and credentials; their integration suites passed in 25 seconds. Desktop encrypted-backend checks passed in 27 seconds within the unchanged 120-second limit. |
 | Full backend after account fixes | `go test -json -p 1 ./backend/... -count=1` exited 0: 14 tested packages, 265 test/subtest pass events, no test skips or failures. The database package took 252 seconds and handlers took 40 seconds. No timeout was changed; the earlier broad-run timeout remains unexplained. |
+| Initialization failures (October 29) | A disposable schema collision reproduced SQLite and PostgreSQL startup succeeding after final FHIR migration failed. The error now propagates. PostgreSQL also closes its pool after migration or job-recovery failure; tests verify zero remaining connections for each failed initialization. Both module graphs pass the regressions and existing PostgreSQL persistence checks. SQLite recovery preserves an unrelated synthetic patient. The full root database suite passed in 411 seconds under the unchanged ten-minute timeout; desktop encrypted-backend checks passed in 38 seconds under the unchanged 120-second limit. |
 | Frontend production dependency audit | Yarn reported 97 affected dependency paths and 65 distinct advisories, including three critical paths involving `@babel/traverse` and `elliptic`. The command exited nonzero. These are dependency findings, not demonstrated application exploits. |
 
 The packaged desktop smoke checks cover the native binding, direct SMART rejection
