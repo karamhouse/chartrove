@@ -85,7 +85,7 @@ warning but exited 0 with all checks successful.
 On October 29, a fresh `sh desktop/build.sh` at executable source commit
 `32f40d4bf6aa4cdebad38aa83d5bc1f3add1f236` rebuilt the production frontend with
 Node 20.19.0 and packaged all subsequent account, initialization, JWX, body-logging,
-and Logrus fixes. The retained artifact is `dist/Chartrove.zip`, SHA-256
+and Logrus fixes. That checkpoint's artifact had SHA-256
 `372c1ffaf13c0e25df1c85a207a7ada455dde235e835b90ed6984b519f87ffaa`.
 Archive integrity, extracted-app strict signature verification, and all ten native
 smoke checks passed; the process exited 0. Build metadata confirms JWX v3.4.0 and
@@ -96,6 +96,18 @@ remain. The extracted app and fresh mode-0700 synthetic database directory were
 removed after process exit and an open-file check. The smoke run uses an
 unencrypted disposable database; encrypted persistence is covered separately by
 the desktop-graph integration tests, not by this native smoke mode.
+
+The subsequent package at executable source
+`2cce0bcec6cff6dcfea55cf11145b227818c84ba` includes x/net 0.62.0 and the Gin
+family. `sh desktop/build.sh --skip-frontend` reused the unchanged production
+frontend from the fresh build above. ZIP integrity, strict app signature, and
+all ten native smoke checks passed, with smoke process exit 0. Executable build
+metadata confirms Gin 1.12.0, protobuf 1.36.12, quic-go 0.59.1, and x/net 0.62.0.
+The current `dist/Chartrove.zip` SHA-256 is
+`bf1ced038983ffe4d6bea8fab0af0a757c5899f7fdb7a233d6b33b71a859cefe`.
+The modified-worktree flag again reflects only preserved unrelated residue.
+The extracted app and disposable database were removed after exit and open-file
+checks. This package predates the following CIRCL work.
 
 The successful frontend diagnostic command used the documented Node 20.19.0
 runtime and `ng test --watch=false --progress=false --browsers=ChromeHeadlessCI

@@ -109,6 +109,7 @@ The [maintenance baseline](MAINTENANCE_BASELINE.md) records commands, toolchain,
 | `30a37e635` | Stop automatic request/response body capture while preserving HTTP behavior and access metadata |
 | `32f40d4bf` | Update Logrus to v1.10.2 in both graphs and verify removal of its module-level advisory |
 | `bdc2434e6` | Patch x/net to v0.62.0 in both graphs and verify upstream HTML and application behavior |
+| `2cce0bcec` | Migrate Gin and required serialization dependencies, including the QUIC security backport |
 
 These commits are local and unpublished. The full backend checkpoint at `0fbb2755b` passed 14 tested packages and 265 test/subtest events without test skips or failures. SQLite/PostgreSQL regressions pass in both module graphs; desktop encrypted-backend checks passed within the unchanged 120-second limit. The earlier broad-suite timeout remains unexplained.
 
@@ -116,7 +117,7 @@ The initialization-failure slice at `d53929b93` passed the full root database pa
 
 The JWX checkpoint passed all 14 tested backend packages and 274 test/subtest events without skips or failures. Subsequent body-logging and Logrus slices passed authentication/web tests, desktop host and encrypted-backend checks, and relevant vet/race checks. The production frontend and macOS package were rebuilt at executable source `32f40d4bf`; archive/signature checks and all ten native smoke checks passed. The baseline records the artifact hash and limits.
 
-The subsequent Gin family passed all 14 tested backend packages and 290 test/subtest events without test skips or failures, plus desktop host and encrypted-backend checks. The baseline records its dependency choices and remaining module findings. Neither production graph imports the deprecated x/crypto OpenPGP package named by the desktop's remaining advisory; both use the separate ProtonMail fork.
+The subsequent Gin family passed all 14 tested backend packages and 290 test/subtest events without test skips or failures, plus desktop host and encrypted-backend checks. Its packaged native build passed signature verification and all ten smoke checks at `2cce0bcec`. The baseline records the artifact hash, dependency choices, and remaining module findings. Neither production graph imports the deprecated x/crypto OpenPGP package named by the desktop's remaining advisory; both use the separate ProtonMail fork.
 
 Next, review the root graph's remaining CIRCL, image-decoding, and OAuth findings against the versions already selected by the desktop, then coordinate Angular alignment and sequential major upgrades. Preserve synthetic rejection tests, encrypted persistence, native desktop behavior, and provider provenance at each step. Review workflow ownership and permissions before any enablement; disabled Actions provide no CI evidence.
 
