@@ -27,7 +27,9 @@
  * Standard animation support in Angular DOES NOT require any polyfills (as of Angular 6.0).
  */
 // import 'web-animations-js';  // Run `npm install --save web-animations-js`.
-import 'webcrypto-liner'
+// Load the browser shim for its side effects; native WebCrypto types describe the API.
+// The package root's legacy export-import aliases conflict with type-only exports in webcrypto-core.
+import 'webcrypto-liner/build/webcrypto-liner.shim.mjs';
 /**
  * By default, zone.js will patch all possible macroTask and DomEvents
  * user can disable parts of macroTask/DomEvents patch by setting following flags

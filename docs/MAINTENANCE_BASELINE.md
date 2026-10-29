@@ -574,6 +574,60 @@ No View Engine library warning remains. The Angular 15 native ZIP above
 predates this removal. Karma required SIGKILL to finish shutting down its
 Chrome child after the assertions; the runner still terminated with exit 0.
 
+## Angular 16 and browser crypto compatibility (2026-10-29)
+
+The next intermediate family is Angular 16.2.12, CLI/build tooling 16.2.16,
+CDK 16.2.14, TypeScript 5.1.6, and Zone.js 0.13.3 on Node 26.13.0.
+Its UI peers are ng-bootstrap 15.1.2, ng-select 11.2.0, angular-fontawesome
+0.13.0, and infinite-scroll 16. Storybook's related packages move together
+to 7.6.24 because the previous release's Angular peer range ended at 16.
+The official CLI and CDK migrations make no source changes. The core migration
+removes deprecated guard interfaces without changing guard logic.
+Node 26 remains outside Angular 16's official support range.
+
+Nine new router integration tests exercise real navigation through the three
+guards. They check signed-out and non-admin rejection, authorized access,
+database setup/unlock redirects, and that rejected navigation never constructs
+the protected component. They pass after correcting the test fixture's
+synchronous `IsAdmin` return type. This does not cover a failed health request;
+the existing encryption-status guard still allows navigation on that error.
+Backend authorization and encryption checks remain independently necessary.
+
+The first production build exposed an installed dependency mismatch: a stale
+nested `gen-mapping` 0.1.1 shadowed the 0.3.x version required by remapping 2.2.1.
+Isolating that exact stale installed copy fixed a small optimizer reproducer
+with source maps enabled. No source-map or optimization setting was disabled.
+
+TypeScript 5.1 also exposed WebCrypto's old `randomUUID` return declaration.
+Browser regressions then reproduced malformed UUIDs in the bundled polyfill:
+one of three tests failed, while the RFC 7636 PKCE vector and AES-GCM
+round-trip/tamper rejection passed. Update webcrypto-liner from 1.4.0 to 1.4.3,
+which includes the upstream [UUID formatting repair](https://github.com/PeculiarVentures/webcrypto-core/commit/049cd7c9434c6171d8d8f4c83c9aa912fd510d3f).
+Its existing Elliptic fork stays at commit
+`75637c76678e83c31682fd967c2fa9ff4761b3fc`, explicitly resolved so the package's
+changed Git URL does not silently advance that crypto implementation.
+This preserves provenance; it is not a security endorsement of the old fork.
+
+The package root's legacy `export import` aliases are incompatible with
+webcrypto-core's type-only exports. Load the public browser-shim file directly
+for its side effects, retaining the same runtime file selected by the package's
+browser field and the native WebCrypto API types. Do not disable library type
+checking. The temporary WebCrypto/ASN.1 resolution overrides used during
+diagnosis are removed; their compatible versions remain recorded in the lockfile.
+The current application does not import their internal type declarations.
+
+The final full frontend suite exits 0 with 368 successful tests and one existing
+skip. All three crypto checks now pass, as do all five desktop bridge tests.
+The production build exits 0 with hash `0f9c03545569b0b5`, a 9.40 MB initial
+bundle, and unchanged budgets, optimization, and source-map settings.
+Playwright verifies synthetic sign-in, empty Medical History and Labs, the
+record wizard, and mobile encounter date selection (`2026-10-29`) followed by
+dismissing both dialogs. Seven observed API responses during the final empty
+report navigation are 200. Only the expected missing Wails runtime module error
+appears in the ordinary browser. Storybook's own build remains unverified at
+this checkpoint. Existing test-fixture warnings and the 2 MB bundle warning
+remain; GitHub Actions are still disabled and no changes are published.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in
@@ -592,8 +646,9 @@ Chrome child after the assertions; the runner still terminated with exit 0.
    migration, reopen, and import behavior; never bypass the version-specific
    SQLCipher replacement by updating its original module version alone.
 5. Align Angular core/compiler/CLI/CDK and UI peers within the current major,
-   then migrate one major at a time. Angular 14.2's TypeScript ceiling is below
-   4.9, so the standalone TypeScript 4.9 PR is ineligible. Keep the explicitly
+   then migrate one major at a time. Angular 14.2's TypeScript ceiling was below
+   4.9, so the standalone TypeScript 4.9 PR was ineligible on that baseline;
+   TypeScript advances only with its compatible Angular family. Keep the explicitly
    requested Node 26.13.0 runtime through sequential source migrations toward
    Angular 22, the first version with documented Node 26 support. Report
    intermediate compatibility failures without reinstalling retired runtimes.
