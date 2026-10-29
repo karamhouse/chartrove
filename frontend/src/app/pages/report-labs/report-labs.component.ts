@@ -91,6 +91,14 @@ export class ReportLabsComponent implements OnInit {
 
     let observationGroups = this.allObservationGroups.slice((this.currentPage-1) * this.pageSize, this.currentPage * this.pageSize)
 
+    if (observationGroups.length === 0) {
+      this.observationGroups = {}
+      this.observationGroupTitles = {}
+      this.isEmptyReport = true
+      this.loading = false
+      return
+    }
+
     this.loading = true
     this.getObservationsByCodes(observationGroups).subscribe((data) => {
       this.loading = false

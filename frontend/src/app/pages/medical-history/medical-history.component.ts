@@ -64,6 +64,12 @@ export class MedicalHistoryComponent implements OnInit {
 
     let encounterIds = this.allEncountersIds.slice((this.currentPage-1) * this.pageSize, this.currentPage * this.pageSize)
 
+    if (encounterIds.length === 0) {
+      this.encounters = []
+      this.loading = false
+      return
+    }
+
     this.fastenApi.getResourceGraph(null, encounterIds).subscribe((graphResponse: ResourceGraphResponse) => {
         this.loading = false
 

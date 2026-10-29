@@ -475,6 +475,32 @@ IDs (400) and a Labs request with an empty code filter (500). These are concrete
 follow-ups, not passing behavior. This check does not establish record saving,
 all charts/imports, accessibility conformance, or native-host behavior.
 
+The native package for source `542dc1f91` embeds those validated Bootstrap 5
+assets. `dist/Chartrove.zip` has SHA-256
+`a7ff1f5cc55365194e711d110014f1857f1c4f47383bcd7917626e62d41f4485`.
+ZIP integrity, strict signature verification, and all ten native smoke checks
+pass; the smoke process exits 0. Its extracted app and synthetic data directory
+were removed after process exit and open-file checks. The smoke page verifies
+native integration, not every Angular screen. Existing macOS sandbox-extension
+and heartbeat diagnostics remain.
+
+## Empty report request repair (2026-10-29)
+
+Medical History and Labs now finish loading empty pages without sending a
+graph request with no IDs or a query with an empty code filter. They also clear
+previously displayed results when pagination reaches an empty page. Six
+HTTP-backed regressions cover initial empty accounts, empty subsequent pages,
+and populated graph/lab requests. Four cases fail before the repair; all six
+pass afterward on Node 26.13.0. The initial test compile error was corrected
+before this red/green comparison; a zero-test result was not counted as passing.
+
+The production build exits 0 with hash `3b353f75e3b72235` and the unchanged
+9.52 MB initial bundle budget. Playwright replays synthetic sign-in followed
+by Medical History and Labs navigation. Both empty views render, all eight
+observed API responses return 200, and the former 400/500 requests disappear.
+Only the ordinary-browser missing-Wails-module error remains in that flow.
+The native ZIP above predates this separate page-logic repair.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in
