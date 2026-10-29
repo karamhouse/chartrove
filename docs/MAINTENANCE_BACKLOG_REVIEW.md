@@ -102,6 +102,7 @@ The [maintenance baseline](MAINTENANCE_BASELINE.md) records commands, toolchain,
 | `da4bce140` | PostgreSQL startup omits connection strings and stops creating placeholder accounts |
 | `0fbb2755b` | Preserve real password-bearing admin accounts during historical migration |
 | `d53929b93` | Reject failed final FHIR migration and close PostgreSQL pools after initialization failure |
+| `e4319b94e` | Migrate both graphs to JWX v3.4.0, reject wrong key types, and verify persisted-key signing independently |
 
 These commits are local and unpublished. The full backend checkpoint at `0fbb2755b` passed 14 tested packages and 265 test/subtest events without test skips or failures. SQLite/PostgreSQL regressions pass in both module graphs; desktop encrypted-backend checks passed within the unchanged 120-second limit. The earlier broad-suite timeout remains unexplained.
 
