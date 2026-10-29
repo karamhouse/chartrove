@@ -5,7 +5,10 @@ import {FastenApiService} from '../../services/fasten-api.service';
 import {SmartConnection, SmartProvider} from '../../models/direct-smart';
 import {Source} from '../../models/fasten/source';
 
-@Component({selector: 'app-direct-smart-sources', templateUrl: './direct-smart-sources.component.html'})
+@Component({
+    selector: 'app-direct-smart-sources', templateUrl: './direct-smart-sources.component.html',
+    standalone: false
+})
 export class DirectSmartSourcesComponent implements OnInit, OnDestroy {
   @Output() imported = new EventEmitter<void>();
   providers: SmartProvider[] = [];

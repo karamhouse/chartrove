@@ -17,11 +17,10 @@ import fhirpath from 'fhirpath';
 import {map} from 'rxjs/operators';
 
 @Component({
-  standalone: true,
-  imports: [NgChartsModule, CommonModule, NgbDatepickerModule, LoadingWidgetComponent],
-  selector: 'app-dashboard-widget',
-  templateUrl: './dashboard-widget.component.html',
-  styleUrls: ['./dashboard-widget.component.scss'],
+    imports: [NgChartsModule, CommonModule, NgbDatepickerModule, LoadingWidgetComponent],
+    selector: 'app-dashboard-widget',
+    templateUrl: './dashboard-widget.component.html',
+    styleUrls: ['./dashboard-widget.component.scss']
 })
 export class DashboardWidgetComponent<TType extends ChartType = ChartType> implements OnInit, DashboardWidgetComponentInterface {
 

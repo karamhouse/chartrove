@@ -713,6 +713,58 @@ The expected missing Wails module error occurs only in this ordinary HTTP
 browser check. Native packaging and Storybook were last verified on Angular 16
 and 17 respectively; neither is represented as validated on Angular 18 yet.
 
+## Angular 19 and Storybook 8 compatibility (2026-10-29)
+
+Advance to Angular 19.2.25, CLI/build tooling 19.2.27, CDK 19.2.19,
+TypeScript 5.8.3, Zone.js 0.15.1, ng-bootstrap 18.0.0, ng-select 14.9.0,
+angular-fontawesome 1.0.0, and infinite-scroll 19.0.0. Storybook's family moves
+to 8.6.19 because version 7's Angular peer range excludes 19. Node 26.13.0
+remains in use, outside this intermediate Angular family's support matrix.
+
+The official core migration changes 144 TypeScript files to preserve existing
+NgModule declarations under Angular 19's standalone default. Review confirms
+the application changes are decorator metadata and formatting. Optional
+application-builder and initializer migrations are not applied.
+
+Production compilation exposed old @types/node 18.11.18 declarations that
+conflict with TypeScript 5.8's ImportMeta. Add @types/node 26.6.6, whose minimum
+TypeScript version is 5.6, to match the selected runtime. Keep library type
+checking enabled. The final frontend tests exit 0 with 375 successes and one
+existing skip. All five bridge tests pass. The production build exits 0 with
+hash `c05fc510b246d52b` and 9,918,164 initial asset bytes, about 3 KB above
+Angular 18's 9,914,832 bytes. Budgets and optimization are unchanged.
+Browser sign-in, empty reports, nested encounter dialogs, mobile date selection,
+and dismissal pass, with no horizontal overflow at 390 pixels. Only the expected
+missing Wails module error remains after clearing the previous disposable token.
+
+Storybook 8 removes the old `.stories.mdx` format. Remove the duplicate
+Introduction.stories.mdx after comparing it with the existing migrated
+Introduction.mdx, preserving its content and Git history. Replace removed
+internal decorator imports with the public Angular Decorator type. Let Meta
+infer six story render argument types so EventEmitter outputs map to callbacks,
+and use supported object/text controls. Add the React 18 declaration peer used
+by MDX; the unused deprecated testing-library package is removed.
+
+Storybook's separately locked Webpack 5.74.0 declarations conflict with modern
+SetIterator and Error types. A scoped resolution selects Webpack 5.112.2 within
+the builder's declared `5` range; Angular's builder retains Webpack 5.105.0.
+The scoped path includes transitive parents, and both installed versions were
+verified. A stale nested ESTree 0.0.51 copy then shadowed the locked 1.0.10
+declarations required by Webpack. Isolating that exact copy makes the Storybook
+type-only check pass without suppressions. This reinforces the need for a clean
+locked installation at the final framework checkpoint. The Storybook build
+then exits 0, reusing Compodoc metadata already generated successfully from the
+same application source. Browser verification finds an additional Lab Results
+story error (NG0301): its standalone NgbCollapse directive was in declarations
+instead of imports. Moving it into imports repairs rendering and the "show all"
+interaction, which reveals both synthetic entries. Resource cards also lacked
+ActivatedRoute context; provide an empty router with initial navigation disabled
+in the Storybook preview. The final Storybook build exits 0, and browser checks
+verify the encounter details link, a source-card click, and the Lab Results
+expansion without rendering or injector errors. The glossary story also renders.
+A missing favicon remains in the static preview; full story coverage is not
+claimed. Native packaging still corresponds to the Angular 16 source above.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in

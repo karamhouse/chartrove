@@ -7,11 +7,10 @@ import {DashboardWidgetComponent} from '../dashboard-widget/dashboard-widget.com
 import {DashboardWidgetConfig} from '../../models/widget/dashboard-widget-config';
 
 @Component({
-  standalone: true,
-  imports: [NgChartsModule, CommonModule, LoadingWidgetComponent, EmptyWidgetComponent],
-  selector: 'image-list-group-widget',
-  templateUrl: './image-list-group-widget.component.html',
-  styleUrls: ['./image-list-group-widget.component.scss']
+    imports: [NgChartsModule, CommonModule, LoadingWidgetComponent, EmptyWidgetComponent],
+    selector: 'image-list-group-widget',
+    templateUrl: './image-list-group-widget.component.html',
+    styleUrls: ['./image-list-group-widget.component.scss']
 })
 export class ImageListGroupWidgetComponent extends DashboardWidgetComponent implements OnInit {
 

@@ -7,11 +7,10 @@ import {LoadingWidgetComponent} from '../loading-widget/loading-widget.component
 import {EmptyWidgetComponent} from '../empty-widget/empty-widget.component';
 
 @Component({
-  standalone: true,
-  imports: [NgChartsModule, CommonModule, LoadingWidgetComponent, EmptyWidgetComponent],
-  selector: 'donut-chart-widget',
-  templateUrl: './donut-chart-widget.component.html',
-  styleUrls: ['./donut-chart-widget.component.scss']
+    imports: [NgChartsModule, CommonModule, LoadingWidgetComponent, EmptyWidgetComponent],
+    selector: 'donut-chart-widget',
+    templateUrl: './donut-chart-widget.component.html',
+    styleUrls: ['./donut-chart-widget.component.scss']
 })
 export class DonutChartWidgetComponent extends DashboardWidgetComponent<'doughnut'> implements OnInit {
 

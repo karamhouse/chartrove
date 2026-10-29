@@ -6,11 +6,10 @@ import {LoadingWidgetComponent} from '../loading-widget/loading-widget.component
 import {EmptyWidgetComponent} from '../empty-widget/empty-widget.component';
 
 @Component({
-  standalone: true,
-  imports: [NgChartsModule, CommonModule, LoadingWidgetComponent, EmptyWidgetComponent],
-  selector: 'table-widget',
-  templateUrl: './table-widget.component.html',
-  styleUrls: ['./table-widget.component.scss']
+    imports: [NgChartsModule, CommonModule, LoadingWidgetComponent, EmptyWidgetComponent],
+    selector: 'table-widget',
+    templateUrl: './table-widget.component.html',
+    styleUrls: ['./table-widget.component.scss']
 })
 export class TableWidgetComponent  extends DashboardWidgetComponent implements OnInit {
   keys: string[] = []

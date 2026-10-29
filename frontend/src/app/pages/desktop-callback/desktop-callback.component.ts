@@ -18,9 +18,10 @@ export function readDesktopAuthCallback(state: string, href: string): Record<str
 }
 
 @Component({
-  selector: 'app-desktop-callback',
-  templateUrl: './desktop-callback.component.html',
-  styleUrls: ['./desktop-callback.component.scss']
+    selector: 'app-desktop-callback',
+    templateUrl: './desktop-callback.component.html',
+    styleUrls: ['./desktop-callback.component.scss'],
+    standalone: false
 })
 export class DesktopCallbackComponent implements OnInit {
 
