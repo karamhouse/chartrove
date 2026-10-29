@@ -219,6 +219,34 @@ include x/net 0.62.0 and report no x/net findings, with 16 root and three deskto
 advisory IDs still present. No new exploitation or call-reachability claim is
 made. The recorded native ZIP at `32f40d4bf` predates this update.
 
+The Gin slice implements [#263](https://github.com/karamhouse/chartrove/pull/263)
+locally with Gin 1.12.0, protobuf 1.36.12, and the required binding/serialization
+family in both graphs. It also exceeds historical #200's Gin 1.9.1 target.
+The [Gin release](https://github.com/gin-gonic/gin/releases/tag/v1.12.0)
+adds BSON binding and HTTP/3 support; application handlers retain explicit JSON
+binding, and no HTTP/3 listener is enabled. The MongoDB module supplies Gin's BSON
+serializer, not an application database. The required quic-go 0.59.0 initially
+introduced GO-2026-5676, so the final selection uses the upstream
+[0.59.1 security backport](https://github.com/quic-go/quic-go/releases/tag/v0.59.1).
+The obsolete chenzhuoyu/base64x requirement was removed after inspecting both
+graphs; the new Sonic family uses cloudwego/base64x. Go minimums and provider,
+local-backend, and SQLCipher replacements are unchanged.
+
+After targeted preparation, the full backend command exited 0 with all 14 tested
+packages and 290 test/subtest pass events, without test skips or failures. The
+database package took 113.513 seconds. Desktop host and privacy tests pass;
+encrypted embedded-backend checks, including synthetic multipart FHIR import,
+pass in 11.187 seconds under the unchanged 120-second limit. Both module graphs
+verify and full `go vet ./...` passes in each. Fresh module scans contain 108 root
+and 109 desktop modules, explicitly
+select the three versions above, and contain no Gin, protobuf, or quic-go
+findings. Fourteen root advisory IDs remain; the desktop's sole remaining ID is
+GO-2026-5932 for deprecated `golang.org/x/crypto/openpgp`. Neither production
+import graph includes that package. Both do import the distinct ProtonMail
+OpenPGP fork; this evidence does not establish the security of that fork or
+justify removing other uses of x/crypto. These are module-level scan results,
+not a new whole-application reachability assessment.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in
