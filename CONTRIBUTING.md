@@ -5,7 +5,7 @@ Chartrove is an independent fork of [Fasten Onprem](https://github.com/fastenhea
 ## Toolchain
 
 - Go 1.26 or newer; root and desktop modules retain separate dependency graphs.
-- Node 16.20.2 for the current Angular 14 migration checkpoint, with the committed Yarn 1.22.22 configuration.
+- Node 26.13.0, pinned in `mise.toml`, with the committed Yarn 1.22.22 configuration.
 - Angular 14.x through the local, locked CLI (currently core 14.3.0, CLI 14.2.13, CDK 14.2.7, and TypeScript 4.8.4).
 - macOS with Xcode Command Line Tools for native desktop builds.
 
@@ -13,13 +13,13 @@ Install only the locked frontend dependencies when needed:
 
 ```sh
 cd frontend
-corepack yarn install --frozen-lockfile --ignore-optional --registry https://registry.npmjs.org --network-concurrency 4
+npm exec --yes --package=corepack@0.35.0 -- corepack yarn install --frozen-lockfile --ignore-optional --registry https://registry.npmjs.org --network-concurrency 4
 cd ..
 ```
 
-Use `corepack yarn exec ng <command>` for the local CLI without a global Yarn or Angular CLI installation. The Angular workspace explicitly selects Yarn.
+Node 26 does not bundle Corepack. The command above invokes a pinned Corepack through npm and preserves the committed Yarn selection. Use `npm exec --yes --package=corepack@0.35.0 -- corepack yarn exec ng <command>` for the local CLI without a global Yarn or Angular CLI installation. The Angular workspace explicitly selects Yarn.
 
-Node 16 and Angular 14 are end-of-life compatibility bridges, not the intended production toolchain. Node 20.19.0 was the fork's earlier tested baseline but is outside Angular 14's supported Node range. Angular 14.2/14.3 requires TypeScript below 4.9; migrate Angular, its UI peers, TypeScript, and Node together in compatible steps toward supported releases. See [the maintenance baseline](docs/MAINTENANCE_BASELINE.md) for current validation limits and the migration sequence.
+The Angular 14-to-22 migration is in progress. Angular 14 reports Node 26 as unsupported; Angular 22 is the first release family in the current official matrix supporting Node 26. Run migration steps on Node 26 and report concrete failures; do not reinstall retired Node runtimes as a workaround. Angular 14.2/14.3 still requires TypeScript below 4.9 until the framework advances. See [the maintenance baseline](docs/MAINTENANCE_BASELINE.md) for current validation limits and the migration sequence.
 
 ## Repository layout
 

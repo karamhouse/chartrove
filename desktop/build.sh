@@ -7,7 +7,7 @@ trap 'rm -rf "$build_root"' EXIT HUP INT TERM
 cd "$repo_root/frontend"
 # Install the locked frontend dependencies separately; builds do not refresh them.
 if [ ! -x node_modules/.bin/ng ]; then
-  echo 'Install frontend dependencies with corepack yarn install --frozen-lockfile first.' >&2
+  echo 'Install frontend dependencies using the pinned Yarn command in CONTRIBUTING.md first.' >&2
   exit 1
 fi
 case "${1:-}" in

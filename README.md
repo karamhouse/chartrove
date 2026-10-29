@@ -19,11 +19,11 @@ Fasten's retired production integration infrastructure is not restored by renami
 
 ## Desktop development
 
-Use macOS with Xcode Command Line Tools, Go 1.26 or newer, and Node 20.19.0. The frontend uses the committed Yarn lockfile; the desktop module pins Wails v3.0.0.
+Use macOS with Xcode Command Line Tools, Go 1.26 or newer, and Mise Node 26.13.0. The frontend uses the committed Yarn lockfile; the desktop module pins Wails v3.0.0. The Angular migration needed for supported Node 26 compatibility is in progress; see [the toolchain status](CONTRIBUTING.md#toolchain).
 
 ```sh
 cd frontend
-corepack yarn install --frozen-lockfile --ignore-optional --registry https://registry.npmjs.org --network-concurrency 4
+npm exec --yes --package=corepack@0.35.0 -- corepack yarn install --frozen-lockfile --ignore-optional --registry https://registry.npmjs.org --network-concurrency 4
 cd ..
 sh desktop/build.sh
 ```

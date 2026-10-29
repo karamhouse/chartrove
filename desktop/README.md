@@ -4,13 +4,13 @@ Chartrove is an independent fork of Fasten Onprem, with a revived macOS Wails v3
 
 ## Build
 
-Use Go 1.26 or newer, macOS with Xcode Command Line Tools, and Node 20.19.0 (the frontend version tested here). The separate desktop Go module pins Wails to v3.0.0. The existing Angular 14 frontend is retained.
+Use Go 1.26 or newer, macOS with Xcode Command Line Tools, and Mise Node 26.13.0. The separate desktop Go module pins Wails to v3.0.0. The frontend migration from Angular 14 to Angular 22 is in progress; Angular 14 does not officially support Node 26. See [the contributor toolchain instructions](../CONTRIBUTING.md) for the pinned Yarn launcher and current validation limits.
 
 With Node 20 selected in your shell:
 
 ```sh
 cd frontend
-corepack yarn install --frozen-lockfile --ignore-optional --registry https://registry.npmjs.org --network-concurrency 4
+npm exec --yes --package=corepack@0.35.0 -- corepack yarn install --frozen-lockfile --ignore-optional --registry https://registry.npmjs.org --network-concurrency 4
 cd ..
 sh desktop/build.sh
 ```

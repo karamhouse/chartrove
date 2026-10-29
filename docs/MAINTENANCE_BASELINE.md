@@ -397,6 +397,50 @@ and ngx-datatable requires at least RxJS 6.6.3 while the application still selec
 and RxJS 6.6 before the Angular 15 step. The fresh-installation count exception
 is the next bounded behavior repair. Frontend advisories remain unresolved.
 
+## Node 26 transition and empty record counts (2026-10-29)
+
+The requested development runtime is now Mise Node 26.13.0, pinned in
+`mise.toml` and the frontend engine range. The current TypeScript language
+server and both tsserver children were restarted and their executable paths
+and working directories verified against Node 26.13.0 and this isolated
+worktree. Current contributor and desktop instructions no longer prescribe
+Node 16 or Node 20. Historical validation observations above remain historical.
+No retired runtime was reinstalled to work around compatibility failures.
+
+Node 26 does not bundle Corepack. Invoking Corepack 0.35.0 through `npm exec`
+selects the committed Yarn 1.22.22 without changing the global runtime or
+installing a global Angular CLI. Angular 14's CLI explicitly warns that Node 26
+is unsupported. The [official matrix](https://angular.dev/reference/versions)
+lists Node 26 support starting with Angular 22; intermediate framework
+migrations run on Node 26 and must report failures rather than conceal them
+with an old runtime. Container and disabled workflow configurations remain
+separately unvalidated and are not evidence of Node 26 compatibility.
+
+Makefile frontend commands now use the pinned Yarn launcher for installation
+and the installed CLI for builds, tests, serving, and Storybook. Build outputs
+remain in `dist/`; the production serve target now selects the existing `prod`
+serve configuration instead of invoking a nonexistent `yarn dist` script.
+Dry-run command expansion and shell syntax pass. This does not claim that
+every inherited build/serve/Storybook configuration was executed.
+
+The browser-reproduced empty encounter count error also affected the
+organization dialog, practitioner dialog, and practitioner creation page.
+Each now defaults absent aggregate results to zero without losing a nonzero
+count. Twenty-four HTTP-backed component regressions cover empty arrays, null
+or omitted data, missing values, explicit zero, and existing counts across all
+four entry points. Before the fix, 13 cases failed, including all four empty
+array cases; afterward all 24 pass on Node 26.13.0.
+
+The full Karma run on Node 26 exits 0 with 347 successful tests and one skip.
+All five desktop bridge tests pass. The production `desktop_prod` build exits
+0 with hash `db282c7e0e7a3f28`, a 9.45 MB initial bundle, and unchanged budgets.
+Existing CSS, CommonJS, and test-fixture diagnostics remain. Playwright then
+replayed sign-in, Add Condition, and Find/Create Encounter against the same
+disposable synthetic database using the rebuilt assets. The empty result
+renders without the earlier count exception. Only the expected missing native
+Wails module diagnostic remains in this ordinary-browser flow. This does not
+establish native packaging or all record persistence paths for the new frontend.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in
