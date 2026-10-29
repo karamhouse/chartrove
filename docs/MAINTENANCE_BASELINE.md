@@ -103,11 +103,24 @@ family. `sh desktop/build.sh --skip-frontend` reused the unchanged production
 frontend from the fresh build above. ZIP integrity, strict app signature, and
 all ten native smoke checks passed, with smoke process exit 0. Executable build
 metadata confirms Gin 1.12.0, protobuf 1.36.12, quic-go 0.59.1, and x/net 0.62.0.
-The current `dist/Chartrove.zip` SHA-256 is
+That checkpoint's ZIP SHA-256 is
 `bf1ced038983ffe4d6bea8fab0af0a757c5899f7fdb7a233d6b33b71a859cefe`.
 The modified-worktree flag again reflects only preserved unrelated residue.
 The extracted app and disposable database were removed after exit and open-file
 checks. This package predates the following CIRCL work.
+
+The latest retained `dist/Chartrove.zip` was built at executable source
+`24134f89171cfaa27f6ba973c5014b18cb21b261` with the same validated frontend
+output. Its SHA-256 is
+`658155c574f724ceaf3da183ef57855459bba72c1dafffaa842e94c97b14e5d9`.
+ZIP integrity, strict app signature, and all ten native smoke checks passed;
+the smoke process exited 0. Build metadata confirms CIRCL 1.6.5, Gin 1.12.0,
+x/image 0.47.0, and OAuth2 0.37.0. The PDF asset fix is included. Existing
+sandbox-extension and heartbeat warnings remain. Uncommitted source was absent
+at build time; the modified-worktree flag again reflects unrelated residue.
+The extracted app and disposable database were removed after exit and open-file
+checks. The original logo, licenses, and healthit.yaml have no diff from the
+baseline main commit.
 
 The successful frontend diagnostic command used the documented Node 20.19.0
 runtime and `ng test --watch=false --progress=false --browsers=ChromeHeadlessCI
@@ -274,8 +287,8 @@ and all web packages pass; desktop host tests and encrypted embedded-backend
 checks pass (10.382 seconds, unchanged 120-second limit). Both graphs verify.
 Fresh module scans explicitly select CIRCL 1.6.5 and report no CIRCL findings:
 11 root advisory IDs and the same one desktop OpenPGP ID remain. The native
-package recorded above predates this patch; application tests here are not a
-new packaged-native smoke result.
+package at `2cce0bcec` predates this patch; the later `24134f891` native checkpoint
+includes it.
 
 The image slice selects x/image 0.47.0 in both graphs, changing only that module
 and its checksums. Its Go 1.26, x/sys 0.49, and x/text 0.43 requirements are
@@ -289,8 +302,8 @@ component tests do not establish successful full PDF rendering from an installed
 application; a follow-up full-render test exposed a missing source-relative logo.
 Both modules verify. Fresh module scans explicitly select x/image 0.47.0 and
 report no image findings, leaving OAuth2 and deprecated OpenPGP in the root
-graph, and only deprecated OpenPGP in the desktop graph. The packaged artifact
-above predates the CIRCL and image slices.
+graph, and only deprecated OpenPGP in the desktop graph. The package at
+`2cce0bcec` predates the CIRCL and image slices; `24134f891` includes them.
 
 The following PDF portability regression renders a synthetic summary from an
 empty temporary working directory. Before the fix, generation returned success
