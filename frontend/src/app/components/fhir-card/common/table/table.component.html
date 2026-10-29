@@ -1,33 +1,35 @@
 <div class="table-responsive">
   <table class="table">
     <tbody>
-    <tr *ngFor="let rowItem of tableData">
-      <td>
-        <strong>{{rowItem.label}}</strong>
-      </td>
-      <td>
-
+      @for (rowItem of tableData; track rowItem) {
+        <tr>
+          <td>
+            <strong>{{rowItem.label}}</strong>
+          </td>
+          <td>
         <ng-container [ngTemplateOutlet]="rowItem.data_type == 'reference' ? dataTypeReference :
          rowItem.data_type == 'coding'? dataTypeCoding :
          rowItem.data_type == 'codingList'? dataTypeCodingList :
          rowItem.data_type == 'codableConcept'? dataTypeCodableConcept :
          dataTypeString"></ng-container>
-
-        <ng-template #dataTypeCodableConcept>
-          <fhir-codable-concept [codableConcept]="rowItem.data"></fhir-codable-concept>
-        </ng-template>
-        <ng-template #dataTypeCoding>
-          <fhir-coding [coding]="rowItem.data"></fhir-coding>
-        </ng-template>
-        <ng-template #dataTypeCodingList>
-          <fhir-coding *ngFor="let coding of rowItem.data" [coding]="coding"></fhir-coding>
-        </ng-template>
-        <ng-template #dataTypeReference>
-          <a [routerLink]="['/explore', displayModel.source_id, 'resource', rowItem.data.reference]">{{rowItem.data.display}}</a>
-        </ng-template>
-        <ng-template #dataTypeString>{{rowItem.data}}</ng-template>
-      </td>
-    </tr>
+            <ng-template #dataTypeCodableConcept>
+              <fhir-codable-concept [codableConcept]="rowItem.data"></fhir-codable-concept>
+            </ng-template>
+            <ng-template #dataTypeCoding>
+              <fhir-coding [coding]="rowItem.data"></fhir-coding>
+            </ng-template>
+            <ng-template #dataTypeCodingList>
+              @for (coding of rowItem.data; track coding) {
+                <fhir-coding [coding]="coding"></fhir-coding>
+              }
+            </ng-template>
+            <ng-template #dataTypeReference>
+              <a [routerLink]="['/explore', displayModel.source_id, 'resource', rowItem.data.reference]">{{rowItem.data.display}}</a>
+            </ng-template>
+            <ng-template #dataTypeString>{{rowItem.data}}</ng-template>
+          </td>
+        </tr>
+      }
     </tbody>
   </table>
 

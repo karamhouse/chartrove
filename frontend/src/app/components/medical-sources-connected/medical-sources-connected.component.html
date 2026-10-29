@@ -1,13 +1,22 @@
 <h2 class="az-content-title">Connected Sources</h2>
 
-<div *ngIf="!loading else isLoadingTemplate" class="row">
-  <app-medical-sources-card class="col-sm-3 mg-b-20 px-3"
-                            *ngFor="let sourceData of connectedSourceList"
-                            [sourceInfo]="sourceData"
-                            [status]="status[sourceData.source?.id] || status[sourceData.brand?.id]"
-                            (onClick)="openModal(contentModalRef, $event)"
-  ></app-medical-sources-card>
-</div>
+@if (!loading) {
+  <div class="row">
+    @for (sourceData of connectedSourceList; track sourceData) {
+      <app-medical-sources-card class="col-sm-3 mg-b-20 px-3"
+        [sourceInfo]="sourceData"
+        [status]="status[sourceData.source?.id] || status[sourceData.brand?.id]"
+        (onClick)="openModal(contentModalRef, $event)"
+      ></app-medical-sources-card>
+    }
+  </div>
+} @else {
+  <div class="row">
+    <div class="col-12">
+      <app-loading-spinner [loadingTitle]="'Please wait, loading sources...'"></app-loading-spinner>
+    </div>
+  </div>
+}
 
 
 <ng-template #contentModalRef let-modal>
@@ -18,21 +27,25 @@
     </button>
   </div>
 
-  <div *ngIf="modalSelectedSourceListItem?.source?.platform_type != 'fasten' && modalSelectedSourceListItem?.source?.platform_type != 'manual'" class="modal-body">
-    <h6>Manage Source</h6>
-    <p>Existing connections can be "Synced", "Reconnected" or "Deleted"</p>
-    <ul>
-      <li><p><strong>Sync</strong> - Download all resources from this healthcare provider, storing them securely in Chartrove</p></li>
-      <li><p><strong>Reconnect</strong> - If your healthcare connection has expired, you can use this button to reconnect</p></li>
-      <li><p><strong>Delete</strong> - Delete all resources for this healthcare provider. This will ONLY effect data stored in Chartrove</p></li>
-    </ul>
-  </div>
-  <div *ngIf="modalSelectedSourceListItem?.source?.platform_type == 'manual'" class="modal-body">
-    <h6>Imported snapshot</h6>
-    <p class="text-break">{{modalSelectedSourceListItem?.source?.display}}</p>
-    <p>This source contains imported records. Automatic sync and reconnect are not available for snapshots. Use the direct provider panel to retrieve another Patient preview.</p>
-  </div>
-  <ng-container *ngIf="modalSelectedSourceListItem?.source?.platform_type == 'fasten'">
+  @if (modalSelectedSourceListItem?.source?.platform_type != 'fasten' && modalSelectedSourceListItem?.source?.platform_type != 'manual') {
+    <div class="modal-body">
+      <h6>Manage Source</h6>
+      <p>Existing connections can be "Synced", "Reconnected" or "Deleted"</p>
+      <ul>
+        <li><p><strong>Sync</strong> - Download all resources from this healthcare provider, storing them securely in Chartrove</p></li>
+        <li><p><strong>Reconnect</strong> - If your healthcare connection has expired, you can use this button to reconnect</p></li>
+        <li><p><strong>Delete</strong> - Delete all resources for this healthcare provider. This will ONLY effect data stored in Chartrove</p></li>
+      </ul>
+    </div>
+  }
+  @if (modalSelectedSourceListItem?.source?.platform_type == 'manual') {
+    <div class="modal-body">
+      <h6>Imported snapshot</h6>
+      <p class="text-break">{{modalSelectedSourceListItem?.source?.display}}</p>
+      <p>This source contains imported records. Automatic sync and reconnect are not available for snapshots. Use the direct provider panel to retrieve another Patient preview.</p>
+    </div>
+  }
+  @if (modalSelectedSourceListItem?.source?.platform_type == 'fasten') {
     <div class="modal-body">
       <h6>Chartrove</h6>
       <p>This source contains all medical records that are created manually in the Chartrove app.
@@ -41,35 +54,33 @@
         <li><p><strong>Explore</strong> - View the medical records that you have created</p></li>
       </ul>
     </div>
-  </ng-container>
+  }
 
   <div class="modal-footer">
 
     <a [routerLink]="['/explore', modalSelectedSourceListItem?.source?.id]" (click)="modal.close()" class="btn btn-indigo me-auto">Explore</a>
 
 
-    <div *ngIf="modalSelectedSourceListItem?.source?.platform_type != 'fasten'" class="d-inline-block" ngbDropdown>
-      <button
-        type="button"
-        class="btn btn-outline-indigo"
-        id="dropdownManual"
-        ngbDropdownToggle>
-        Actions
-      </button>
-      <div ngbDropdownMenu aria-labelledby="dropdownManual">
-        <button *ngIf="modalSelectedSourceListItem?.source?.platform_type != 'manual'" ngbDropdownItem (click)="sourceSyncHandler(modalSelectedSourceListItem?.source)" type="button" class="btn btn-indigo">Sync</button>
-        <button *ngIf="modalSelectedSourceListItem?.source?.platform_type != 'manual'" ngbDropdownItem (click)="sourceReconnectHandler(modalSelectedSourceListItem)" type="button" class="btn btn-danger">Reconnect</button>
-        <button  ngbDropdownItem (click)="sourceDeleteHandler()" type="button" class="btn btn-danger">Delete</button>
+    @if (modalSelectedSourceListItem?.source?.platform_type != 'fasten') {
+      <div class="d-inline-block" ngbDropdown>
+        <button
+          type="button"
+          class="btn btn-outline-indigo"
+          id="dropdownManual"
+          ngbDropdownToggle>
+          Actions
+        </button>
+        <div ngbDropdownMenu aria-labelledby="dropdownManual">
+          @if (modalSelectedSourceListItem?.source?.platform_type != 'manual') {
+            <button ngbDropdownItem (click)="sourceSyncHandler(modalSelectedSourceListItem?.source)" type="button" class="btn btn-indigo">Sync</button>
+          }
+          @if (modalSelectedSourceListItem?.source?.platform_type != 'manual') {
+            <button ngbDropdownItem (click)="sourceReconnectHandler(modalSelectedSourceListItem)" type="button" class="btn btn-danger">Reconnect</button>
+          }
+          <button  ngbDropdownItem (click)="sourceDeleteHandler()" type="button" class="btn btn-danger">Delete</button>
+        </div>
       </div>
-    </div>
+    }
     <button (click)="modal.dismiss('Close click')" type="button" class="btn btn-outline-light">Close</button>
-  </div>
-</ng-template>
-
-<ng-template #isLoadingTemplate>
-  <div class="row">
-    <div class="col-12">
-      <app-loading-spinner [loadingTitle]="'Please wait, loading sources...'"></app-loading-spinner>
-    </div>
   </div>
 </ng-template>

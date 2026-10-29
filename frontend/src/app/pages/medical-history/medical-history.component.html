@@ -34,9 +34,11 @@
 
         <!-- Condition List -->
         <ul class="timeline">
-          <li *ngFor="let encounter of encounters">
-            <app-report-medical-history-timeline-panel [resourceFhir]="encounter" ></app-report-medical-history-timeline-panel>
-          </li>
+          @for (encounter of encounters; track encounter) {
+            <li>
+              <app-report-medical-history-timeline-panel [resourceFhir]="encounter" ></app-report-medical-history-timeline-panel>
+            </li>
+          }
         </ul>
 
 
@@ -49,7 +51,7 @@
               [pageSize]="pageSize"
               [maxSize]="15"
               (pageChange)="pageChange()"
-            >
+              >
             </ngb-pagination>
           </div>
         </div>

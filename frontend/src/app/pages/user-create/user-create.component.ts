@@ -5,13 +5,13 @@ import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
 import { ToastNotification, ToastType } from '../../models/fasten/toast';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
     selector: 'app-user-create',
     templateUrl: './user-create.component.html',
     styleUrls: ['./user-create.component.scss'],
-    imports: [CommonModule, ReactiveFormsModule]
+    imports: [ReactiveFormsModule]
 })
 export class UserCreateComponent implements OnInit {
   userForm: FormGroup;

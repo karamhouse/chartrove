@@ -358,6 +358,7 @@
         "storybook": {
           "builder": "@storybook/angular:start-storybook",
           "options": {
+            "experimentalZoneless": false,
             "configDir": ".storybook",
             "browserTarget": "fastenhealth:build",
             "compodoc": true,
@@ -382,6 +383,7 @@
         "build-storybook": {
           "builder": "@storybook/angular:build-storybook",
           "options": {
+            "experimentalZoneless": false,
             "configDir": ".storybook",
             "browserTarget": "fastenhealth:build",
             "compodoc": true,

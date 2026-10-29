@@ -805,6 +805,43 @@ GitHub recheck during this migration confirms main remains
 `de7818a9174b24884ad55ce81ad21a5f3a2a6f8b`, 316 open issue/PR records, and
 repository Actions disabled. No GitHub records or workflow settings were changed.
 
+### Angular 21 and Storybook 10 on Node 26 (2026-10-29)
+
+Align core/compiler 21.2.25, CLI/build 21.2.29, CDK 21.2.14,
+TypeScript 5.9.3, ng-bootstrap 20.0.0, ng-select 21.8.2,
+angular-fontawesome 4.0.0 with Font Awesome 7.3.1, infinite-scroll 21,
+and Storybook 10.6.5. Official migrations convert legacy template control flow
+and explicitly preserve Zone.js at application bootstrap. The test environment
+and Storybook also retain Zone.js, matching production rather than adopting
+Angular 21's new zoneless default. The resize host listener no longer passes an
+unused argument; the NLM story lets Storybook infer its public argument type.
+
+Angular 21 does not officially support Node 26. ng-select 21.8.2 explicitly
+excludes it in its engine range, so this intermediate install required a
+command-local `--ignore-engines`; no persistent override was added. Angular 22
+and ng-select 23.11.0 declare Node 26 support and require a strict clean install.
+An incremental Yarn install also left a stale nested Babel helper resolving an
+incompatible lru-cache. A fresh frozen dependency tree fixes the reproduced
+preset-env transform failure without patching installed packages.
+
+Angular 21 exposes invalid historical test fixtures: patient resources lacked
+FHIR types, Lab Results lacked its response wrapper, practitioner tests made real
+HTTP requests, and the history mock was never injected. Replace those fixtures
+with empty/synthetic responses and verify all practitioner HTTP requests finish.
+A new patient-profile test renders synthetic patient, vaccine, and allergy data.
+The full browser suite passes 376 tests with one existing skip, exits 0, and five
+native bridge tests pass. No error handling or assertions are disabled.
+
+The optimized production build exits 0, hash `71266e5c98623e2b`, with
+9,899,027 initial asset bytes and unchanged budgets. Storybook's normal Compodoc
+build now exits 0 without the Angular 20 workaround. Browser checks pass sign-in,
+empty Medical History/Labs, nested encounter dialogs, and mobile date selection
+at 390x844 without horizontal overflow or page errors. No record is saved.
+Storybook Lab Results expansion and encounter-card rendering pass without page
+errors. The ordinary HTTP app still reports the expected absent Wails module;
+static Storybook retains bundle-size and optional-document warnings. Native
+packaging still corresponds to Angular 16 pending the final Angular 22 rebuild.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in

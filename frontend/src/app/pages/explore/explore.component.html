@@ -10,11 +10,12 @@
 
       <ng-template #report>
         <div class="row">
-          <app-medical-sources-card class="col-sm-3 mg-b-20 px-3"
-                                    *ngFor="let sourceData of connectedSources"
-                                    [sourceInfo]="sourceData"
-                                    (onClick)="exploreSource($event)"
-          ></app-medical-sources-card>
+          @for (sourceData of connectedSources; track sourceData) {
+            <app-medical-sources-card class="col-sm-3 mg-b-20 px-3"
+              [sourceInfo]="sourceData"
+              (onClick)="exploreSource($event)"
+            ></app-medical-sources-card>
+          }
         </div>
       </ng-template>
 

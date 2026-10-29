@@ -11,7 +11,7 @@ import { GridStack } from 'gridstack';
 import type { GridHTMLElement, GridItemHTMLElement, GridStackNode, GridStackOptions, GridStackWidget } from 'gridstack';
 
 import { GridItemCompHTMLElement, GridstackItemComponent } from './gridstack-item.component';
-import {CommonModule} from '@angular/common';
+
 import {WidgetsModule, WidgetComponents} from '../../widgets/widgets.module';
 import {DashboardWidgetComponentInterface} from '../../widgets/dashboard-widget-component-interface';
 
@@ -46,16 +46,18 @@ export type SelectorToType = {[key: string]: Type<Object>};
  * HTML Component Wrapper for gridstack, in combination with GridstackItemComponent for the items
  */
 @Component({
-    imports: [CommonModule, GridstackItemComponent, WidgetsModule],
+    imports: [GridstackItemComponent, WidgetsModule],
     selector: 'gridstack',
     template: `
     <!-- content to show when when grid is empty, like instructions on how to add widgets -->
-    <ng-content select="[empty-content]" *ngIf="isEmpty"></ng-content>
+    @if (isEmpty) {
+      <ng-content select="[empty-content]"></ng-content>
+    }
     <!-- where dynamic items go -->
     <ng-template #container></ng-template>
     <!-- where template items go -->
     <ng-content></ng-content>
-  `,
+    `,
     styles: [`
     :host { display: block; }
   `]

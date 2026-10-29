@@ -8,6 +8,7 @@ import { ActivatedRoute } from '@angular/router';
 import { HTTP_CLIENT_TOKEN } from 'src/app/dependency-injection';
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { MedicalHistoryComponent } from '../medical-history/medical-history.component';
+import {FastenApiService} from '../../services/fasten-api.service';
 
 describe('PractitionerHistoryComponent', () => {
   let mockedFastenApiService;
@@ -17,6 +18,7 @@ describe('PractitionerHistoryComponent', () => {
   beforeEach(async () => {
     mockedFastenApiService = jasmine.createSpyObj('FastenApiService', [
       'getResources',
+      'getPractitionerHistory',
       'getResourceGraph',
       'getSummary',
     ]);
@@ -24,6 +26,7 @@ describe('PractitionerHistoryComponent', () => {
     declarations: [PractitionerHistoryComponent, ReportHeaderComponent, MedicalHistoryComponent],
     imports: [RouterTestingModule],
     providers: [
+        {provide: FastenApiService, useValue: mockedFastenApiService},
         {
             provide: ActivatedRoute,
             useValue: {
@@ -44,6 +47,7 @@ describe('PractitionerHistoryComponent', () => {
       of({ Condition: [], Encounter: [] })
     );
     mockedFastenApiService.getResources.and.returnValue(of([]));
+    mockedFastenApiService.getPractitionerHistory.and.returnValue(of([]));
     mockedFastenApiService.getSummary.and.returnValue(of({ sources: [] }));
 
     fixture = TestBed.createComponent(PractitionerHistoryComponent);
@@ -51,7 +55,8 @@ describe('PractitionerHistoryComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('finishes loading when the practitioner has no encounters', () => {
+    expect(component.loading).toBeFalse();
+    expect(mockedFastenApiService.getPractitionerHistory).toHaveBeenCalledWith('test-practitioner-id');
   });
 });

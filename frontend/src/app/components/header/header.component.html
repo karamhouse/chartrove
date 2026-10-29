@@ -26,9 +26,11 @@
         <li class="nav-item" ngbDropdown [ngClass]="{ 'active': sources?.isActive }">
           <a routerLink="/sources" routerLinkActive="active" #sources="routerLinkActive" class="nav-link"><fa-icon [icon]="['fas', 'hospital']"></fa-icon>&nbsp; Sources</a>
         </li>
-        <li class="nav-item" *ngIf="isAdmin" ngbDropdown [ngClass]="{ 'active': users?.isActive }">
-          <a routerLink="/users" routerLinkActive="active" #users="routerLinkActive" class="nav-link"><fa-icon [icon]="['fas', 'users']"></fa-icon>&nbsp; Users</a>
-        </li>
+        @if (isAdmin) {
+          <li class="nav-item" ngbDropdown [ngClass]="{ 'active': users?.isActive }">
+            <a routerLink="/users" routerLinkActive="active" #users="routerLinkActive" class="nav-link"><fa-icon [icon]="['fas', 'users']"></fa-icon>&nbsp; Users</a>
+          </li>
+        }
         <li class="nav-item" ngbDropdown [ngClass]="{ 'active': practitioners?.isActive }">
           <a routerLink="/practitioners" routerLinkActive="active" #practitioners="routerLinkActive" class="nav-link"><fa-icon [icon]="['fas', 'id-card']"></fa-icon>&nbsp; Address book</a>
         </li>
@@ -49,62 +51,70 @@
           <h6 class="az-notification-title">Notifications</h6>
           <p class="az-notification-text">Background Jobs & Updates</p>
           <div class="az-notification-list">
-            <a *ngFor="let backgroundJob of backgroundJobs" class="media new" routerLink="/background-jobs">
-              <div><img imageFallback style="max-width:50px;" src="assets/sources/{{backgroundJob.data?.brand_id}}.png" alt=""></div>
-              <div class="media-body">
-                <p><strong>{{backgroundJob.data?.source_type}}</strong> added {{backgroundJob.data?.checkpoint_data?.summary?.UpdatedResources?.length}} new records</p>
-                <span>{{backgroundJob.done_time | amDateFormat:'MMM DD hh:mma'}}</span>
-              </div><!-- media-body -->
-            </a><!-- media -->
-          </div><!-- az-notification-list -->
-          <div class="dropdown-footer"><a routerLink="/background-jobs">View History</a></div>
-        </div><!-- dropdown-menu -->
-      </div><!-- az-header-notification -->
-      <div class="az-header-theme-toggle" >
-        <a class="" (click)="toggleTheme()" >
-          <img *ngIf="isDarkMode" src="assets/icons/sun.svg" alt="Light mode" class="theme-icon">
-          <img *ngIf="!isDarkMode" src="assets/icons/moon.svg" alt="Dark mode" class="theme-icon">
-        </a>
+            @for (backgroundJob of backgroundJobs; track backgroundJob) {
+              <a class="media new" routerLink="/background-jobs">
+                <div><img imageFallback style="max-width:50px;" src="assets/sources/{{backgroundJob.data?.brand_id}}.png" alt=""></div>
+                <div class="media-body">
+                  <p><strong>{{backgroundJob.data?.source_type}}</strong> added {{backgroundJob.data?.checkpoint_data?.summary?.UpdatedResources?.length}} new records</p>
+                  <span>{{backgroundJob.done_time | amDateFormat:'MMM DD hh:mma'}}</span>
+                </div><!-- media-body -->
+              </a>
+              }<!-- media -->
+            </div><!-- az-notification-list -->
+            <div class="dropdown-footer"><a routerLink="/background-jobs">View History</a></div>
+          </div><!-- dropdown-menu -->
+        </div><!-- az-header-notification -->
+        <div class="az-header-theme-toggle" >
+          <a class="" (click)="toggleTheme()" >
+            @if (isDarkMode) {
+              <img src="assets/icons/sun.svg" alt="Light mode" class="theme-icon">
+            }
+            @if (!isDarkMode) {
+              <img src="assets/icons/moon.svg" alt="Dark mode" class="theme-icon">
+            }
+          </a>
+        </div>
+        <div class="dropdown az-profile-menu" ngbDropdown>
+          <a class="az-img-user" id="profileDropdown" ngbDropdownToggle><span class="chartrove-avatar" aria-label="Chartrove profile">C</span></a>
+          <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="profileDropdown">
+            <div class="az-dropdown-header d-sm-none">
+              <a class="az-header-arrow" (click)="closeMenu($event)"><i class="icon ion-md-arrow-back"></i></a>
+            </div>
+            <div [routerLink]="'/patient-profile'" class="az-header-profile cursor-pointer">
+              <div class="az-img-user">
+                <span class="chartrove-avatar" aria-hidden="true">C</span>
+              </div><!-- az-img-user -->
+              <h6>{{current_user_claims.full_name || current_user_claims.sub || current_user_claims.email }}</h6>
+              @if (isAdmin) {
+                <span>Administrator</span>
+              }
+            </div><!-- az-header-profile -->
+
+            <a (click)="openSupportForm(content)" class="dropdown-item  cursor-pointer"><i style="font-size: medium;" class="fas fa-question-circle"></i> Get Support</a>
+            <a class="dropdown-item" href="https://github.com/karamhouse/chartrove" externalLink><i class="fab fa-github"></i> Chartrove project</a>
+            <a routerLink="/settings" class="dropdown-item cursor-pointer"><i style="font-size: medium;" class="fas fa-cog"></i> Settings</a>
+            <a (click)="signOut($event)" class="dropdown-item  cursor-pointer"><i style="font-size: medium;" class="fas fa-power-off"></i> Sign Out</a>
+          </div><!-- dropdown-menu -->
+        </div>
+      </div><!-- az-header-right -->
+    </div><!-- container -->
+  </div><!-- az-header -->
+
+
+  <ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">Chartrove support</h4>
+      <button type="button" class="btn close" aria-label="Close" (click)="modal.dismiss('Cross click')"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="modal-body">
+      <p>Report bugs and suggest improvements in the Chartrove issue tracker.</p>
+      <p>Issues are public. Remove health information, credentials, and identifying details before posting. This link does not attach records or logs.</p>
+      <p><a class="btn btn-az-primary" href="https://github.com/karamhouse/chartrove/issues/new" externalLink>Open a Chartrove issue</a></p>
+      <p><a href="https://github.com/karamhouse/chartrove#documentation" externalLink>Chartrove documentation</a></p>
+      <hr>
+        <p class="text-muted">Chartrove is an independent fork of <a href="https://github.com/fastenhealth/fasten-onprem" externalLink>Fasten Onprem</a>. Fasten Health services and support are separate from this project.</p>
       </div>
-      <div class="dropdown az-profile-menu" ngbDropdown>
-        <a class="az-img-user" id="profileDropdown" ngbDropdownToggle><span class="chartrove-avatar" aria-label="Chartrove profile">C</span></a>
-        <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="profileDropdown">
-          <div class="az-dropdown-header d-sm-none">
-            <a class="az-header-arrow" (click)="closeMenu($event)"><i class="icon ion-md-arrow-back"></i></a>
-          </div>
-          <div [routerLink]="'/patient-profile'" class="az-header-profile cursor-pointer">
-            <div class="az-img-user">
-              <span class="chartrove-avatar" aria-hidden="true">C</span>
-            </div><!-- az-img-user -->
-            <h6>{{current_user_claims.full_name || current_user_claims.sub || current_user_claims.email }}</h6>
-            <span *ngIf="isAdmin">Administrator</span>
-          </div><!-- az-header-profile -->
-
-          <a (click)="openSupportForm(content)" class="dropdown-item  cursor-pointer"><i style="font-size: medium;" class="fas fa-question-circle"></i> Get Support</a>
-          <a class="dropdown-item" href="https://github.com/karamhouse/chartrove" externalLink><i class="fab fa-github"></i> Chartrove project</a>
-          <a routerLink="/settings" class="dropdown-item cursor-pointer"><i style="font-size: medium;" class="fas fa-cog"></i> Settings</a>
-          <a (click)="signOut($event)" class="dropdown-item  cursor-pointer"><i style="font-size: medium;" class="fas fa-power-off"></i> Sign Out</a>
-        </div><!-- dropdown-menu -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
       </div>
-    </div><!-- az-header-right -->
-  </div><!-- container -->
-</div><!-- az-header -->
-
-
-<ng-template #content let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title">Chartrove support</h4>
-    <button type="button" class="btn close" aria-label="Close" (click)="modal.dismiss('Cross click')"><span aria-hidden="true">×</span></button>
-  </div>
-  <div class="modal-body">
-    <p>Report bugs and suggest improvements in the Chartrove issue tracker.</p>
-    <p>Issues are public. Remove health information, credentials, and identifying details before posting. This link does not attach records or logs.</p>
-    <p><a class="btn btn-az-primary" href="https://github.com/karamhouse/chartrove/issues/new" externalLink>Open a Chartrove issue</a></p>
-    <p><a href="https://github.com/karamhouse/chartrove#documentation" externalLink>Chartrove documentation</a></p>
-    <hr>
-    <p class="text-muted">Chartrove is an independent fork of <a href="https://github.com/fastenhealth/fasten-onprem" externalLink>Fasten Onprem</a>. Fasten Health services and support are separate from this project.</p>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
-  </div>
-</ng-template>
+    </ng-template>

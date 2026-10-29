@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ChartConfiguration, ChartDataset, ChartOptions, ChartType} from 'chart.js';
 import {DashboardWidgetConfig} from '../../models/widget/dashboard-widget-config';
 import {NgChartsModule} from 'ng2-charts';
-import {CommonModule} from '@angular/common';
+
 import {NgbDatepickerModule} from '@ng-bootstrap/ng-bootstrap';
 import {DashboardWidgetComponentInterface} from '../dashboard-widget-component-interface';
 import {FastenApiService} from '../../services/fasten-api.service';
@@ -17,7 +17,7 @@ import fhirpath from 'fhirpath';
 import {map} from 'rxjs/operators';
 
 @Component({
-    imports: [NgChartsModule, CommonModule, NgbDatepickerModule, LoadingWidgetComponent],
+    imports: [NgChartsModule, NgbDatepickerModule, LoadingWidgetComponent],
     selector: 'app-dashboard-widget',
     templateUrl: './dashboard-widget.component.html',
     styleUrls: ['./dashboard-widget.component.scss']

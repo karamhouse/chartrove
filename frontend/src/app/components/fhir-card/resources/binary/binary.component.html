@@ -1,14 +1,17 @@
-<div *ngIf="loading">
-  <div class="text-center mg-b-20">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
+@if (loading) {
+  <div>
+    <div class="text-center mg-b-20">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
   </div>
-</div>
+}
 
 
 
-<ng-container *ngIf="!loading" [ngTemplateOutlet]="
+@if (!loading) {
+<ng-container [ngTemplateOutlet]="
   displayModel?.content_type == 'application/pdf' ? showPdf :
   displayModel?.content_type == 'text/markdown' ? showMarkdown :
   displayModel?.content_type == 'text/plain' ? showText :
@@ -19,6 +22,7 @@
   (displayModel?.content_type == 'image/jpeg' || displayModel?.content_type == 'image/png') ? showImg :
   showEmpty
 "></ng-container>
+}
 
 <ng-template #showPdf>
   <fhir-pdf [displayModel]="displayModel"></fhir-pdf>
