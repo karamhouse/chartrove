@@ -207,6 +207,18 @@ remain. These are module-level results, not new call-reachability analyses. Run
 directories: this scanner version rejects patterns in module mode and fails at
 the source-free repository/module roots.
 
+The subsequent x/net slice selects v0.62.0 in both graphs, beyond #277's v0.61.0
+target. It fixes [GO-2026-6860](https://pkg.go.dev/vuln/GO-2026-6860) and
+[GO-2026-6866](https://pkg.go.dev/vuln/GO-2026-6866). No other module version or Go
+minimum changes. The upstream comparison also includes socket and QUIC changes;
+neither application imports those changed packages. The upstream HTML package
+tests pass under both graphs, as do root authentication/web packages, desktop
+host tests, and encrypted embedded-backend checks (12 seconds, unchanged
+120-second limit). Both module graphs verify. Module-level scans explicitly
+include x/net 0.62.0 and report no x/net findings, with 16 root and three desktop
+advisory IDs still present. No new exploitation or call-reachability claim is
+made. The recorded native ZIP at `32f40d4bf` predates this update.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in
