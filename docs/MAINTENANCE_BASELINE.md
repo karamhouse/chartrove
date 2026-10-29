@@ -348,6 +348,55 @@ The absence of package/call traces agrees with the separate production import
 inventory. This does not establish whole-application security: frontend
 advisories, legacy integration behavior, and unexamined execution paths remain.
 
+## Angular 14 migration checkpoint (2026-10-29)
+
+The application Angular family is aligned at 14.3.0, CLI/build tooling at
+14.2.13, CDK at 14.2.7, and TypeScript at 4.8.4. This advances the same-major
+work represented by [#234](https://github.com/karamhouse/chartrove/pull/234)
+and [#223](https://github.com/karamhouse/chartrove/pull/223). Node 16.20.2
+and Yarn 1.22.22 provide the historically supported Angular 14 compatibility
+range for this step; neither Node 16 nor Angular 14 is a supported final target.
+No global/project runtime configuration was changed.
+
+The global webpack 5.74.0 override is removed so build-angular can select its
+required 5.76.1. The independent `webpack@5` lock entry remains 5.74.0, and
+transitive Angular `~14.2.12` entries also remain. This is not a complete
+webpack or nested Angular graph modernization. Yarn is explicitly selected in
+`angular.json`; `corepack yarn exec ng version` confirms the selected versions.
+
+Both migration-only checks exit 0 using the installed CLI and
+`NG_DISABLE_VERSION_CHECK=1`. That switch prevents the old CLI from downloading
+the latest CLI before executing; it does not force peer compatibility or relax
+validation. There are no eligible 14.2-to-14.3 source migrations. The initial
+automatic CLI 22 replacement attempts exited before migration because they
+required a newer Node runtime; no source changes came from those attempts.
+
+The `desktop_prod` production build exits 0 with a 9.45 MB initial bundle,
+unchanged budgets, and hash `46f16b1a59b24b21`. Karma exits 0 with 323 successful
+tests and one skip on Chrome Headless 156. The desktop bridge test file also
+exits 0 under Node 16. Existing CommonJS, invalid legacy CSS `hover-focus()`,
+bundle warning, and incomplete Angular test-fixture declaration diagnostics
+remain. No assertion, timeout, or budget was relaxed.
+
+Browser plugin not available; Playwright checked the production assets against
+a newly created loopback-only SQLite backend using a synthetic account.
+Account creation, dashboard navigation, the record wizard, nested encounter
+dialog, Create tab, and date input rendered at 1200x1098 and 390x844. The
+desktop bundle reports the expected missing Wails runtime when served over
+ordinary HTTP; this is not native-host validation. A separate real defect was
+reproduced: an empty encounter count response throws while opening the dialog.
+The terminology search returned no result, so record persistence was not
+established by this browser check. The standalone server also still performs
+legacy Fasten installation registration during startup; fully offline server
+startup remains an independence gap. The retained native ZIP above predates
+this frontend checkpoint.
+
+Known peer debt remains: ng-bootstrap 10 targets Angular 12 and Bootstrap 4,
+and ngx-datatable requires at least RxJS 6.6.3 while the application still selects
+6.5.5. Coordinate ng-bootstrap 13, Bootstrap 5.2, Popper, CSS/API adaptation,
+and RxJS 6.6 before the Angular 15 step. The fresh-installation count exception
+is the next bounded behavior repair. Frontend advisories remain unresolved.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in
