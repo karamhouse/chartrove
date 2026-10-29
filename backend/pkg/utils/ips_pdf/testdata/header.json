@@ -20,7 +20,7 @@
 			"type": "page",
 			"nodes": [
 				{
-					"value": 11.527777777777779,
+					"value": 13.565315315315313,
 					"type": "row",
 					"nodes": [
 						{
@@ -58,9 +58,11 @@
 							"type": "col",
 							"nodes": [
 								{
-									"value": "backend/pkg/utils/ips_pdf/assets/fasten_logo.jpg",
-									"type": "fileImage",
+									"value": "/9j/4AAQSkZJRg==",
+									"type": "bytesImage",
 									"details": {
+										"bytes_size": 101655,
+										"extension": "jpg",
 										"prop_center": true,
 										"prop_percent": 80
 									}
@@ -106,7 +108,7 @@
 					]
 				},
 				{
-					"value": 239.941944444,
+					"value": 237.904406906,
 					"type": "row",
 					"nodes": [
 						{

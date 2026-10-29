@@ -292,6 +292,17 @@ report no image findings, leaving OAuth2 and deprecated OpenPGP in the root
 graph, and only deprecated OpenPGP in the desktop graph. The packaged artifact
 above predates the CIRCL and image slices.
 
+The following PDF portability regression renders a synthetic summary from an
+empty temporary working directory. Before the fix, generation returned success
+but embedded the text `could not load image` instead of the source-relative
+Fasten logo. The original JPEG is now embedded in the Go binary and passed to
+Maroto's bytes-image constructor; the asset and attribution are unchanged.
+The regression checks a complete PDF with an image object and no error text.
+Both module graphs pass it and all PDF component tests. Only the header fixture
+was regenerated: it now records the JPEG byte prefix/size and its actual height.
+Root handler tests and desktop encrypted-backend tests also pass (10.956 seconds
+for the latter, unchanged 120-second limit). No real patient data was used.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in
