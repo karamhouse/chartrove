@@ -63,7 +63,7 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
         "count_by": {"field": "*"}
       }
     }).subscribe((resp: ResponseWrapper) => {
-      this.totalPractitioners = resp.data?.[0].value
+      this.totalPractitioners = resp.data?.[0]?.value ?? 0
     })
   }
   changeTab(id: string) {

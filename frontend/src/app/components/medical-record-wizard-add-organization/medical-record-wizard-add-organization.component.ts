@@ -63,7 +63,7 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
         "count_by": {"field": "*"}
       }
     }).subscribe((resp: ResponseWrapper) => {
-      this.totalOrganizations = resp.data?.[0].value
+      this.totalOrganizations = resp.data?.[0]?.value ?? 0
     })
   }
   changeTab(id: string) {

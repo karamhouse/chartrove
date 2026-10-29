@@ -60,7 +60,7 @@ export class MedicalRecordWizardAddEncounterComponent implements OnInit {
         "count_by": {"field": "*"}
       }
     }).subscribe((resp: ResponseWrapper) => {
-      this.totalEncounters = resp.data?.[0].value
+      this.totalEncounters = resp.data?.[0]?.value ?? 0
     })
   }
 

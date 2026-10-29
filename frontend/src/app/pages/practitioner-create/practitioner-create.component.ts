@@ -58,7 +58,7 @@ export class PractitionerCreateComponent implements OnInit {
         "count_by": {"field": "*"}
       }
     }).subscribe((resp: ResponseWrapper) => {
-      this.totalPractitioners = resp.data?.[0].value || 0;
+      this.totalPractitioners = resp.data?.[0]?.value ?? 0;
     });
   }
 
