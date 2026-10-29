@@ -4,7 +4,7 @@
  */
 
 import { Component, ElementRef, Input, ViewChild, ViewContainerRef, OnDestroy } from '@angular/core';
-import { GridItemHTMLElement, GridStackNode } from 'gridstack';
+import type { GridItemHTMLElement, GridStackNode } from 'gridstack';
 import {CommonModule} from '@angular/common';
 
 /** store element to Ng Class pointer back */

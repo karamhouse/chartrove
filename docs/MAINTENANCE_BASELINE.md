@@ -765,6 +765,46 @@ expansion without rendering or injector errors. The glossary story also renders.
 A missing favicon remains in the static preview; full story coverage is not
 claimed. Native packaging still corresponds to the Angular 16 source above.
 
+### Angular 20 and Storybook 9 on Node 26 (2026-10-29)
+
+Align core/compiler 20.3.34, CLI/build 20.3.42, CDK 20.2.14,
+ng-bootstrap 19.0.1, ng-select 20.7.0, angular-fontawesome 2.0.1,
+infinite-scroll 20, and Storybook 9.1.21. TypeScript remains 5.8.3.
+The official CLI migration preserves generation defaults and selects bundler
+module resolution; required core/CDK migrations make no application changes.
+Node 26 remains outside Angular 20's documented support matrix.
+
+Bundler resolution rejects a private Chart.js type path; import ChartConfiguration
+from the public package. The production compiler also exposes GridStack interfaces
+imported as runtime values in the attributed wrappers. Mark those imports as types,
+retaining the runtime GridStack import and original copyright headers.
+
+Storybook 9 consolidates essentials/interactions into core and moves MDX blocks
+into addon-docs. Its native ESM loading fails with RxJS 6's directory exports,
+so select supported RxJS 7.8.2. The complete browser suite passes 375 tests with
+the existing skip both before and after this RxJS change; both processes exit 0.
+Five native bridge tests pass. The first production attempt was deliberately
+stopped before changing RxJS; the next exposes the GridStack type imports above.
+The corrected production build exits 0 with hash `0a3d799199fc2b96` and
+9,920,211 initial asset bytes. Optimization and budgets remain unchanged.
+
+Storybook's Yarn Classic Compodoc invocation omits the argument separator:
+its installed runPackageCommandSync constructs `yarn exec compodoc ...`, and
+Compodoc receives no arguments. Direct invocation succeeds:
+`node node_modules/@compodoc/compodoc/bin/index-cli.js -p .storybook/tsconfig.json -e json -d .`.
+The intermediate preview build uses that freshly generated metadata with
+`--compodoc=false`. The normal launcher must be rechecked with Storybook 10.
+This workaround is not a passing normal documentation-build claim. The resulting
+Storybook build exits 0; browser checks verify the Lab Results expansion and
+encounter card without rendering or console errors. The production application
+also passes browser sign-in and empty Medical History/Labs checks against the
+disposable database, with no page errors; its expected absent Wails module
+console error remains. Native packaging still corresponds to Angular 16.
+
+GitHub recheck during this migration confirms main remains
+`de7818a9174b24884ad55ce81ad21a5f3a2a6f8b`, 316 open issue/PR records, and
+repository Actions disabled. No GitHub records or workflow settings were changed.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in

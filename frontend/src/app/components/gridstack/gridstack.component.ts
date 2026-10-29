@@ -7,7 +7,8 @@ import { AfterContentInit, Component, ContentChildren, ElementRef, EventEmitter,
   OnDestroy, OnInit, Output, QueryList, Type, ViewChild, ViewContainerRef, reflectComponentType } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { GridHTMLElement, GridItemHTMLElement, GridStack, GridStackNode, GridStackOptions, GridStackWidget } from 'gridstack';
+import { GridStack } from 'gridstack';
+import type { GridHTMLElement, GridItemHTMLElement, GridStackNode, GridStackOptions, GridStackWidget } from 'gridstack';
 
 import { GridItemCompHTMLElement, GridstackItemComponent } from './gridstack-item.component';
 import {CommonModule} from '@angular/common';
