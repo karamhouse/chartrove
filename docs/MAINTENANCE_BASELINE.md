@@ -172,6 +172,26 @@ fastjson 1.6.10, and Testify 1.12.1 with go.yaml.in/yaml/v3 3.0.5. Three
 obsolete v2 helper requirements were removed after checking both module graphs.
 The Go minimum, SQLCipher, Wails, OAuth2, and provider replacements are unchanged.
 
+The next slice implements [#271](https://github.com/karamhouse/chartrove/pull/271)
+locally by updating Logrus from 1.9.0 to 1.10.2 in both graphs. Only that module's
+version and checksums change. Upstream's
+[v1.10.0 notes](https://github.com/sirupsen/logrus/releases/tag/v1.10.0) document
+formatting and concurrency changes, including byte-slice text output and generic
+PanicLevel calls; these must not be mistaken for an application logging-policy
+change. This maintenance slice retains existing logger configuration and tests
+body privacy, access metadata, and status handling through the application.
+Authentication and all root web packages pass, desktop host/middleware and
+encrypted-backend tests pass, and module verification and full vet pass in both
+graphs. Existing native linker warnings remain.
+
+Fresh govulncheck 1.9.0 module scans from `backend/cmd/fasten` and
+`desktop/cmd/fasten-desktop` include 104 and 105 modules respectively and explicitly
+identify Logrus 1.10.2. GO-2025-4188 is absent; 18 root and five desktop advisory IDs
+remain. These are module-level results, not new call-reachability analyses. Run
+`govulncheck -scan=module -json` without package patterns from those source
+directories: this scanner version rejects patterns in module mode and fails at
+the source-free repository/module roots.
+
 ## Dependency migration order
 
 1. Establish effective authentication regressions and take the JWT v4 patch in

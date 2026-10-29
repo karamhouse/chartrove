@@ -81,6 +81,7 @@ These categories identify the evidence needed for the next decision. Same-major 
 - #260 represents the desktop's local `fasten-onprem => ..` backend replacement. #261 is constrained by recovered provider-library provenance. SQLite's exact-version SQLCipher replacement must survive any driver or ORM update.
 - #253's standalone TypeScript 4.9 target exceeds Angular 14.2's supported TypeScript ceiling. Angular core, compiler, CLI, CDK, UI peers, RxJS, and test tooling need a coordinated, sequential migration.
 - #268's JWX v2.1.7 target is insufficient for maintained security support. The [v3.3.0 release](https://github.com/lestrrat-go/jwx/releases/tag/v3.3.0) fixes GHSA-4cf7-xm37-g63h and identifies v2 as unmaintained. Both local graphs now select [v3.4.0](https://github.com/lestrrat-go/jwx/releases/tag/v3.4.0). Regressions reproduce and fix custom-field injection and non-private-key panics; persisted RSA keys and independently verified dynamic-client assertions pass. This also exceeds the historical v2.0.19 target in #207. Neither PR has been merged or closed.
+- #271's Logrus v1.10.2 target is implemented locally in both graphs. No other module version changed in that slice. The previously imported GO-2025-4188 finding is absent from fresh module-level scans that explicitly include Logrus v1.10.2. No active exploit path was demonstrated; the old finding was not reported as called. The PR remains open pending publication and review.
 - The current #160 paid-contribution inquiry was read without responding. No hiring or payment decision is inferred.
 
 ## Verified local implementation and migration sequence
@@ -103,6 +104,7 @@ The [maintenance baseline](MAINTENANCE_BASELINE.md) records commands, toolchain,
 | `0fbb2755b` | Preserve real password-bearing admin accounts during historical migration |
 | `d53929b93` | Reject failed final FHIR migration and close PostgreSQL pools after initialization failure |
 | `e4319b94e` | Migrate both graphs to JWX v3.4.0, reject wrong key types, and verify persisted-key signing independently |
+| `30a37e635` | Stop automatic request/response body capture while preserving HTTP behavior and access metadata |
 
 These commits are local and unpublished. The full backend checkpoint at `0fbb2755b` passed 14 tested packages and 265 test/subtest events without test skips or failures. SQLite/PostgreSQL regressions pass in both module graphs; desktop encrypted-backend checks passed within the unchanged 120-second limit. The earlier broad-suite timeout remains unexplained.
 
