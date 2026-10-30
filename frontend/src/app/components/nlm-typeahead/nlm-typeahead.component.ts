@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Optional, Output, Self, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Optional, Output, Self, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {merge, Observable, ObservableInput, of, Subject} from 'rxjs';
 import {catchError, debounceTime, distinctUntilChanged, filter, switchMap, tap} from 'rxjs/operators';
 import {NlmClinicalTableSearchService, NlmSearchResults} from '../../services/nlm-clinical-table-search.service';
@@ -34,18 +34,18 @@ export enum NlmSearchType {
 }
 
 @Component({
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    NgbTypeaheadModule,
-    HighlightModule,
-  ],
-  selector: 'app-nlm-typeahead',
-  templateUrl: './nlm-typeahead.component.html',
-  styleUrls: ['./nlm-typeahead.component.scss'],
-  providers: [
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        FormsModule,
+        NgbTypeaheadModule,
+        HighlightModule,
+    ],
+    selector: 'app-nlm-typeahead',
+    templateUrl: './nlm-typeahead.component.html',
+    styleUrls: ['./nlm-typeahead.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    providers: [
     // {
     //   provide: NG_VALUE_ACCESSOR,
     //   multi:true,
@@ -56,7 +56,7 @@ export enum NlmSearchType {
     //   multi:true,
     //   useExisting: NlmTypeaheadComponent
     // }
-  ]
+    ]
 })
 export class NlmTypeaheadComponent implements ControlValueAccessor {
   @Input() searchType: NlmSearchType = NlmSearchType.Condition;

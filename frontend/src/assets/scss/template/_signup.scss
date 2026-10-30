@@ -121,7 +121,7 @@
       &:first-child .btn {
         background-color: #4267b2;
         color: #fff;
-        @include hover-focus() {
+        &:hover, &:focus {
           background-color: darken(#4267b2, 8%);
           color: #fff;
         }
@@ -140,6 +140,6 @@
     color: $gray-900;
     font-weight: 700;
 
-    @include hover-focus() { color: $az-color-primary; }
+    &:hover, &:focus { color: $az-color-primary; }
   }
 }

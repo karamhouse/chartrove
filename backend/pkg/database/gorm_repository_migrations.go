@@ -189,7 +189,9 @@ func (gr *GormRepository) Migrate() error {
 			ID: "20240212142126", // remove unnecessary admin user if present.
 			Migrate: func(tx *gorm.DB) error {
 
-				deleteResp := tx.Delete(&models.User{}, "username = ?", "admin")
+				// The historical placeholder has no password. A user-created
+				// account named admin must retain its identity and credentials.
+				deleteResp := tx.Delete(&models.User{}, "username = ? AND password = ?", "admin", "")
 				if deleteResp.Error != nil {
 					tx.Logger.Error(context.Background(), fmt.Sprintf("An error occurred while removing placeholder admin user: %v", deleteResp.Error))
 					return deleteResp.Error
@@ -265,6 +267,7 @@ func (gr *GormRepository) Migrate() error {
 	//TODO: final migration step. This should not be necessary once we do true migrations for the databaseModels.
 	if err := databaseModel.Migrate(gr.GormClient); err != nil {
 		gr.Logger.Errorf("Final Database migration failed with error.\n Please open a github issue at https://github.com/fastenhealth/fasten-onprem. \n %v", err)
+		return err
 	}
 
 	gr.Logger.Infoln("Database migration completed successfully")

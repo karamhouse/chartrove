@@ -227,7 +227,7 @@
 
         + .nav-link { margin-left: 2px; }
 
-        @include hover-focus() {
+        &:hover, &:focus {
           background-color: $gray-300;
         }
 
@@ -272,7 +272,7 @@
         @include media-breakpoint-up(md) { display: none; }
       }
 
-      @include hover-focus() {
+      &:hover, &:focus {
         background-color: $gray-200;
       }
 
@@ -447,7 +447,7 @@
       font-weight: 500;
       align-items: flex-start;
       padding-top: 8px;
-      @include hover() { background-color: $gray-300; }
+      &:hover { background-color: $gray-300; }
 
       &.active {
         &,
@@ -650,7 +650,7 @@
       text-align: right;
       display: inline-block;
 
-      @include hover-focus() { color: $blue; }
+      &:hover, &:focus { color: $blue; }
     }
 
     div + div { margin-top: 5px; }
@@ -682,7 +682,7 @@
       padding-left: 10px;
       padding-right: 10px;
 
-      @include hover-focus() {
+      &:hover, &:focus {
         background-color: darken($gray-100, 2%);
       }
 

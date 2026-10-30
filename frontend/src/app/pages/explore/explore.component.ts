@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Source} from '../../models/fasten/source';
@@ -11,9 +11,11 @@ import {SourceListItem} from '../medical-sources/medical-sources.component';
 
 
 @Component({
-  selector: 'app-explore',
-  templateUrl: './explore.component.html',
-  styleUrls: ['./explore.component.scss']
+    selector: 'app-explore',
+    templateUrl: './explore.component.html',
+    styleUrls: ['./explore.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ExploreComponent implements OnInit {
   loading: boolean = false

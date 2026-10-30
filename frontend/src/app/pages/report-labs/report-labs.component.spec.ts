@@ -25,7 +25,7 @@ describe('ReportLabsComponent', () => {
     })
     .compileComponents();
     mockedFastenApiService.getResources.and.returnValue(of([]));
-    mockedFastenApiService.queryResources.and.returnValue(of([]));
+    mockedFastenApiService.queryResources.and.returnValue(of({success: true, data: []}));
     mockedFastenApiService.getSummary.and.returnValue(of({sources: []}));
 
     fixture = TestBed.createComponent(ReportLabsComponent);
@@ -33,7 +33,9 @@ describe('ReportLabsComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('renders the empty report after a successful query with no records', () => {
+    expect(component.loading).toBeFalse();
+    expect(component.allObservationGroups).toEqual([]);
+    expect(fixture.nativeElement.textContent).toContain('No Lab Data Found!');
   });
 });

@@ -80,7 +80,7 @@ type FhirPerson struct {
 	   * [RelatedPerson](relatedperson.html): The Related Person's date of birth
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Birthdate *time.Time `gorm:"column:birthdate;type:datetime" json:"birthdate,omitempty"`
+	Birthdate *time.Time `gorm:"column:birthdate" json:"birthdate,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -113,7 +113,7 @@ type FhirPerson struct {
 	Link datatypes.JSON `gorm:"column:link;type:text;serializer:json" json:"link,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`

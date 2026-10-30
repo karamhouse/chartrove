@@ -6,7 +6,6 @@ import (
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -18,7 +17,7 @@ func newPostgresRepository(appConfig config.Interface, globalLogger logrus.Field
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Gorm/PostgreSQL setup
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	globalLogger.Infof("Trying to connect to postgres db: %s\n", appConfig.GetString("database.location"))
+	globalLogger.Info("Trying to connect to postgres database")
 	dsn := appConfig.GetString("database.location")
 
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
@@ -34,7 +33,7 @@ func newPostgresRepository(appConfig config.Interface, globalLogger logrus.Field
 	if err != nil {
 		return nil, fmt.Errorf("Failed to connect to database! - %v", err)
 	}
-	globalLogger.Infof("Successfully connected to fasten postgres db: %s\n", dsn)
+	globalLogger.Info("Successfully connected to postgres database")
 
 	fastenRepo := GormRepository{
 		AppConfig:  appConfig,
@@ -46,21 +45,14 @@ func newPostgresRepository(appConfig config.Interface, globalLogger logrus.Field
 	//TODO: automigrate for now, this should be replaced with a migration tool once the DB has stabilized.
 	err = fastenRepo.Migrate()
 	if err != nil {
+		_ = fastenRepo.Close()
 		return nil, err
-	}
-
-	// create/update admin user
-	//TODO: determine if this admin user is ncessary
-	//SECURITY: validate this user is necessary
-	adminUser := models.User{}
-	err = database.FirstOrCreate(&adminUser, models.User{Username: "admin"}).Error
-	if err != nil {
-		return nil, fmt.Errorf("Failed to create admin user! - %v", err)
 	}
 
 	//fail any Locked jobs. This is necessary because the job may have been locked by a process that was killed.
 	err = fastenRepo.CancelAllLockedBackgroundJobsAndFail()
 	if err != nil {
+		_ = fastenRepo.Close()
 		return nil, err
 	}
 

@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, HostListener, ChangeDetectionStrategy } from '@angular/core';
+
 import { Router } from '@angular/router';
 import { FastenApiService } from '../../services/fasten-api.service';
 import { Practitioner } from 'src/app/models/fasten/practitioner';
@@ -16,11 +16,11 @@ export interface Favorite {
 }
 
 @Component({
-  selector: 'app-practitioner-list',
-  templateUrl: './practitioner-list.component.html',
-  styleUrls: ['./practitioner-list.component.scss'],
-  standalone: true,
-  imports: [CommonModule]
+    selector: 'app-practitioner-list',
+    templateUrl: './practitioner-list.component.html',
+    styleUrls: ['./practitioner-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: []
 })
 export class PractitionerListComponent implements OnInit, OnDestroy {
   practitioners: Practitioner[] = [];
@@ -57,7 +57,7 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
     this.isTouchEnabled = window.matchMedia('(any-pointer: coarse)').matches;
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize() {
     this.checkDeviceCapabilities();
   }

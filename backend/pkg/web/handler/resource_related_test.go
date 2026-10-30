@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
@@ -48,10 +46,9 @@ type ResourceRelatedHandlerTestSuite struct {
 func (suite *ResourceRelatedHandlerTestSuite) BeforeTest(suiteName, testName string) {
 	suite.MockCtrl = gomock.NewController(suite.T())
 
-	dbFile, err := ioutil.TempFile("", fmt.Sprintf("%s.*.db", testName))
-	if err != nil {
-		log.Fatal(err)
-	}
+	dbFile, err := os.CreateTemp(suite.T().TempDir(), fmt.Sprintf("%s.*.db", testName))
+	require.NoError(suite.T(), err)
+	require.NoError(suite.T(), dbFile.Close())
 	suite.TestDatabase = dbFile
 
 	appConfig := mock_config.NewMockInterface(suite.MockCtrl)
@@ -64,6 +61,9 @@ func (suite *ResourceRelatedHandlerTestSuite) BeforeTest(suiteName, testName str
 	suite.AppConfig = appConfig
 
 	appRepo, err := database.NewRepository(suite.AppConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+	t := suite.T()
+	t.Cleanup(func() { require.NoError(t, appRepo.Close()) })
 	suite.AppRepository = appRepo
 
 	suite.AppEventBus = event_bus.NewNoopEventBusServer()
@@ -78,7 +78,6 @@ func (suite *ResourceRelatedHandlerTestSuite) BeforeTest(suiteName, testName str
 // AfterTest has a function to be executed right after the test finishes and receives the suite and test names as input
 func (suite *ResourceRelatedHandlerTestSuite) AfterTest(suiteName, testName string) {
 	suite.MockCtrl.Finish()
-	os.Remove(suite.TestDatabase.Name())
 }
 
 // In order for 'go test' to run this suite, we need to create
@@ -89,6 +88,10 @@ func TestResourceRelatedHandlerTestSuite(t *testing.T) {
 
 func (suite *ResourceRelatedHandlerTestSuite) TestResourceRelatedHandlerTestSuite() {
 	//setup
+	uploadDir := suite.T().TempDir()
+	for _, key := range []string{"TMPDIR", "TMP", "TEMP"} {
+		suite.T().Setenv(key, uploadDir)
+	}
 	w := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(w)
 	ctx.Set(pkg.ContextKeyTypeLogger, logrus.WithField("test", suite.T().Name()))
@@ -106,6 +109,9 @@ func (suite *ResourceRelatedHandlerTestSuite) TestResourceRelatedHandlerTestSuit
 	require.NoError(suite.T(), err)
 
 	CreateRelatedResources(ctx)
+	remaining, err := os.ReadDir(uploadDir)
+	require.NoError(suite.T(), err)
+	require.Empty(suite.T(), remaining, "uploaded health records must not remain in the temporary directory")
 
 	var responseWrapper models.ResponseWrapper
 	err = json.Unmarshal(w.Body.Bytes(), &responseWrapper)
@@ -280,6 +286,7 @@ func createMultipartFormData(t *testing.T, fieldName, fileName string) (bytes.Bu
 	w := multipart.NewWriter(&b)
 	var fw io.Writer
 	file := mustOpen(fileName)
+	defer file.Close()
 	if fw, err = w.CreateFormFile(fieldName, file.Name()); err != nil {
 		t.Errorf("Error creating writer: %v", err)
 	}
@@ -288,6 +295,37 @@ func createMultipartFormData(t *testing.T, fieldName, fileName string) (bytes.Bu
 	}
 	w.Close()
 	return b, w
+}
+
+func TestCreateRelatedResourcesCleansUploadOnSourceError(t *testing.T) {
+	uploadDir := t.TempDir()
+	for _, key := range []string{"TMPDIR", "TMP", "TEMP"} {
+		t.Setenv(key, uploadDir)
+	}
+	ctrl := gomock.NewController(t)
+	repo := mock_database.NewMockDatabaseRepository(ctrl)
+	repo.EXPECT().GetCurrentUser(gomock.Any()).Return(nil, fmt.Errorf("synthetic lookup failure"))
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	ctx.Set(pkg.ContextKeyTypeLogger, logrus.WithField("test", t.Name()))
+	ctx.Set(pkg.ContextKeyTypeDatabase, repo)
+	ctx.Set(pkg.ContextKeyTypeEventBusServer, event_bus.NewNoopEventBusServer())
+	var body bytes.Buffer
+	writer := multipart.NewWriter(&body)
+	part, err := writer.CreateFormFile("file", "synthetic.json")
+	require.NoError(t, err)
+	_, err = io.WriteString(part, `{"resourceType":"Bundle","type":"collection","entry":[]}`)
+	require.NoError(t, err)
+	require.NoError(t, writer.Close())
+	ctx.Request = httptest.NewRequest(http.MethodPost, "/api/v1/resource/related", &body)
+	ctx.Request.Header.Set("Content-Type", writer.FormDataContentType())
+
+	CreateRelatedResources(ctx)
+
+	require.Equal(t, http.StatusInternalServerError, w.Code)
+	remaining, err := os.ReadDir(uploadDir)
+	require.NoError(t, err)
+	require.Empty(t, remaining, "failed imports must remove their uploaded temporary file")
 }
 
 func mustOpen(f string) *os.File {

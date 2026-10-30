@@ -3,8 +3,6 @@ package database
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"os"
 	"strings"
 	"testing"
@@ -35,10 +33,9 @@ type RepositorySqlTestSuite struct {
 func (suite *RepositorySqlTestSuite) BeforeTest(suiteName, testName string) {
 	suite.MockCtrl = gomock.NewController(suite.T())
 
-	dbFile, err := ioutil.TempFile("", fmt.Sprintf("%s.*.db", testName))
-	if err != nil {
-		log.Fatal(err)
-	}
+	dbFile, err := os.CreateTemp(suite.T().TempDir(), fmt.Sprintf("%s.*.db", testName))
+	require.NoError(suite.T(), err)
+	require.NoError(suite.T(), dbFile.Close())
 	suite.TestDatabase = dbFile
 
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
@@ -48,7 +45,7 @@ func (suite *RepositorySqlTestSuite) BeforeTest(suiteName, testName string) {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	suite.TestRepository = dbRepo
 	userModel := &models.User{
@@ -64,9 +61,6 @@ func (suite *RepositorySqlTestSuite) BeforeTest(suiteName, testName string) {
 // AfterTest has a function to be executed right after the test finishes and receives the suite and test names as input
 func (suite *RepositorySqlTestSuite) AfterTest(suiteName, testName string) {
 	suite.MockCtrl.Finish()
-	os.Remove(suite.TestDatabase.Name())
-	os.Remove(suite.TestDatabase.Name() + "-shm")
-	os.Remove(suite.TestDatabase.Name() + "-wal")
 }
 
 // In order for 'go test' to run this suite, we need to create

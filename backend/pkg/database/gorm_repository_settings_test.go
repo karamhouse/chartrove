@@ -10,8 +10,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"io/ioutil"
-	"log"
 	"os"
 	"testing"
 )
@@ -31,10 +29,9 @@ type RepositorySettingsTestSuite struct {
 // BeforeTest has a function to be executed right before the test starts and receives the suite and test names as input
 func (suite *RepositorySettingsTestSuite) BeforeTest(suiteName, testName string) {
 
-	dbFile, err := ioutil.TempFile("", fmt.Sprintf("%s.*.db", testName))
-	if err != nil {
-		log.Fatal(err)
-	}
+	dbFile, err := os.CreateTemp(suite.T().TempDir(), fmt.Sprintf("%s.*.db", testName))
+	require.NoError(suite.T(), err)
+	require.NoError(suite.T(), dbFile.Close())
 	suite.TestDatabase = dbFile
 
 	testConfig, err := config.Create()
@@ -44,7 +41,7 @@ func (suite *RepositorySettingsTestSuite) BeforeTest(suiteName, testName string)
 	testConfig.SetDefault("log.level", "INFO")
 	suite.TestConfig = testConfig
 
-	dbRepo, err := NewRepository(testConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), testConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	suite.TestRepository = dbRepo
 	userModel := &models.User{
@@ -56,11 +53,6 @@ func (suite *RepositorySettingsTestSuite) BeforeTest(suiteName, testName string)
 	suite.TestUser = userModel
 	require.NoError(suite.T(), err)
 
-}
-
-// AfterTest has a function to be executed right after the test finishes and receives the suite and test names as input
-func (suite *RepositorySettingsTestSuite) AfterTest(suiteName, testName string) {
-	os.Remove(suite.TestDatabase.Name())
 }
 
 // In order for 'go test' to run this suite, we need to create

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NlmTypeaheadComponent} from '../nlm-typeahead/nlm-typeahead.component';
@@ -18,20 +18,20 @@ import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {ResourceType} from '../../../lib/models/constants';
 
 @Component({
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    NlmTypeaheadComponent,
-    HighlightModule,
-    NgbTooltipModule,
-    NgbNavModule,
-    FhirDatatableModule
-  ],
-  selector: 'app-medical-record-wizard-add-organization',
-  templateUrl: './medical-record-wizard-add-organization.component.html',
-  styleUrls: ['./medical-record-wizard-add-organization.component.scss']
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        FormsModule,
+        NlmTypeaheadComponent,
+        HighlightModule,
+        NgbTooltipModule,
+        NgbNavModule,
+        FhirDatatableModule
+    ],
+    selector: 'app-medical-record-wizard-add-organization',
+    templateUrl: './medical-record-wizard-add-organization.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./medical-record-wizard-add-organization.component.scss']
 })
 export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
   @Input() debugMode: boolean = false;
@@ -63,7 +63,7 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
         "count_by": {"field": "*"}
       }
     }).subscribe((resp: ResponseWrapper) => {
-      this.totalOrganizations = resp.data?.[0].value
+      this.totalOrganizations = resp.data?.[0]?.value ?? 0
     })
   }
   changeTab(id: string) {

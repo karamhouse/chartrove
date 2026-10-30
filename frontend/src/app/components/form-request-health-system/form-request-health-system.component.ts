@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormRequestHealthSystem } from '../../models/fasten/form-request-health-system';
 import { FastenApiService } from '../../services/fasten-api.service';
 
 @Component({
-  selector: 'app-form-request-health-system',
-  templateUrl: './form-request-health-system.component.html',
-  styleUrls: ['./form-request-health-system.component.scss']
+    selector: 'app-form-request-health-system',
+    templateUrl: './form-request-health-system.component.html',
+    styleUrls: ['./form-request-health-system.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class FormRequestHealthSystemComponent implements OnInit {
   formRequestHealthSystem: FormRequestHealthSystem = null

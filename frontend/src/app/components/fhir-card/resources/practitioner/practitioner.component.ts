@@ -1,21 +1,21 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
 import {FhirCardEditableComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {ImmunizationModel} from '../../../../../lib/models/resources/immunization-model';
 import {TableRowItem} from '../../common/table/table-row-item';
 import {Router, RouterModule} from '@angular/router';
 import {PractitionerModel} from '../../../../../lib/models/resources/practitioner-model';
 import {NgbCollapseModule} from "@ng-bootstrap/ng-bootstrap";
-import {CommonModule} from "@angular/common";
+
 import {BadgeComponent} from "../../common/badge/badge.component";
 import {TableComponent} from "../../common/table/table.component";
 import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
 
 @Component({
-  standalone: true,
-  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, RouterModule],
-  selector: 'fhir-practitioner',
-  templateUrl: './practitioner.component.html',
-  styleUrls: ['./practitioner.component.scss']
+    imports: [NgbCollapseModule, BadgeComponent, TableComponent, RouterModule],
+    selector: 'fhir-practitioner',
+    templateUrl: './practitioner.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./practitioner.component.scss']
 })
 export class PractitionerComponent implements OnInit, FhirCardEditableComponentInterface {
   @Input() displayModel: PractitionerModel | null

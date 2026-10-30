@@ -17,7 +17,7 @@ type FhirCondition struct {
 	AbatementAge datatypes.JSON `gorm:"column:abatementAge;type:text;serializer:json" json:"abatementAge,omitempty"`
 	// Date-related abatements (dateTime and period)
 	// https://hl7.org/fhir/r4/search.html#date
-	AbatementDate *time.Time `gorm:"column:abatementDate;type:datetime" json:"abatementDate,omitempty"`
+	AbatementDate *time.Time `gorm:"column:abatementDate" json:"abatementDate,omitempty"`
 	// Abatement as a string
 	// https://hl7.org/fhir/r4/search.html#string
 	AbatementString datatypes.JSON `gorm:"column:abatementString;type:text;serializer:json" json:"abatementString,omitempty"`
@@ -103,7 +103,7 @@ type FhirCondition struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`
@@ -121,13 +121,13 @@ type FhirCondition struct {
 	OnsetAge datatypes.JSON `gorm:"column:onsetAge;type:text;serializer:json" json:"onsetAge,omitempty"`
 	// Date related onsets (dateTime and Period)
 	// https://hl7.org/fhir/r4/search.html#date
-	OnsetDate *time.Time `gorm:"column:onsetDate;type:datetime" json:"onsetDate,omitempty"`
+	OnsetDate *time.Time `gorm:"column:onsetDate" json:"onsetDate,omitempty"`
 	// Onsets as a string
 	// https://hl7.org/fhir/r4/search.html#string
 	OnsetInfo datatypes.JSON `gorm:"column:onsetInfo;type:text;serializer:json" json:"onsetInfo,omitempty"`
 	// Date record was first recorded
 	// https://hl7.org/fhir/r4/search.html#date
-	RecordedDate *time.Time `gorm:"column:recordedDate;type:datetime" json:"recordedDate,omitempty"`
+	RecordedDate *time.Time `gorm:"column:recordedDate" json:"recordedDate,omitempty"`
 	// The severity of the condition
 	// https://hl7.org/fhir/r4/search.html#token
 	Severity datatypes.JSON `gorm:"column:severity;type:text;serializer:json" json:"severity,omitempty"`

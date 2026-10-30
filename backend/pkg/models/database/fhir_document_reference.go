@@ -29,7 +29,7 @@ type FhirDocumentReference struct {
 	Custodian datatypes.JSON `gorm:"column:custodian;type:text;serializer:json" json:"custodian,omitempty"`
 	// When this document reference was created
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date" json:"date,omitempty"`
 	// Human-readable description
 	// https://hl7.org/fhir/r4/search.html#string
 	Description datatypes.JSON `gorm:"column:description;type:text;serializer:json" json:"description,omitempty"`
@@ -104,7 +104,7 @@ type FhirDocumentReference struct {
 	Location string `gorm:"column:location;type:text" json:"location,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`
@@ -119,7 +119,7 @@ type FhirDocumentReference struct {
 	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// Time of service that is being documented
 	// https://hl7.org/fhir/r4/search.html#date
-	Period *time.Time `gorm:"column:period;type:datetime" json:"period,omitempty"`
+	Period *time.Time `gorm:"column:period" json:"period,omitempty"`
 	// Related identifiers or resources
 	// https://hl7.org/fhir/r4/search.html#reference
 	Related datatypes.JSON `gorm:"column:related;type:text;serializer:json" json:"related,omitempty"`

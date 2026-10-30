@@ -26,19 +26,19 @@
   border-width: 1px;
   background-color: transparent;
 
-  @include hover-focus() { color: #fff; }
+  &:hover, &:focus { color: #fff; }
 }
 
 .btn-outline-indigo {
   border-color: $indigo;
   color: $indigo;
 
-  @include hover-focus() { background-color: $indigo; }
+  &:hover, &:focus { background-color: $indigo; }
 }
 
 .btn-outline-light {
   border-color: $gray-500;
   color: $gray-500;
 
-  @include hover-focus() { background-color: $gray-500; }
+  &:hover, &:focus { background-color: $gray-500; }
 }

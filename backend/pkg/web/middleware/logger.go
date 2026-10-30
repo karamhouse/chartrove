@@ -1,24 +1,17 @@
 package middleware
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"io"
-	"io/ioutil"
 	"math"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 )
 
 // Middleware based on https://github.com/toorop/gin-logrus/blob/master/logger.go
-// Body recording based on
-// - https://github.com/gin-gonic/gin/issues/1363
-// - https://stackoverflow.com/questions/38501325/how-to-log-response-body-in-gin
 
 // 2016-09-27 09:38:21.541541811 +0200 CEST
 // 127.0.0.1 - frank [10/Oct/2000:13:55:36 -0700]
@@ -38,20 +31,10 @@ func LoggerMiddleware(logger *logrus.Entry) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 
-		//clone the request body reader.
-		var reqBody string
-		if c.Request.Body != nil {
-			buf, _ := ioutil.ReadAll(c.Request.Body)
-			reqBodyReader1 := ioutil.NopCloser(bytes.NewBuffer(buf))
-			reqBodyReader2 := ioutil.NopCloser(bytes.NewBuffer(buf)) //We have to create a new Buffer, because reqBodyReader1 will be read.
-			c.Request.Body = reqBodyReader2
-			reqBody = readBody(reqBodyReader1)
-		}
-
+		// Bodies may contain credentials or health records. Leave them with their
+		// handlers and never capture them for logging, including at debug level.
 		// other handler can change c.Path so:
 		path := c.Request.URL.Path
-		blw := &responseBodyLogWriter{body: &bytes.Buffer{}, ResponseWriter: c.Writer}
-		c.Writer = blw
 		c.Set(pkg.ContextKeyTypeLogger, logger)
 		start := time.Now()
 		c.Next()
@@ -90,34 +73,5 @@ func LoggerMiddleware(logger *logrus.Entry) gin.HandlerFunc {
 				entry.Info(msg)
 			}
 		}
-		if strings.Contains(path, "/api/") {
-			//only debug log request/response from api endpoint.
-			if len(reqBody) > 0 {
-				entry.WithField("bodyType", "request").Debugln(reqBody) // Print request body
-			}
-			entry.WithField("bodyType", "response").Debugln(blw.body.String())
-		}
 	}
-}
-
-// Response Logging
-
-type responseBodyLogWriter struct {
-	gin.ResponseWriter
-	body *bytes.Buffer
-}
-
-func (w responseBodyLogWriter) Write(b []byte) (int, error) {
-	w.body.Write(b)
-	return w.ResponseWriter.Write(b)
-}
-
-// Request Logging
-
-func readBody(reader io.Reader) string {
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(reader)
-
-	s := buf.String()
-	return s
 }

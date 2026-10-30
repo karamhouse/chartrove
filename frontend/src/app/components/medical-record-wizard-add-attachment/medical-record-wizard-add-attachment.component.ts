@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NlmTypeaheadComponent} from '../nlm-typeahead/nlm-typeahead.component';
@@ -6,18 +6,18 @@ import {HighlightModule} from 'ngx-highlightjs';
 import {NgbActiveModal, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    NlmTypeaheadComponent,
-    HighlightModule,
-    NgbTooltipModule
-  ],
-  selector: 'app-medical-record-wizard-add-attachment',
-  templateUrl: './medical-record-wizard-add-attachment.component.html',
-  styleUrls: ['./medical-record-wizard-add-attachment.component.scss']
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        FormsModule,
+        NlmTypeaheadComponent,
+        HighlightModule,
+        NgbTooltipModule
+    ],
+    selector: 'app-medical-record-wizard-add-attachment',
+    templateUrl: './medical-record-wizard-add-attachment.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./medical-record-wizard-add-attachment.component.scss']
 })
 export class MedicalRecordWizardAddAttachmentComponent implements OnInit {
   @Input() debugMode: boolean = false;

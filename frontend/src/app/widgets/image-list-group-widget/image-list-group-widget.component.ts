@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {NgChartsModule} from 'ng2-charts';
 import {CommonModule} from '@angular/common';
 import {LoadingWidgetComponent} from '../loading-widget/loading-widget.component';
@@ -7,11 +7,11 @@ import {DashboardWidgetComponent} from '../dashboard-widget/dashboard-widget.com
 import {DashboardWidgetConfig} from '../../models/widget/dashboard-widget-config';
 
 @Component({
-  standalone: true,
-  imports: [NgChartsModule, CommonModule, LoadingWidgetComponent, EmptyWidgetComponent],
-  selector: 'image-list-group-widget',
-  templateUrl: './image-list-group-widget.component.html',
-  styleUrls: ['./image-list-group-widget.component.scss']
+    imports: [NgChartsModule, CommonModule, LoadingWidgetComponent, EmptyWidgetComponent],
+    selector: 'image-list-group-widget',
+    templateUrl: './image-list-group-widget.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./image-list-group-widget.component.scss']
 })
 export class ImageListGroupWidgetComponent extends DashboardWidgetComponent implements OnInit {
 

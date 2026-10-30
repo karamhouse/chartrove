@@ -5,19 +5,21 @@ Chartrove is an independent fork of [Fasten Onprem](https://github.com/fastenhea
 ## Toolchain
 
 - Go 1.26 or newer; root and desktop modules retain separate dependency graphs.
-- Node 20.19.0 and the committed Yarn 1.22.22 configuration.
-- Angular 14.1.x through the local, locked CLI.
+- Node 26.13.0, pinned in `mise.toml`, with the committed Yarn 1.22.22 configuration.
+- Angular 22.x through the local, locked CLI (currently core 22.2.4, CLI/CDK 22.2.5, and TypeScript 6.0.3).
 - macOS with Xcode Command Line Tools for native desktop builds.
 
 Install only the locked frontend dependencies when needed:
 
 ```sh
 cd frontend
-corepack yarn install --frozen-lockfile --ignore-optional --registry https://registry.npmjs.org --network-concurrency 4
+npm exec --yes --package=corepack@0.35.0 -- corepack yarn install --frozen-lockfile --registry https://registry.npmjs.org --network-concurrency 4
 cd ..
 ```
 
-Use the local CLI rather than installing or upgrading a global Angular CLI for a project change.
+Node 26 does not bundle Corepack. The command above invokes a pinned Corepack through npm and preserves the committed Yarn selection. Use `node node_modules/@angular/cli/bin/ng.js <command>` for the local CLI without a global Yarn or Angular CLI installation. The Angular workspace explicitly selects Yarn.
+
+Angular 22 officially supports Node 26 and TypeScript 6.0. Keep TypeScript within the selected Angular compiler's supported range and report concrete compatibility failures; do not reinstall retired Node runtimes or bypass engine checks. See [the maintenance baseline](docs/MAINTENANCE_BASELINE.md) for validation evidence and the sequential migration history.
 
 ## Repository layout
 
@@ -47,11 +49,16 @@ For frontend iteration, select the existing `desktop_prod` configuration. A nati
 From the repository root:
 
 ```sh
-go test ./backend/... -count=1
+make prepare-backend
+go test -p 1 ./backend/... -count=1
 cd frontend
 node --test desktop-tests/bridge.test.mjs
 node node_modules/@angular/cli/bin/ng.js test --watch=false --browsers=ChromeHeadlessCI
 ```
+
+`make prepare-backend` generates the ignored `backend/resources/related_versions.json` required by the backend executable. It does not tidy, vendor, or upgrade dependencies. The backend test targets use this preparation step; dependency refresh remains the separate `dep-backend` target. Mise selects Node through your shell activation; `.envrc` no longer activates the historical Nix flake. The retained flake is not the supported development baseline.
+
+Database fixtures use test-scoped directories and close their repositories before cleanup. Run validation with `TMPDIR` set to a newly created private task directory so any leftovers from failed or interrupted tests can be identified and removed after their processes exit. Never point tests at an existing health-record directory.
 
 From `desktop/`:
 
@@ -61,6 +68,23 @@ go test github.com/fastenhealth/fasten-onprem/backend/pkg/web -run TestEmbedded 
 ```
 
 The native `--smoke-test` mode requires `--unencrypted` and an explicit fresh `--data-dir`. It refuses an existing database. It validates the real WebView bridge and uses synthetic records only.
+
+The opt-in PostgreSQL driver regression requires Docker with a local Unix socket.
+Pull its pinned PostgreSQL 17 image, then run from the repository root:
+
+```sh
+docker pull postgres:17-alpine@sha256:266d3c257594e195b309ae9d1805e54c788f1d7b375f56bf6c367aac6c917e7b
+go test -tags=postgres_integration ./backend/pkg/database -run '^TestPostgresIntegration$' -count=1
+```
+
+The test creates a loopback-only disposable container with a generated password
+and in-memory data directory, and removes it afterward. It accepts no existing
+database connection or host volume. To check the desktop dependency graph, run
+the same command from `desktop/` with the package path
+`github.com/fastenhealth/fasten-onprem/backend/pkg/database`.
+This checks driver parameter binding, fresh repository migration, synthetic
+account and FHIR date persistence, and reopen. It does not establish compatibility
+of every advanced resource query or an existing production database.
 
 Choose checks appropriate to the change. Do not relax timeouts, encryption, or test assertions to make a failing check pass. Distinguish a source check from a successful build and a real native UI check.
 

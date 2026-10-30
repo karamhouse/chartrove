@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {forkJoin} from 'rxjs';
@@ -9,9 +9,11 @@ import {AllergyIntoleranceModel} from '../../../lib/models/resources/allergy-int
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-patient-profile',
-  templateUrl: './patient-profile.component.html',
-  styleUrls: ['./patient-profile.component.scss']
+    selector: 'app-patient-profile',
+    templateUrl: './patient-profile.component.html',
+    styleUrls: ['./patient-profile.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PatientProfileComponent implements OnInit {
   loading: {[name: string]: boolean} = {page: false, delete: false}

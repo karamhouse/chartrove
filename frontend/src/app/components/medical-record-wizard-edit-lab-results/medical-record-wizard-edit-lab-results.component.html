@@ -1,13 +1,15 @@
 <div class="modal-header">
   <h4 class="modal-title" id="modal-attachment">Edit Lab Results</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()"><span aria-hidden="true">×</span></button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body">
 
-  <div *ngIf="debugMode" class="alert alert-warning">
-    <!--    <pre><code  [highlight]="newAttachmentForm.getRawValue() | json"></code></pre>-->
-    <!--    <strong>New Attachment Form Status: {{ newAttachmentForm.status }}</strong>-->
-  </div>
+  @if (debugMode) {
+    <div class="alert alert-warning">
+      <!--    <pre><code  [highlight]="newAttachmentForm.getRawValue() | json"></code></pre>-->
+      <!--    <strong>New Attachment Form Status: {{ newAttachmentForm.status }}</strong>-->
+    </div>
+  }
 
   <div class="row mg-b-15">
     <div class="col-md-12">
@@ -20,19 +22,25 @@
 
 
 
-  <div *ngIf="questionnaire" class="row">
-    <wc-lhc-form
-      #lhcForm
-      [(questionnaire)]="questionnaire"
-      [options]="options"
-      [fhirVersion]="format"
-      (onFormReady)="onFormReady($event)"
-      (onError)="onError($event)"
-
-    ></wc-lhc-form>
-  </div>
-  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+  @if (questionnaire) {
+    <div class="row">
+      <wc-lhc-form
+        #lhcForm
+        [(questionnaire)]="questionnaire"
+        [options]="options"
+        [fhirVersion]="format"
+        (onFormReady)="onFormReady()"
+        (onError)="onError()"
+      ></wc-lhc-form>
+    </div>
+  }
+  @if (loading) {
+    <app-loading-spinner></app-loading-spinner>
+  }
+  @if (formError) {
+    <div class="alert alert-danger" role="alert">{{formError}}</div>
+  }
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-az-primary" (click)="submit()">Edit Lab Results</button>
+  <button type="button" class="btn btn-az-primary" [disabled]="!formReady || loading" (click)="submit()">Edit Lab Results</button>
 </div>

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { FastenApiService } from '../../services/fasten-api.service';
 import { Practitioner } from 'src/app/models/fasten/practitioner';
@@ -16,11 +16,11 @@ interface ContactDataItem {
 }
 
 @Component({
-  selector: 'app-practitioner-view',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './practitioner-view.component.html',
-  styleUrls: ['./practitioner-view.component.scss'] 
+    selector: 'app-practitioner-view',
+    imports: [],
+    templateUrl: './practitioner-view.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./practitioner-view.component.scss']
 })
 export class PractitionerViewComponent implements OnInit {
   practitioner: Practitioner | null = null;

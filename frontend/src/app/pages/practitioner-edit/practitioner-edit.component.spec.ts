@@ -3,7 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PractitionerEditPageComponent } from './practitioner-edit.component';
 import { ActivatedRoute } from '@angular/router';
 import { HTTP_CLIENT_TOKEN } from 'src/app/dependency-injection';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
+import {HttpTestingController, provideHttpClientTesting} from '@angular/common/http/testing';
 import { of } from 'rxjs';
 
 describe('PractitionerEditComponent', () => {
@@ -11,24 +12,26 @@ describe('PractitionerEditComponent', () => {
   let fixture: ComponentFixture<PractitionerEditPageComponent>;
 
   beforeEach(async () => {
-    TestBed.configureTestingModule({
-      imports: [PractitionerEditPageComponent, HttpClientModule],
-      providers: [
+    await TestBed.configureTestingModule({
+    imports: [PractitionerEditPageComponent],
+    providers: [
         {
-          provide: ActivatedRoute,
-          useValue: {
-            snapshot: {
-              paramMap: { get: (key: string) => 'test-practitioner-id' },
+            provide: ActivatedRoute,
+            useValue: {
+                snapshot: {
+                    paramMap: { get: (key: string) => 'test-practitioner-id' },
+                },
+                params: of({ id: 'test-practitioner-id' })
             },
-            params: of({ id: 'test-practitioner-id' })
-          },
         },
         {
-          provide: HTTP_CLIENT_TOKEN,
-          useClass: HttpClient,
+            provide: HTTP_CLIENT_TOKEN,
+            useClass: HttpClient,
         },
-      ],
-    }).compileComponents();
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+    ]
+}).compileComponents();
   });
 
   beforeEach(() => {
@@ -37,7 +40,16 @@ describe('PractitionerEditComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  afterEach(() => TestBed.inject(HttpTestingController).verify());
+
+  it('reports a missing practitioner after a successful empty response', () => {
+    const request = TestBed.inject(HttpTestingController).expectOne(req =>
+      req.urlWithParams.endsWith('/api/secure/resource/fhir?sourceResourceType=Practitioner'));
+    expect(request.request.method).toBe('GET');
+    request.flush({success: true, data: []});
+    fixture.detectChanges();
+    expect(component.isLoading).toBeFalse();
+    expect(component.loadError).toBe('Practitioner not found');
+    expect(fixture.nativeElement.textContent).toContain('Practitioner not found');
   });
 });

@@ -278,7 +278,7 @@
       height: $az-height-base - 2px;
     }
 
-    @include hover-focus() {
+    &:hover, &:focus {
       color: $az-color-primary;
       outline: none;
     }

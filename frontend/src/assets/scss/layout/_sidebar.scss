@@ -258,7 +258,7 @@
     color: $body-color;
     font-size: 13px;
 
-    @include hover-focus() { color: $az-color-primary; }
+    &:hover, &:focus { color: $az-color-primary; }
 
     &.with-sub {
       justify-content: space-between;

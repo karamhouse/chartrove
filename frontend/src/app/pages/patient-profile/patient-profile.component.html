@@ -5,195 +5,165 @@
       <!-- Header Row -->
       <report-header [reportHeaderTitle]="'Patient Profile'"></report-header>
 
-      <div *ngIf="!loading['page'] else isLoadingTemplate" class="pl-3 pr-3">
-        <!-- Patient Name Row -->
-        <div class="row mt-5 mb-3">
-          <div class="col-6">
-            <h1>{{patient | fhirPath: "Patient.name.family.first()"}}, {{patient | fhirPath: "Patient.name.given.first()"}}</h1>
-          </div>
-        </div>
-
-        <!-- Patient Details -->
-        <div class="row">
-          <div class="col-6">
-            <h2 class="tx-indigo">Patient</h2>
-
-            <div class="row">
-              <div class="col-6">
-                <strong class="tx-indigo">First Name:</strong>
-              </div>
-              <div class="col-6">
-                {{patient | fhirPath: "Patient.name.given.first()"}}
-              </div>
-
-              <div class="col-6">
-                <strong class="tx-indigo">Last Name:</strong>
-              </div>
-              <div class="col-6">
-                {{patient | fhirPath: "Patient.name.family.first()"}}
-              </div>
-
-              <div class="col-6">
-                <strong class="tx-indigo">Gender:</strong>
-              </div>
-              <div class="col-6">
-                {{patient | fhirPath: "Patient.gender" | titlecase}}
-              </div>
-
-              <div class="col-6">
-                <strong class="tx-indigo">Martial Status:</strong>
-              </div>
-              <div class="col-6">
-                {{patient | fhirPath: "Patient.maritalStatus.text" | titlecase}}
-              </div>
-
-              <div class="col-6">
-                <strong class="tx-indigo">Religious Affil:</strong>
-              </div>
-              <div class="col-6">
-                N/A
-              </div>
-
-              <div class="col-6">
-                <strong class="tx-indigo">Ethnicity:</strong>
-              </div>
-              <div class="col-6">
-                White/Caucasian
-              </div>
-
-              <div class="col-6">
-                <strong class="tx-indigo">Language:</strong>
-              </div>
-              <div class="col-6">
-                {{patient | fhirPath: "Patient.communication.language.text" | titlecase}}
-              </div>
-
-              <div class="col-6">
-                <strong class="tx-indigo">Address:</strong>
-              </div>
-              <div class="col-6">
-                {{patient | fhirPath: "Patient.address.line.first()"}}<br/>{{patient | fhirPath: "Patient.address.city.first()"}}, {{patient | fhirPath: "Patient.address.state.first()"}}, {{patient | fhirPath: "Patient.address.postalCode.first()"}}
-              </div>
-
-              <div class="col-6">
-                <strong class="tx-indigo">Date of Birth:</strong>
-              </div>
-              <div class="col-6">
-                {{patient | fhirPath: "Patient.birthDate" | date }}
-              </div>
-
-              <div class="col-6">
-                <strong class="tx-indigo">Phone:</strong>
-              </div>
-              <div class="col-6">
-                {{patient | fhirPath: "Patient.telecom.where(system='phone').value.first()"}}
-              </div>
-
-              <div class="col-6">
-                <strong class="tx-indigo">Email:</strong>
-              </div>
-              <div class="col-6">
-                {{patient | fhirPath: "Patient.telecom.where(system='email').value.first()"}}
-              </div>
-
-            </div>
-
-          </div>
-          <div class="col-6">
-            <h2 class="tx-indigo">Care Provider</h2>
-
-            <div class="row">
-              <div class="col-6">
-                <strong class="tx-indigo">Primary Care:</strong>
-              </div>
-              <div class="col-6">
-                Bishop, J. ANRP
-              </div>
-
-              <div class="col-6">
-                <strong  class="tx-indigo">Address:</strong>
-              </div>
-              <div class="col-6">
-                Malcom Randall VA <br/>Medical Center Gainsville FL
-              </div>
-
-              <div class="col-6">
-                <strong  class="tx-indigo">Phone:</strong>
-              </div>
-              <div class="col-6">
-                123-321-5532
-              </div>
-
-              <div class="col-6">
-                <strong  class="tx-indigo">Email:</strong>
-              </div>
-              <div class="col-6">
-                myemail@va.com
-              </div>
-
+      @if (!loading['page']) {
+        <div class="ps-3 pe-3">
+          <!-- Patient Name Row -->
+          <div class="row mt-5 mb-3">
+            <div class="col-6">
+              <h1>{{patient | fhirPath: "Patient.name.family.first()"}}, {{patient | fhirPath: "Patient.name.given.first()"}}</h1>
             </div>
           </div>
-        </div>
-
-
-        <!-- Immunizations & Allergies -->
-        <div class="row mt-5">
-          <div class="col-6">
-            <h2 class="tx-indigo">Immunizations</h2>
-
-            <p>
-              <ng-container *ngFor="let immunization of immunizations; let i = index">
-                <strong class="cursor-pointer tx-indigo" [ngbPopover]="immunizationPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover">{{immunization.title }}</strong><br/>
-                {{immunization.sort_date | date }}<br/>
-                {{immunization.location }}<br/>
-                <br/>
-
-
-                <ng-template #immunizationPopoverContent>
-                  <fhir-card [displayModel]="immunization"></fhir-card>
-                </ng-template>
-              </ng-container>
-            </p>
-
+          <!-- Patient Details -->
+          <div class="row">
+            <div class="col-6">
+              <h2 class="tx-indigo">Patient</h2>
+              <div class="row">
+                <div class="col-6">
+                  <strong class="tx-indigo">First Name:</strong>
+                </div>
+                <div class="col-6">
+                  {{patient | fhirPath: "Patient.name.given.first()"}}
+                </div>
+                <div class="col-6">
+                  <strong class="tx-indigo">Last Name:</strong>
+                </div>
+                <div class="col-6">
+                  {{patient | fhirPath: "Patient.name.family.first()"}}
+                </div>
+                <div class="col-6">
+                  <strong class="tx-indigo">Gender:</strong>
+                </div>
+                <div class="col-6">
+                  {{patient | fhirPath: "Patient.gender" | titlecase}}
+                </div>
+                <div class="col-6">
+                  <strong class="tx-indigo">Martial Status:</strong>
+                </div>
+                <div class="col-6">
+                  {{patient | fhirPath: "Patient.maritalStatus.text" | titlecase}}
+                </div>
+                <div class="col-6">
+                  <strong class="tx-indigo">Religious Affil:</strong>
+                </div>
+                <div class="col-6">
+                  N/A
+                </div>
+                <div class="col-6">
+                  <strong class="tx-indigo">Ethnicity:</strong>
+                </div>
+                <div class="col-6">
+                  White/Caucasian
+                </div>
+                <div class="col-6">
+                  <strong class="tx-indigo">Language:</strong>
+                </div>
+                <div class="col-6">
+                  {{patient | fhirPath: "Patient.communication.language.text" | titlecase}}
+                </div>
+                <div class="col-6">
+                  <strong class="tx-indigo">Address:</strong>
+                </div>
+                <div class="col-6">
+                  {{patient | fhirPath: "Patient.address.line.first()"}}<br/>{{patient | fhirPath: "Patient.address.city.first()"}}, {{patient | fhirPath: "Patient.address.state.first()"}}, {{patient | fhirPath: "Patient.address.postalCode.first()"}}
+                </div>
+                <div class="col-6">
+                  <strong class="tx-indigo">Date of Birth:</strong>
+                </div>
+                <div class="col-6">
+                  {{patient | fhirPath: "Patient.birthDate" | date }}
+                </div>
+                <div class="col-6">
+                  <strong class="tx-indigo">Phone:</strong>
+                </div>
+                <div class="col-6">
+                  {{patient | fhirPath: "Patient.telecom.where(system='phone').value.first()"}}
+                </div>
+                <div class="col-6">
+                  <strong class="tx-indigo">Email:</strong>
+                </div>
+                <div class="col-6">
+                  {{patient | fhirPath: "Patient.telecom.where(system='email').value.first()"}}
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <h2 class="tx-indigo">Care Provider</h2>
+              <div class="row">
+                <div class="col-6">
+                  <strong class="tx-indigo">Primary Care:</strong>
+                </div>
+                <div class="col-6">
+                  Bishop, J. ANRP
+                </div>
+                <div class="col-6">
+                  <strong  class="tx-indigo">Address:</strong>
+                </div>
+                <div class="col-6">
+                  Malcom Randall VA <br/>Medical Center Gainsville FL
+                </div>
+                <div class="col-6">
+                  <strong  class="tx-indigo">Phone:</strong>
+                </div>
+                <div class="col-6">
+                  123-321-5532
+                </div>
+                <div class="col-6">
+                  <strong  class="tx-indigo">Email:</strong>
+                </div>
+                <div class="col-6">
+                  myemail&#64;va.com
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="col-6">
-            <h2 class="tx-indigo">Allergies</h2>
-
-            <p>
-              <ng-container *ngFor="let allergy of allergyIntolerances; let i = index">
-                <strong class="cursor-pointer tx-indigo" [ngbPopover]="allergyIntolerancesPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover">{{allergy.title}}</strong><br/>
-                {{allergy.recorded_date }}<br/>
-                <br/>
-
-                <ng-template #allergyIntolerancesPopoverContent>
-                  <fhir-card [displayModel]="allergy"></fhir-card>
-                </ng-template>
-              </ng-container>
-
-            </p>
+          <!-- Immunizations & Allergies -->
+          <div class="row mt-5">
+            <div class="col-6">
+              <h2 class="tx-indigo">Immunizations</h2>
+              <p>
+                @for (immunization of immunizations; track immunization; let i = $index) {
+                  <strong class="cursor-pointer tx-indigo" [ngbPopover]="immunizationPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover">{{immunization.title }}</strong><br/>
+                  {{immunization.sort_date | date }}<br/>
+                  {{immunization.location }}<br/>
+                  <br/>
+                  <ng-template #immunizationPopoverContent>
+                    <fhir-card [displayModel]="immunization"></fhir-card>
+                  </ng-template>
+                }
+              </p>
+            </div>
+            <div class="col-6">
+              <h2 class="tx-indigo">Allergies</h2>
+              <p>
+                @for (allergy of allergyIntolerances; track allergy; let i = $index) {
+                  <strong class="cursor-pointer tx-indigo" [ngbPopover]="allergyIntolerancesPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover">{{allergy.title}}</strong><br/>
+                  {{allergy.recorded_date }}<br/>
+                  <br/>
+                  <ng-template #allergyIntolerancesPopoverContent>
+                    <fhir-card [displayModel]="allergy"></fhir-card>
+                  </ng-template>
+                }
+              </p>
+            </div>
           </div>
-        </div>
-
-        <!-- Account Actions -->
-        <hr/>
-
-        <div class="row" style="padding-bottom:20px">
-          <div class="col-12">
-            <div class="btn-group" role="group">
-              <button (click)="openModal(manageModalRef)" type="button" class="btn btn-outline-danger">Delete Account</button>
+          <!-- Account Actions -->
+          <hr/>
+          <div class="row" style="padding-bottom:20px">
+            <div class="col-12">
+              <div class="btn-group" role="group">
+                <button (click)="openModal(manageModalRef)" type="button" class="btn btn-outline-danger">Delete Account</button>
+              </div>
             </div>
           </div>
         </div>
-
-      </div>
-
-      <ng-template #isLoadingTemplate>
+      } @else {
         <div class="row">
           <div class="col-12">
             <app-loading-spinner [loadingTitle]="'Please wait, loading patient profile...'"></app-loading-spinner>
           </div>
         </div>
-      </ng-template>
+      }
+
 
     </div>
   </div>
@@ -219,7 +189,9 @@
 
   <div class="modal-footer">
     <button type="button" (click)="deleteAccount()" class="btn btn-danger">
-      <span *ngIf="loading['delete']" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      @if (loading['delete']) {
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      }
       Delete
     </button>
     <button (click)="modal.dismiss('Close click')" type="button" class="btn btn-outline-light">Close</button>

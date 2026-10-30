@@ -87,7 +87,7 @@ type FhirObservation struct {
 	   * [SupplyRequest](supplyrequest.html): When the request was made
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date" json:"date,omitempty"`
 	// Related measurements the observation is made from
 	// https://hl7.org/fhir/r4/search.html#reference
 	DerivedFrom datatypes.JSON `gorm:"column:derivedFrom;type:text;serializer:json" json:"derivedFrom,omitempty"`
@@ -162,7 +162,7 @@ type FhirObservation struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`
@@ -204,7 +204,7 @@ type FhirObservation struct {
 	ValueConcept datatypes.JSON `gorm:"column:valueConcept;type:text;serializer:json" json:"valueConcept,omitempty"`
 	// The value of the observation, if the value is a date or period of time
 	// https://hl7.org/fhir/r4/search.html#date
-	ValueDate *time.Time `gorm:"column:valueDate;type:datetime" json:"valueDate,omitempty"`
+	ValueDate *time.Time `gorm:"column:valueDate" json:"valueDate,omitempty"`
 	// The value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)
 	// https://hl7.org/fhir/r4/search.html#quantity
 	ValueQuantity datatypes.JSON `gorm:"column:valueQuantity;type:text;serializer:json" json:"valueQuantity,omitempty"`

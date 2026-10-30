@@ -54,7 +54,7 @@
       &.fa-desktop { font-size: 23px; }
     }
 
-    @include hover-focus() { color: $gray-700; }
+    &:hover, &:focus { color: $gray-700; }
 
     &.active { color: $az-color-primary; }
 
@@ -85,7 +85,7 @@
     @include border-radius(2px);
   }
 
-  @include hover-focus() { color: $gray-900; }
+  &:hover, &:focus { color: $gray-900; }
 }
 
 .az-iconbar-bottom {
@@ -101,7 +101,7 @@
   color: $gray-600;
   margin-bottom: 20px;
 
-  @include hover-focus() { color: $gray-900; }
+  &:hover, &:focus { color: $gray-900; }
 }
 
 .az-iconbar-aside {
@@ -147,7 +147,7 @@
   font-size: 28px;
   opacity: .5;
 
-  @include hover-focus() {
+  &:hover, &:focus {
     opacity: 1;
     color: $gray-900;
   }
@@ -226,7 +226,7 @@
       }
     }
 
-    @include hover-focus() {
+    &:hover, &:focus {
       color: $az-color-primary;
       i { color: $az-color-primary; }
     }
@@ -275,7 +275,7 @@
       height: 36px;
       color: $body-color;
 
-      @include hover-focus() { color: $az-color-primary; }
+      &:hover, &:focus { color: $az-color-primary; }
     }
   }
 }

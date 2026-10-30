@@ -18,13 +18,13 @@ textarea.parsley-success {
   &.parsley-error {
     display: inline-block;
     padding: 10px;
-    border: 1px solid theme-color('danger');
+    border: 1px solid map-get($theme-colors, 'danger');
   }
 
   &.parsley-success {
     display: inline-block;
     padding: 10px;
-    border: 1px solid theme-color('success');
+    border: 1px solid map-get($theme-colors, 'success');
   }
 }
 
@@ -40,7 +40,7 @@ textarea.parsley-success {
 
 
 .parsley-errors-list {
-  color: theme-color('danger');
+  color: map-get($theme-colors, 'danger');
   list-style: none;
   font-size: 12px;
   padding: 0;
@@ -54,22 +54,22 @@ textarea.parsley-success {
   .parsley-input {
     &.parsley-error {
       .form-control {
-        background-color: lighten(theme-color('danger'), 45%);
-        border-color: theme-color('danger');
+        background-color: lighten(map-get($theme-colors, 'danger'), 45%);
+        border-color: map-get($theme-colors, 'danger');
         border-bottom-width: 0;
         @include border-bottom-radius(0);
       }
     }
 
     &.parsley-success {
-      .form-control { border-color: theme-color('success'); }
+      .form-control { border-color: map-get($theme-colors, 'success'); }
     }
   }
 
   .parsley-checkbox {
     &.parsley-error {
-      border: 1px solid theme-color('danger');
-      background-color: lighten(theme-color('danger'), 45%);
+      border: 1px solid map-get($theme-colors, 'danger');
+      background-color: lighten(map-get($theme-colors, 'danger'), 45%);
       @include border-top-radius(2px);
     }
   }
@@ -77,14 +77,14 @@ textarea.parsley-success {
   .parsley-select {
     &.parsley-error {
       .select2-container--default .select2-selection--single {
-        background-color: lighten(theme-color('danger'), 45%);
+        background-color: lighten(map-get($theme-colors, 'danger'), 45%);
         @include border-bottom-radius(0);
       }
     }
   }
 
   .parsley-errors-list.filled {
-    background-color: theme-color('danger');
+    background-color: map-get($theme-colors, 'danger');
     color: #fff;
     padding: 7px 10px;
     @include border-bottom-radius(2px);

@@ -63,7 +63,7 @@ type FhirDiagnosticReport struct {
 	   * [SupplyRequest](supplyrequest.html): When the request was made
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date" json:"date,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -120,7 +120,7 @@ type FhirDiagnosticReport struct {
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
 	// When the report was issued
 	// https://hl7.org/fhir/r4/search.html#date
-	Issued *time.Time `gorm:"column:issued;type:datetime" json:"issued,omitempty"`
+	Issued *time.Time `gorm:"column:issued" json:"issued,omitempty"`
 	// Language of the resource content
 	// https://hl7.org/fhir/r4/search.html#token
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
@@ -129,7 +129,7 @@ type FhirDiagnosticReport struct {
 	Media datatypes.JSON `gorm:"column:media;type:text;serializer:json" json:"media,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`

@@ -6,20 +6,20 @@
       </div>
 
       <div class="alert alert-info" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
+        <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
         <strong>Work-in-Progress!</strong> Some sources may not be implemented correctly.
         Some sources may require frequent re-connection, as background refresh has not been implemented yet.
         <br/>
         If you have feedback regarding healthcare sources, please <a href="https://github.com/karamhouse/chartrove/issues" externalLink>file a ticket <i class="fab fa-github"></i></a>
 
-        <span *ngIf="environment_name == 'sandbox'">
-          <br/>
-          <br/>
-        In <strong>Sandbox mode</strong> Chartrove cannot access real patient information. You must use Sandbox credentials when authenticating to healthcare sources.
-          <a href="https://docs.fastenhealth.com/getting-started/sandbox.html#connecting-a-new-source" externalLink>See the legacy Fasten sandbox guide</a>
-        </span>
+        @if (environment_name == 'sandbox') {
+          <span>
+            <br/>
+            <br/>
+            In <strong>Sandbox mode</strong> Chartrove cannot access real patient information. You must use Sandbox credentials when authenticating to healthcare sources.
+            <a href="https://docs.fastenhealth.com/getting-started/sandbox.html#connecting-a-new-source" externalLink>See the legacy Fasten sandbox guide</a>
+          </span>
+        }
       </div>
 
       <app-medical-sources-connected></app-medical-sources-connected>
@@ -27,26 +27,40 @@
 
       <h2 class="az-content-title mg-t-40">Medical Record Sources</h2>
 
-      <app-direct-smart-sources *ngIf="environment_name.startsWith('desktop')" (imported)="connectedSources?.refreshSources()"></app-direct-smart-sources>
+      @if (environment_name.startsWith('desktop')) {
+        <app-direct-smart-sources (imported)="connectedSources?.refreshSources()"></app-direct-smart-sources>
+      }
 
-      <section *ngIf="environment_name.startsWith('desktop')" class="card mb-4" aria-labelledby="epic-sandbox-title">
-        <div class="card-body">
-          <h3 id="epic-sandbox-title" class="h5">Epic sandbox <span class="badge badge-info">Synthetic test data only</span></h3>
-          <p>Connect with Epic’s published test account to retrieve one synthetic Patient, then import it into this app.</p>
-          <p class="text-muted">This separate sandbox uses Fasten’s test registration. It does not enable production access or automatic sync.</p>
-          <p><a href="https://fhir.epic.com/Documentation#patientlist" externalLink>Epic sandbox test account instructions</a></p>
-          <button type="button" class="btn btn-primary mr-2" data-testid="connect-epic-sandbox"
-                  [disabled]="!!sandboxController || sandboxImporting" (click)="connectEpicSandbox()">
-            {{sandboxController ? 'Connecting…' : 'Connect Epic sandbox'}}
-          </button>
-          <button *ngIf="sandboxController" type="button" class="btn btn-outline-secondary" (click)="cancelEpicSandbox()">Cancel connection</button>
-          <button *ngIf="sandboxPatient" type="button" class="btn btn-success" [disabled]="sandboxImporting"
-                  (click)="importEpicSandboxPatient()">{{sandboxImporting ? 'Importing…' : 'Import synthetic Patient'}}</button>
-          <p *ngIf="sandboxStatus" class="mt-3 mb-0" role="status" aria-live="polite">{{sandboxStatus}}</p>
-          <p *ngIf="sandboxError" class="alert alert-danger mt-3 mb-0" role="alert">{{sandboxError}}</p>
-          <a *ngIf="sandboxImportedSource" class="btn btn-link pl-0" [routerLink]="['/explore', sandboxImportedSource.id]">View imported Patient</a>
-        </div>
-      </section>
+      @if (environment_name.startsWith('desktop')) {
+        <section class="card mb-4" aria-labelledby="epic-sandbox-title">
+          <div class="card-body">
+            <h3 id="epic-sandbox-title" class="h5">Epic sandbox <span class="badge text-bg-info">Synthetic test data only</span></h3>
+            <p>Connect with Epic’s published test account to retrieve one synthetic Patient, then import it into this app.</p>
+            <p class="text-muted">This separate sandbox uses Fasten’s test registration. It does not enable production access or automatic sync.</p>
+            <p><a href="https://fhir.epic.com/Documentation#patientlist" externalLink>Epic sandbox test account instructions</a></p>
+            <button type="button" class="btn btn-primary me-2" data-testid="connect-epic-sandbox"
+              [disabled]="!!sandboxController || sandboxImporting" (click)="connectEpicSandbox()">
+              {{sandboxController ? 'Connecting…' : 'Connect Epic sandbox'}}
+            </button>
+            @if (sandboxController) {
+              <button type="button" class="btn btn-outline-secondary" (click)="cancelEpicSandbox()">Cancel connection</button>
+            }
+            @if (sandboxPatient) {
+              <button type="button" class="btn btn-success" [disabled]="sandboxImporting"
+              (click)="importEpicSandboxPatient()">{{sandboxImporting ? 'Importing…' : 'Import synthetic Patient'}}</button>
+            }
+            @if (sandboxStatus) {
+              <p class="mt-3 mb-0" role="status" aria-live="polite">{{sandboxStatus}}</p>
+            }
+            @if (sandboxError) {
+              <p class="alert alert-danger mt-3 mb-0" role="alert">{{sandboxError}}</p>
+            }
+            @if (sandboxImportedSource) {
+              <a class="btn btn-link ps-0" [routerLink]="['/explore', sandboxImportedSource.id]">View imported Patient</a>
+            }
+          </div>
+        </section>
+      }
 
       <div class="az-content-label mg-b-5">Manual Upload</div>
       <p class="mg-b-20">Chartrove also supports manually uploaded electronic medical records (EMR/EHR). Click below to upload.</p>
@@ -55,14 +69,18 @@
         <div class="col-lg">
           <ngx-dropzone [multiple]="false" (change)="uploadSourceBundleHandler($event)" accept=".json,.phr,.ndjson,.jsonl,.xml,.ccda,.cda">
             <ngx-dropzone-label>Select your EMR/EHR bundle. Must be in JSON or XML format</ngx-dropzone-label>
-            <ngx-dropzone-preview *ngFor="let f of uploadedFile" [removable]="false">
-              <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
-            </ngx-dropzone-preview>
+            @for (f of uploadedFile; track f) {
+              <ngx-dropzone-preview [removable]="false">
+                <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+              </ngx-dropzone-preview>
+            }
           </ngx-dropzone>
 
-          <div *ngIf="uploadErrorMsg" class="alert alert-danger mt-3" role="alert">
-            <strong>Error:</strong> {{uploadErrorMsg}}
-          </div>
+          @if (uploadErrorMsg) {
+            <div class="alert alert-danger mt-3" role="alert">
+              <strong>Error:</strong> {{uploadErrorMsg}}
+            </div>
+          }
         </div><!-- col -->
       </div><!-- row -->
 
@@ -75,12 +93,14 @@
 
   <div class="modal-header">
     <div class="media">
-      <img class="modal-header-media-image mg-sm-r-20 mg-b-20 mg-sm-b-0" [src]="'assets/sources/'+(modalSelectedBrandListItem?.id +'.png')" [alt]="modalSelectedBrandListItem?.name">
+      <img class="modal-header-media-image mg-sm-r-20 mg-b-20 mg-sm-b-0" [src]="'assets/sources/'+($safeNavigationMigration(modalSelectedBrandListItem?.id) +'.png')" [alt]="$safeNavigationMigration(modalSelectedBrandListItem?.name)">
       <div class="media-body">
         <h6>{{modalSelectedBrandListItem?.name}}</h6>
-        <a *ngIf="modalSelectedBrandListItem?.brand_website"
-           [href]="modalSelectedBrandListItem?.brand_website"
-           class="mg-b-0" externalLink>{{modalSelectedBrandListItem?.brand_website | shortDomain}}</a>
+        @if (modalSelectedBrandListItem?.brand_website) {
+          <a
+            [href]="$safeNavigationMigration(modalSelectedBrandListItem?.brand_website)"
+          class="mg-b-0" externalLink>{{$safeNavigationMigration(modalSelectedBrandListItem?.brand_website) | shortDomain}}</a>
+        }
       </div><!-- media-body -->
     </div><!-- media -->
     <button type="button" class="btn close" aria-label="Close" (click)="modal.dismiss('Cross click')">
@@ -101,21 +121,25 @@
     </p>
 
 
-    <div *ngFor="let portal of modalSelectedBrandListItem?.portals" class="list-group">
-      <ng-container *ngFor="let endpoint of portal?.endpoints">
-        <div (click)="connectHandler($event, modalSelectedBrandListItem.id, portal.id, endpoint.id)" class="list-group-item list-group-item-action flex-column align-items-start cursor-pointer">
-          <div class="d-flex w-100 justify-content-between align-items-center">
-            <h5 class="mb-1">
-              <span *ngIf="status[endpoint.id] == 'authorize'" class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
-              {{portal.name}}
-            </h5>
-            <span class="badge badge-primary badge-pill">{{endpoint.platform_type}}</span>
+    @for (portal of modalSelectedBrandListItem?.portals; track portal) {
+      <div class="list-group">
+        @for (endpoint of portal?.endpoints; track endpoint) {
+          <div (click)="connectHandler($event, modalSelectedBrandListItem.id, portal.id, endpoint.id)" class="list-group-item list-group-item-action flex-column align-items-start cursor-pointer">
+            <div class="d-flex w-100 justify-content-between align-items-center">
+              <h5 class="mb-1">
+                @if (status[endpoint.id] == 'authorize') {
+                  <span class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
+                }
+                {{portal.name}}
+              </h5>
+              <span class="badge text-bg-primary rounded-pill">{{endpoint.platform_type}}</span>
+            </div>
+            <p class="mb-1">{{portal.description}}</p>
+            <small>{{portal.portal_website | shortDomain}}</small>
           </div>
-          <p class="mb-1">{{portal.description}}</p>
-          <small>{{portal.portal_website | shortDomain}}</small>
-        </div>
-      </ng-container>
-    </div>
+        }
+      </div>
+    }
   </div>
 </ng-template>
 

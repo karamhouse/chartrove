@@ -20,7 +20,7 @@ type FhirAccount struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`
@@ -41,7 +41,7 @@ type FhirAccount struct {
 	Owner datatypes.JSON `gorm:"column:owner;type:text;serializer:json" json:"owner,omitempty"`
 	// Transaction window
 	// https://hl7.org/fhir/r4/search.html#date
-	Period *time.Time `gorm:"column:period;type:datetime" json:"period,omitempty"`
+	Period *time.Time `gorm:"column:period" json:"period,omitempty"`
 	// active | inactive | entered-in-error | on-hold | unknown
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {Router, RouterModule} from '@angular/router';
@@ -10,11 +10,11 @@ import {TableComponent} from "../../common/table/table.component";
 import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.component';
 
 @Component({
-  standalone: true,
-  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, GlossaryLookupComponent, RouterModule],
-  selector: 'fhir-medication-request',
-  templateUrl: './medication-request.component.html',
-  styleUrls: ['./medication-request.component.scss']
+    imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, GlossaryLookupComponent, RouterModule],
+    selector: 'fhir-medication-request',
+    templateUrl: './medication-request.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./medication-request.component.scss']
 })
 export class MedicationRequestComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: MedicationRequestModel | null

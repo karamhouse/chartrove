@@ -9,25 +9,27 @@
 #
 # instead, we use https://depot.dev/ to do our multi-arch builds on native ARM and AMD nodes.
 
-FROM node:20 as frontend-build
+FROM node:26.13.0 AS frontend-build
 ARG FASTEN_ENV=sandbox
 WORKDIR /usr/src/fastenhealth/frontend
 COPY frontend/package.json frontend/yarn.lock ./
 
-RUN yarn install --frozen-lockfile
+RUN npm exec --yes --package=corepack@0.35.0 -- corepack yarn install --frozen-lockfile --registry https://registry.npmjs.org --network-concurrency 4
 COPY frontend/ ./
 RUN --mount=type=cache,target=/tmp/lock,sharing=locked \
-    yarn run build -- --configuration ${FASTEN_ENV} --output-path=../dist
+    node node_modules/@angular/cli/bin/ng.js build --configuration ${FASTEN_ENV} --output-path=../dist
 
 #########################################################################################################
 # Backend Build
 #########################################################################################################
-FROM golang:1.21 as backend-build
+FROM golang:1.27.3-bookworm AS backend-build
 
 WORKDIR /go/src/github.com/fastenhealth/fasten-onprem
 COPY . .
 
 RUN --mount=type=cache,target=/tmp/lock,sharing=locked \
+    --mount=type=cache,target=/go/pkg/mod,sharing=locked \
+    --mount=type=cache,target=/root/.cache/go-build,sharing=locked \
     go mod vendor \
     && go install github.com/golang/mock/mockgen@v1.6.0 \
     && go generate ./... \

@@ -40,6 +40,9 @@ func JwtGenerateFastenTokenFromUser(user models.User, issuerSigningKey string) (
 }
 
 func JwtValidateFastenToken(encryptionKey string, signedToken string) (*UserRegisteredClaims, error) {
+	if len(strings.TrimSpace(encryptionKey)) == 0 {
+		return nil, errors.New("issuer signing key cannot be empty")
+	}
 	token, err := jwt.ParseWithClaims(
 		signedToken,
 		&UserRegisteredClaims{},
@@ -58,8 +61,10 @@ func JwtValidateFastenToken(encryptionKey string, signedToken string) (*UserRegi
 		err = errors.New("couldn't parse claims")
 		return nil, err
 	}
-	if claims.ExpiresAt.Unix() < time.Now().Local().Unix() {
-		err = errors.New("token expired")
+	// RegisteredClaims permits an omitted expiry, but Chartrove always issues
+	// expiring tokens. Requiring it here also avoids dereferencing a nil date.
+	if !claims.VerifyExpiresAt(time.Now(), true) {
+		err = errors.New("token is expired or missing expiry")
 		return nil, err
 	}
 	return claims, nil

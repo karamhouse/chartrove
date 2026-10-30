@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {DiagnosticReportModel} from '../../../../../lib/models/resources/diagnostic-report-model';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {Router, RouterModule} from '@angular/router';
@@ -12,11 +12,11 @@ import {BinaryComponent} from '../binary/binary.component';
 import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.component';
 
 @Component({
-  standalone: true,
-  imports: [NgbCollapseModule, NgbNavModule, CommonModule, BadgeComponent, TableComponent, RouterModule, BinaryComponent],
-  selector: 'fhir-document-reference',
-  templateUrl: './document-reference.component.html',
-  styleUrls: ['./document-reference.component.scss']
+    imports: [NgbCollapseModule, NgbNavModule, CommonModule, BadgeComponent, TableComponent, RouterModule, BinaryComponent],
+    selector: 'fhir-document-reference',
+    templateUrl: './document-reference.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./document-reference.component.scss']
 })
 export class DocumentReferenceComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: DocumentReferenceModel

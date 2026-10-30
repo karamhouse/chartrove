@@ -10,35 +10,37 @@
         <h6>{{lastUpdated ? (lastUpdated | date:'MMM d, yyyy') : ''}}</h6>
       </div><!-- media-body -->
     </div><!-- media -->
-    <div *ngIf="primaryCare" class="media">
-      <div class="media-body">
-        <label>Primary Care</label>
-        <h6 class="cursor-pointer" [ngbPopover]="primaryCarePopoverContent" placement="bottom" >{{primaryCare?.name?.[0]?.displayName }}</h6>
-      </div><!-- media-body -->
-    </div><!-- media -->
-    <div class="media">
-      <div class="media-body">
-        <label>Selected Sources</label>
-        <h6>All Sources</h6>
-      </div><!-- media-body -->
-    </div><!-- media -->
-    <a [routerLink]="'/sources'" class="btn btn-purple">Add Source</a>
-    <a [routerLink]="'/resource/create'" class="btn btn-purple mg-l-10">Add Condition</a>
+    @if (primaryCare) {
+      <div class="media">
+        <div class="media-body">
+          <label>Primary Care</label>
+          <h6 class="cursor-pointer" [ngbPopover]="primaryCarePopoverContent" placement="bottom" >{{primaryCare?.name?.[0]?.displayName }}</h6>
+        </div><!-- media-body -->
+      </div>
+      }<!-- media -->
+      <div class="media">
+        <div class="media-body">
+          <label>Selected Sources</label>
+          <h6>All Sources</h6>
+        </div><!-- media-body -->
+      </div><!-- media -->
+      <a [routerLink]="'/sources'" class="btn btn-purple">Add Source</a>
+      <a [routerLink]="'/resource/create'" class="btn btn-purple mg-l-10">Add Condition</a>
+    </div>
+  </div><!-- az-dashboard-one-title -->
+
+  <div class="az-dashboard-nav">
+    <nav class="nav">
+    </nav>
+
+    <nav class="nav">
+      <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-save"></i> Save Report</a>
+      <a class="nav-link" (click)="getIPSExport($event)"><i class="far fa-file-pdf"></i> Export to PDF</a>
+      <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-envelope"></i>Send to Email</a>
+      <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="fas fa-ellipsis-h"></i></a>
+    </nav>
   </div>
-</div><!-- az-dashboard-one-title -->
 
-<div class="az-dashboard-nav">
-  <nav class="nav">
-  </nav>
-
-  <nav class="nav">
-    <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-save"></i> Save Report</a>
-    <a class="nav-link" (click)="getIPSExport($event)"><i class="far fa-file-pdf"></i> Export to PDF</a>
-    <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-envelope"></i>Send to Email</a>
-    <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="fas fa-ellipsis-h"></i></a>
-  </nav>
-</div>
-
-<ng-template #primaryCarePopoverContent>
-  <fhir-card [displayModel]="primaryCare"></fhir-card>
-</ng-template>
+  <ng-template #primaryCarePopoverContent>
+    <fhir-card [displayModel]="primaryCare"></fhir-card>
+  </ng-template>

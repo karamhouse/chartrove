@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
 import {FhirCardEditableComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {Router, RouterModule} from '@angular/router';
@@ -12,11 +12,11 @@ import * as _ from "lodash";
 import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
 
 @Component({
-  standalone: true,
-  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, GlossaryLookupComponent, RouterModule],
-  selector: 'fhir-medication',
-  templateUrl: './medication.component.html',
-  styleUrls: ['./medication.component.scss']
+    imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, GlossaryLookupComponent, RouterModule],
+    selector: 'fhir-medication',
+    templateUrl: './medication.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./medication.component.scss']
 })
 export class MedicationComponent implements OnInit, FhirCardEditableComponentInterface {
   @Input() displayModel: MedicationModel

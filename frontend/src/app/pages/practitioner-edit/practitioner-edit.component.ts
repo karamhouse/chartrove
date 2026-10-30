@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -13,17 +13,17 @@ import { PractitionerModel } from '../../../lib/models/resources/practitioner-mo
 import { parseFullName } from 'parse-full-name';
 
 @Component({
-  selector: 'app-practitioner-edit-page',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    NgbTooltipModule,
-    HighlightModule,
-    NlmTypeaheadComponent
-  ],
-  templateUrl: './practitioner-edit.component.html',
-  styleUrls: ['./practitioner-edit.component.scss']
+    selector: 'app-practitioner-edit-page',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        NgbTooltipModule,
+        HighlightModule,
+        NlmTypeaheadComponent
+    ],
+    templateUrl: './practitioner-edit.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./practitioner-edit.component.scss']
 })
 export class PractitionerEditPageComponent implements OnInit {
   practitioner: Practitioner | null = null;

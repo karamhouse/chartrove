@@ -76,12 +76,7 @@
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "src/styles.scss"
             ],
-            "scripts": [
-              {
-                "input": "node_modules/@panva/oauth4webapi/build/index.js",
-                "bundleName": "oauth4webapi"
-              }
-            ]
+            "scripts": []
           },
           "configurations": {
             "dev": {
@@ -279,37 +274,37 @@
           "options": {
             "hmr": true,
             "liveReload": true,
-            "browserTarget": "fastenhealth:build",
-            "proxyConfig": "proxy.conf.json"
+            "proxyConfig": "proxy.conf.json",
+            "buildTarget": "fastenhealth:build"
           },
           "configurations": {
             "dev": {
-              "browserTarget": "fastenhealth:build:dev"
+              "buildTarget": "fastenhealth:build:dev"
             },
             "prod": {
-              "browserTarget": "fastenhealth:build:prod"
+              "buildTarget": "fastenhealth:build:prod"
             },
             "sandbox": {
-              "browserTarget": "fastenhealth:build:sandbox"
+              "buildTarget": "fastenhealth:build:sandbox"
             },
             "cloud_sandbox": {
-              "browserTarget": "fastenhealth:build:cloud_sandbox"
+              "buildTarget": "fastenhealth:build:cloud_sandbox"
             },
             "desktop_sandbox": {
-              "browserTarget": "fastenhealth:build:desktop_sandbox"
+              "buildTarget": "fastenhealth:build:desktop_sandbox"
             },
             "offline_sandbox": {
-              "browserTarget": "fastenhealth:build:offline_sandbox"
+              "buildTarget": "fastenhealth:build:offline_sandbox"
             },
             "desktop_prod": {
-              "browserTarget": "fastenhealth:build:desktop_prod"
+              "buildTarget": "fastenhealth:build:desktop_prod"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "fastenhealth:build"
+            "buildTarget": "fastenhealth:build"
           }
         },
         "test": {
@@ -363,6 +358,7 @@
         "storybook": {
           "builder": "@storybook/angular:start-storybook",
           "options": {
+            "experimentalZoneless": false,
             "configDir": ".storybook",
             "browserTarget": "fastenhealth:build",
             "compodoc": true,
@@ -387,6 +383,7 @@
         "build-storybook": {
           "builder": "@storybook/angular:build-storybook",
           "options": {
+            "experimentalZoneless": false,
             "configDir": ".storybook",
             "browserTarget": "fastenhealth:build",
             "compodoc": true,
@@ -403,6 +400,33 @@
     }
   },
   "cli": {
-    "analytics": false
+    "analytics": false,
+    "packageManager": "yarn"
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
+    }
   }
 }

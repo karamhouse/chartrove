@@ -1,11 +1,13 @@
-import {Component} from '@angular/core';
+import {Component, ChangeDetectionStrategy} from '@angular/core';
 import {GenericColumnDefn, DatatableGenericResourceComponent} from './datatable-generic-resource.component';
 import {attributeXTime} from './utils';
 
 @Component({
-  selector: 'fhir-datatable-care-team',
-  templateUrl: './datatable-generic-resource.component.html',
-  styleUrls: ['./datatable-generic-resource.component.scss']
+    selector: 'fhir-datatable-care-team',
+    templateUrl: './datatable-generic-resource.component.html',
+    styleUrls: ['./datatable-generic-resource.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class DatatableCareTeamComponent extends DatatableGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [

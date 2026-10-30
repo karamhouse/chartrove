@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {BinaryModel} from '../../../../../lib/models/resources/binary-model';
 import {Router} from '@angular/router';
 import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
@@ -7,11 +7,11 @@ import {CommonModule} from '@angular/common';
 import {HighlightModule} from 'ngx-highlightjs';
 
 @Component({
-  standalone: true,
-  imports: [NgbCollapseModule, HighlightModule, CommonModule],
-  selector: 'fhir-fallback',
-  templateUrl: './fallback.component.html',
-  styleUrls: ['./fallback.component.scss']
+    imports: [NgbCollapseModule, HighlightModule, CommonModule],
+    selector: 'fhir-fallback',
+    templateUrl: './fallback.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./fallback.component.scss']
 })
 export class FallbackComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: BinaryModel

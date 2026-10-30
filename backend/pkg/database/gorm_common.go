@@ -90,7 +90,7 @@ func (gr *GormRepository) GetUserCount(ctx context.Context) (int, error) {
 
 func (gr *GormRepository) GetUserByUsername(ctx context.Context, username string) (*models.User, error) {
 	var foundUser models.User
-	result := gr.GormClient.WithContext(ctx).Where(models.User{Username: username}).First(&foundUser)
+	result := gr.GormClient.WithContext(ctx).Where("username = ?", username).First(&foundUser)
 	return &foundUser, result.Error
 }
 

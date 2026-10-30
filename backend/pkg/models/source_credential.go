@@ -8,8 +8,8 @@ import (
 	sourcesDefinitions "github.com/fastenhealth/fasten-sources/definitions"
 	sourcesPkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/google/uuid"
-	"github.com/lestrrat-go/jwx/v2/jwa"
-	"github.com/lestrrat-go/jwx/v2/jwt"
+	"github.com/lestrrat-go/jwx/v3/jwa"
+	"github.com/lestrrat-go/jwx/v3/jwt"
 	"io"
 	"log"
 	"net/http"
@@ -236,34 +236,9 @@ func (s *SourceCredential) RefreshDynamicClientAccessToken() error {
 	if len(endpoint.DynamicClientRegistrationMode) == 0 {
 		return fmt.Errorf("dynamic client registration mode not set")
 	}
-	if len(s.DynamicClientJWKS) == 0 {
-		return fmt.Errorf("dynamic client jwks not set")
-	}
-	if len(s.DynamicClientId) == 0 {
-		return fmt.Errorf("dynamic client id not set")
-	}
-
-	//convert the serialized dynamic-client credentials to a jwx.Key
-	jwkeypair, err := jwk.JWKDeserialize(s.DynamicClientJWKS[0])
+	signed, err := s.dynamicClientAssertion(endpoint.TokenEndpoint)
 	if err != nil {
 		return err
-	}
-
-	// see https://github.com/lestrrat-go/jwx/tree/v2/jwt#token-usage
-	t := jwt.New()
-	t.Set("kid", jwkeypair.KeyID())
-	t.Set(jwt.SubjectKey, s.DynamicClientId)
-	t.Set(jwt.AudienceKey, endpoint.TokenEndpoint)
-	t.Set(jwt.JwtIDKey, uuid.New().String())
-	t.Set(jwt.ExpirationKey, time.Now().Add(time.Minute*2).Unix()) // must be less than 5 minutes from now. Time when this JWT expires
-	t.Set(jwt.IssuedAtKey, time.Now().Unix())
-	t.Set(jwt.IssuerKey, s.DynamicClientId)
-
-	//sign the jwt with the private key
-	// Signing a token (using raw rsa.PrivateKey)
-	signed, err := jwt.Sign(t, jwt.WithKey(jwa.RS256, jwkeypair))
-	if err != nil {
-		return fmt.Errorf("failed to sign dynamic-client jwt: %s", err)
 	}
 
 	//send this signed jwt to the token endpoint to get a new access token
@@ -303,4 +278,33 @@ func (s *SourceCredential) RefreshDynamicClientAccessToken() error {
 	s.ExpiresAt = time.Now().Add(time.Second * time.Duration(registrationTokenResponseBytes.ExpiresIn)).Unix()
 
 	return nil
+}
+
+// Build the signed assertion independently of provider discovery and transport,
+// so persisted keys and token claims can be checked without contacting a provider.
+func (s *SourceCredential) dynamicClientAssertion(tokenEndpoint string) ([]byte, error) {
+	if len(s.DynamicClientJWKS) == 0 {
+		return nil, fmt.Errorf("dynamic client jwks not set")
+	}
+	if len(s.DynamicClientId) == 0 {
+		return nil, fmt.Errorf("dynamic client id not set")
+	}
+	jwkeypair, err := jwk.JWKDeserialize(s.DynamicClientJWKS[0])
+	if err != nil {
+		return nil, err
+	}
+	t := jwt.New()
+	keyID, _ := jwkeypair.KeyID()
+	t.Set("kid", keyID)
+	t.Set(jwt.SubjectKey, s.DynamicClientId)
+	t.Set(jwt.AudienceKey, tokenEndpoint)
+	t.Set(jwt.JwtIDKey, uuid.New().String())
+	t.Set(jwt.ExpirationKey, time.Now().Add(time.Minute*2).Unix())
+	t.Set(jwt.IssuedAtKey, time.Now().Unix())
+	t.Set(jwt.IssuerKey, s.DynamicClientId)
+	signed, err := jwt.Sign(t, jwt.WithKey(jwa.RS256(), jwkeypair))
+	if err != nil {
+		return nil, fmt.Errorf("failed to sign dynamic-client jwt: %w", err)
+	}
+	return signed, nil
 }

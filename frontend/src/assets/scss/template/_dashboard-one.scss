@@ -102,7 +102,7 @@
     @include media-breakpoint-up(sm) { font-size: $font-size-base; }
     @include media-breakpoint-up(lg) { padding: 5px 15px 10px; }
 
-    @include hover-focus() { color: $az-color-primary; }
+    &:hover, &:focus { color: $az-color-primary; }
 
     + .nav-link { border-left: 1px solid $gray-300; }
   }
@@ -114,7 +114,7 @@
 
       @include media-breakpoint-up(sm) { display: block; }
 
-      @include hover-focus() { color: $az-color-primary; }
+      &:hover, &:focus { color: $az-color-primary; }
 
       &.active { color: $az-color-primary; }
 
@@ -134,7 +134,7 @@
 
       @include media-breakpoint-up(md) { display: block; }
 
-      @include hover-focus() { color: $az-color-primary; }
+      &:hover, &:focus { color: $az-color-primary; }
 
       i {
         font-size: 16px;
@@ -193,7 +193,7 @@
         color: $gray-600;
         border: 1px solid $gray-300;
 
-        @include hover-focus() {
+        &:hover, &:focus {
           background-color: $gray-100;
           border-color: $gray-300;
         }

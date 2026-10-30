@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
@@ -23,9 +23,11 @@ class LabResultCodeByDate {
 
 
 @Component({
-  selector: 'app-report-labs',
-  templateUrl: './report-labs.component.html',
-  styleUrls: ['./report-labs.component.scss']
+    selector: 'app-report-labs',
+    templateUrl: './report-labs.component.html',
+    styleUrls: ['./report-labs.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ReportLabsComponent implements OnInit {
   loading: boolean = false
@@ -90,6 +92,14 @@ export class ReportLabsComponent implements OnInit {
   populateObservationsForCurrentPage(){
 
     let observationGroups = this.allObservationGroups.slice((this.currentPage-1) * this.pageSize, this.currentPage * this.pageSize)
+
+    if (observationGroups.length === 0) {
+      this.observationGroups = {}
+      this.observationGroupTitles = {}
+      this.isEmptyReport = true
+      this.loading = false
+      return
+    }
 
     this.loading = true
     this.getObservationsByCodes(observationGroups).subscribe((data) => {

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {Source} from '../../models/fasten/source';
 import {SourceListItem} from '../../pages/medical-sources/medical-sources.component';
 import {ModalDismissReasons, NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -18,9 +18,11 @@ import {BackgroundJobSyncData} from '../../models/fasten/background-job';
 import {extractErrorFromResponse, replaceErrors} from '../../../lib/utils/error_extract';
 
 @Component({
-  selector: 'app-medical-sources-connected',
-  templateUrl: './medical-sources-connected.component.html',
-  styleUrls: ['./medical-sources-connected.component.scss']
+    selector: 'app-medical-sources-connected',
+    templateUrl: './medical-sources-connected.component.html',
+    styleUrls: ['./medical-sources-connected.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class MedicalSourcesConnectedComponent implements OnInit {
   loading: boolean = false

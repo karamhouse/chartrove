@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NlmTypeaheadComponent } from '../nlm-typeahead/nlm-typeahead.component';
@@ -12,21 +12,21 @@ import { NlmSearchResults } from 'src/app/services/nlm-clinical-table-search.ser
 import { generateReferenceUriFromResourceOrReference } from 'src/lib/utils/bundle_references';
 
 @Component({
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    NlmTypeaheadComponent,
-    HighlightModule,
-    NgbTooltipModule,
-    NgbNavModule,
-    FhirDatatableModule,
-    NgbDatepickerModule
-  ],
-  selector: 'app-medical-record-wizard-edit-procedure',
-  templateUrl: './medical-record-wizard-edit-procedure.component.html',
-  styleUrls: ['./medical-record-wizard-edit-procedure.component.scss']
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        FormsModule,
+        NlmTypeaheadComponent,
+        HighlightModule,
+        NgbTooltipModule,
+        NgbNavModule,
+        FhirDatatableModule,
+        NgbDatepickerModule
+    ],
+    selector: 'app-medical-record-wizard-edit-procedure',
+    templateUrl: './medical-record-wizard-edit-procedure.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./medical-record-wizard-edit-procedure.component.scss']
 })
 export class MedicalRecordWizardEditProcedureComponent implements OnInit {
   @Input() debugMode: boolean = false

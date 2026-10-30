@@ -176,7 +176,7 @@ table.dataTable {
       &.previous { margin-right: 3px; }
       &.next { margin-left: 3px; }
 
-      @include hover-focus() {
+      &:hover, &:focus {
         border: 0;
         background-image: none;
         background-color: $gray-300;

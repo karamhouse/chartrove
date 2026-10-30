@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import { moduleMetadata } from '@storybook/angular';
-import { DecoratorFunction } from '@storybook/types';
+import type { Decorator } from '@storybook/angular';
 import { ReportLabsObservationComponent } from './report-labs-observation.component'
 import { PipesModule } from 'src/app/pipes/pipes.module';
 import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
@@ -19,7 +19,7 @@ import { fhirVersions } from 'src/lib/models/constants';
 import { observationR4Factory } from 'src/lib/fixtures/factories/r4/resources/observation-r4-factory';
 
 
-const withHttpClientProvider: DecoratorFunction<any> = (storyFunc, context) => {
+const withHttpClientProvider: Decorator = (storyFunc, context) => {
   const { httpClientResp } = context.parameters;
 
   class MockHttpClient extends HttpClient {
@@ -42,8 +42,7 @@ const meta: Meta<ReportLabsObservationComponent> = {
   decorators: [
     withHttpClientProvider,
     moduleMetadata({
-      imports: [PipesModule, GlossaryLookupComponent, NgChartsModule, RouterTestingModule, HttpClientModule, ObservationVisualizationComponent],
-      declarations: [ NgbCollapse ],
+      imports: [PipesModule, GlossaryLookupComponent, NgChartsModule, RouterTestingModule, HttpClientModule, ObservationVisualizationComponent, NgbCollapse],
       providers: [],
     })
   ],
@@ -56,13 +55,13 @@ const meta: Meta<ReportLabsObservationComponent> = {
   }),
   argTypes: {
     observations: {
-      control: 'array'
+      control: 'object'
     },
     observationCode: {
-      control: 'string'
+      control: 'text'
     },
     observationTitle: {
-      control: 'string'
+      control: 'text'
     },
   },
 };

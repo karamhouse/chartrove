@@ -3,8 +3,6 @@ package database
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http/httptest"
 	"os"
 	"sort"
@@ -51,10 +49,9 @@ type RepositoryTestSuite struct {
 func (suite *RepositoryTestSuite) BeforeTest(suiteName, testName string) {
 	suite.MockCtrl = gomock.NewController(suite.T())
 
-	dbFile, err := ioutil.TempFile("", fmt.Sprintf("%s.*.db", testName))
-	if err != nil {
-		log.Fatal(err)
-	}
+	dbFile, err := os.CreateTemp(suite.T().TempDir(), fmt.Sprintf("%s.*.db", testName))
+	require.NoError(suite.T(), err)
+	require.NoError(suite.T(), dbFile.Close())
 	suite.TestDatabase = dbFile
 
 }
@@ -62,9 +59,6 @@ func (suite *RepositoryTestSuite) BeforeTest(suiteName, testName string) {
 // AfterTest has a function to be executed right after the test finishes and receives the suite and test names as input
 func (suite *RepositoryTestSuite) AfterTest(suiteName, testName string) {
 	suite.MockCtrl.Finish()
-	//os.Remove(suite.TestDatabase.Name())
-	//os.Remove(suite.TestDatabase.Name() + "-shm")
-	//os.Remove(suite.TestDatabase.Name() + "-wal")
 }
 
 // In order for 'go test' to run this suite, we need to create
@@ -85,7 +79,7 @@ func (suite *RepositoryTestSuite) TestNewRepository() {
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 
 	//test
-	_, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	_, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 
 	//assert
 	require.NoError(suite.T(), err)
@@ -100,7 +94,7 @@ func (suite *RepositoryTestSuite) TestCreateUser() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	//test
@@ -124,7 +118,7 @@ func (suite *RepositoryTestSuite) TestCreateUser_WithExitingUser_ShouldFail() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	//test
@@ -156,7 +150,7 @@ func (suite *RepositoryTestSuite) TestCreateUser_WithUserProvidedId_ShouldBeRepl
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	//test
@@ -185,7 +179,7 @@ func (suite *RepositoryTestSuite) TestGetUserByUsername() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	userModel := &models.User{
 		Username: "test_username",
@@ -212,7 +206,7 @@ func (suite *RepositoryTestSuite) TestGetUserByUsername_WithInvalidUsername() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	userModel := &models.User{
 		Username: "test_username",
@@ -238,7 +232,7 @@ func (suite *RepositoryTestSuite) TestGetCurrentUser_WithContextBackgroundAuthUs
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	userModel := &models.User{
 		Username: "test_username",
@@ -266,7 +260,7 @@ func (suite *RepositoryTestSuite) TestGetCurrentUser_WithGinContextBackgroundAut
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	userModel := &models.User{
 		Username: "test_username",
@@ -298,7 +292,7 @@ func (suite *RepositoryTestSuite) TestGetCurrentUser_WithContextBackgroundAuthUs
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	//test
@@ -318,7 +312,7 @@ func (suite *RepositoryTestSuite) TestCreateGlossaryEntry() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	//test
@@ -357,7 +351,7 @@ func (suite *RepositoryTestSuite) TestUpsertRawResource() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -417,7 +411,7 @@ func (suite *RepositoryTestSuite) TestUpsertRawResource_WithRelatedResourceAndDu
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -468,7 +462,7 @@ func (suite *RepositoryTestSuite) TestUpsertRawResource_Upsert() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -550,7 +544,7 @@ func (suite *RepositoryTestSuite) TestUpsertRawResource_UpsertWithNewAssociation
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -622,7 +616,7 @@ func (suite *RepositoryTestSuite) TestListResources() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -728,7 +722,7 @@ func (suite *RepositoryTestSuite) TestGetResourceByResourceTypeAndId() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -785,7 +779,7 @@ func (suite *RepositoryTestSuite) TestGetResourceBySourceId() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -842,7 +836,7 @@ func (suite *RepositoryTestSuite) TestGetPatientForSources() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -902,7 +896,7 @@ func (suite *RepositoryTestSuite) TestAddResourceAssociation() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -942,7 +936,7 @@ func (suite *RepositoryTestSuite) TestAddResourceAssociation_WithMismatchingSour
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -995,7 +989,7 @@ func (suite *RepositoryTestSuite) TestRemoveResourceAssociation() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -1040,7 +1034,7 @@ func (suite *RepositoryTestSuite) TestGetSourceSummary() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -1125,7 +1119,7 @@ func (suite *RepositoryTestSuite) TestGetSummary() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -1232,7 +1226,7 @@ func (suite *RepositoryTestSuite) TestAddResourceComposition() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -1321,7 +1315,7 @@ func (suite *RepositoryTestSuite) TestAddResourceComposition_WithExistingComposi
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -1485,7 +1479,7 @@ func (suite *RepositoryTestSuite) TestCreateBackgroundJob_Sync() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	userModel := &models.User{
 		Username: "test_username",
@@ -1523,7 +1517,7 @@ func (suite *RepositoryTestSuite) TestListBackgroundJobs() {
 	fakeConfig.EXPECT().GetString("log.level").Return("DEBUG").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -1604,7 +1598,7 @@ func (suite *RepositoryTestSuite) TestUpdateBackgroundJob() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -1653,7 +1647,7 @@ func (suite *RepositoryTestSuite) TestFindAllResourceAssociations_AsBase() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	ctx := context.Background()
 
@@ -1763,7 +1757,7 @@ func (suite *RepositoryTestSuite) TestFindAllResourceAssociations_AsRelated() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	ctx := context.Background()
 
@@ -1866,7 +1860,7 @@ func (suite *RepositoryTestSuite) TestFindAllResourceAssociations_AsBaseAndRelat
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	ctx := context.Background()
 
@@ -1971,7 +1965,7 @@ func (suite *RepositoryTestSuite) TestRemoveBulkResourceAssociations_Success() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	dbRepo, err := newTestRepository(suite.T(), fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	ctx := context.Background()
 

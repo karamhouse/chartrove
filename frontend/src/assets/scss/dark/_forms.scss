@@ -1,11 +1,9 @@
 @mixin dark-forms-styles {
         .input-group {
-            .input-group-prepend {
-                .input-group-text {
-                    background-color: var(--card);
-                    color: var(--dark-text-color);
-                    border-color: var(--border);
-                }
+            .input-group-text {
+                background-color: var(--card);
+                color: var(--dark-text-color);
+                border-color: var(--border);
             }
 
         .form-control {
@@ -14,13 +12,6 @@
             border-color: var(--border);
         }
 
-            .input-group-append {
-                .input-group-text {
-                    background-color: var(--card);
-                    color: var(--dark-text-color);
-                    border-color: var(--border);
-                }
-            }
         }
 
     // Form control (Users)

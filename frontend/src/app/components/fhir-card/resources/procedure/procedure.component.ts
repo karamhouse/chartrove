@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
 import {FhirCardEditableComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {Router, RouterModule} from '@angular/router';
@@ -11,11 +11,11 @@ import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.
 import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
 
 @Component({
-  standalone: true,
-  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, GlossaryLookupComponent, RouterModule],
-  selector: 'fhir-procedure',
-  templateUrl: './procedure.component.html',
-  styleUrls: ['./procedure.component.scss']
+    imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, GlossaryLookupComponent, RouterModule],
+    selector: 'fhir-procedure',
+    templateUrl: './procedure.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./procedure.component.scss']
 })
 export class ProcedureComponent implements OnInit, FhirCardEditableComponentInterface {
   @Input() displayModel: ProcedureModel | null

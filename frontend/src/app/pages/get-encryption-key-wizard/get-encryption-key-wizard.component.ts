@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastNotification, ToastType } from 'src/app/models/fasten/toast';
 import { FastenApiService } from 'src/app/services/fasten-api.service';
 import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
-  selector: 'app-get-encryption-key-wizard',
-  templateUrl: './get-encryption-key-wizard.component.html',
-  styleUrls: ['./get-encryption-key-wizard.component.scss'],
+    selector: 'app-get-encryption-key-wizard',
+    templateUrl: './get-encryption-key-wizard.component.html',
+    styleUrls: ['./get-encryption-key-wizard.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class GetEncryptionKeyWizardComponent implements OnInit {
   gridImages: string[] = [

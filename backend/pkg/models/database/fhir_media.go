@@ -17,7 +17,7 @@ type FhirMedia struct {
 	BasedOn datatypes.JSON `gorm:"column:basedOn;type:text;serializer:json" json:"basedOn,omitempty"`
 	// When Media was collected
 	// https://hl7.org/fhir/r4/search.html#date
-	Created *time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
+	Created *time.Time `gorm:"column:created" json:"created,omitempty"`
 	// Observing Device
 	// https://hl7.org/fhir/r4/search.html#reference
 	Device datatypes.JSON `gorm:"column:device;type:text;serializer:json" json:"device,omitempty"`
@@ -32,7 +32,7 @@ type FhirMedia struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`

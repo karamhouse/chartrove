@@ -28,15 +28,17 @@
             <h1 class="az-dashboard-title">Condition</h1>
           </div>
           <div class="col-6">
-            <a class="float-right btn btn-outline-indigo" routerLink="/resource/create">Add Condition</a>
+            <a class="float-end btn btn-outline-indigo" routerLink="/resource/create">Add Condition</a>
           </div>
         </div>
 
         <!-- Condition List -->
         <ul class="timeline">
-          <li *ngFor="let encounter of encounters">
-            <app-report-medical-history-timeline-panel [resourceFhir]="encounter" ></app-report-medical-history-timeline-panel>
-          </li>
+          @for (encounter of encounters; track encounter) {
+            <li>
+              <app-report-medical-history-timeline-panel [resourceFhir]="encounter" ></app-report-medical-history-timeline-panel>
+            </li>
+          }
         </ul>
 
 
@@ -49,7 +51,7 @@
               [pageSize]="pageSize"
               [maxSize]="15"
               (pageChange)="pageChange()"
-            >
+              >
             </ngb-pagination>
           </div>
         </div>

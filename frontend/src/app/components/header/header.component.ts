@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {ActivatedRoute, NavigationStart, Router} from '@angular/router';
 import {AuthService} from '../../services/auth.service';
 import {UserRegisteredClaims} from '../../models/fasten/user-registered-claims';
@@ -13,9 +13,11 @@ import {ToastNotification, ToastType} from '../../models/fasten/toast';
 import {ThemeService} from '../../theme.service';
 
 @Component({
-  selector: 'app-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+    selector: 'app-header',
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   current_user_claims: UserRegisteredClaims

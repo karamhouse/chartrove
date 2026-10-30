@@ -140,7 +140,7 @@
       height: auto;
 
       input.parsley-error {
-        border-color: theme-color('danger');
+        border-color: map-get($theme-colors, 'danger');
 
         + ul { list-style: none !important; }
       }

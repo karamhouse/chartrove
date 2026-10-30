@@ -14,7 +14,7 @@ type FhirServiceRequest struct {
 	models.ResourceBase
 	// Date request signed
 	// https://hl7.org/fhir/r4/search.html#date
-	Authored *time.Time `gorm:"column:authored;type:datetime" json:"authored,omitempty"`
+	Authored *time.Time `gorm:"column:authored" json:"authored,omitempty"`
 	// What request fulfills
 	// https://hl7.org/fhir/r4/search.html#reference
 	BasedOn datatypes.JSON `gorm:"column:basedOn;type:text;serializer:json" json:"basedOn,omitempty"`
@@ -112,7 +112,7 @@ type FhirServiceRequest struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`
@@ -127,7 +127,7 @@ type FhirServiceRequest struct {
 	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// When service should occur
 	// https://hl7.org/fhir/r4/search.html#date
-	Occurrence *time.Time `gorm:"column:occurrence;type:datetime" json:"occurrence,omitempty"`
+	Occurrence *time.Time `gorm:"column:occurrence" json:"occurrence,omitempty"`
 	// Requested performer
 	// https://hl7.org/fhir/r4/search.html#reference
 	Performer datatypes.JSON `gorm:"column:performer;type:text;serializer:json" json:"performer,omitempty"`

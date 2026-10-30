@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Optional, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Optional, Output, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {Patient} from 'fhir/r4';
 import {EpicSandboxService} from '../../services/epic-sandbox.service';
 import {MedicalSourcesConnectedComponent} from '../../components/medical-sources-connected/medical-sources-connected.component';
@@ -33,9 +33,11 @@ export class SourceListItem {
 }
 
 @Component({
-  selector: 'app-medical-sources',
-  templateUrl: './medical-sources.component.html',
-  styleUrls: ['./medical-sources.component.scss']
+    selector: 'app-medical-sources',
+    templateUrl: './medical-sources.component.html',
+    styleUrls: ['./medical-sources.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class MedicalSourcesComponent implements OnInit, OnDestroy {
   loading: boolean = false

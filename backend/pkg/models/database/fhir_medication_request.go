@@ -14,7 +14,7 @@ type FhirMedicationRequest struct {
 	models.ResourceBase
 	// Return prescriptions written on this date
 	// https://hl7.org/fhir/r4/search.html#date
-	Authoredon *time.Time `gorm:"column:authoredon;type:datetime" json:"authoredon,omitempty"`
+	Authoredon *time.Time `gorm:"column:authoredon" json:"authoredon,omitempty"`
 	// Returns prescriptions with different categories
 	// https://hl7.org/fhir/r4/search.html#token
 	Category datatypes.JSON `gorm:"column:category;type:text;serializer:json" json:"category,omitempty"`
@@ -44,7 +44,7 @@ type FhirMedicationRequest struct {
 	   * [MedicationRequest](medicationrequest.html): Returns medication request to be administered on a specific date
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date" json:"date,omitempty"`
 	// Returns medication request dosage instructions
 	// https://hl7.org/fhir/r4/search.html#string
 	DosageInstruction datatypes.JSON `gorm:"column:dosageInstruction;type:text;serializer:json" json:"dosageInstruction,omitempty"`
@@ -118,7 +118,7 @@ type FhirMedicationRequest struct {
 	Medication datatypes.JSON `gorm:"column:medication;type:text;serializer:json" json:"medication,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {NgChartsModule} from 'ng2-charts';
 import {ChartConfiguration} from 'chart.js';
 import {DashboardWidgetComponent} from '../dashboard-widget/dashboard-widget.component';
@@ -7,13 +7,13 @@ import {LoadingWidgetComponent} from '../loading-widget/loading-widget.component
 import {EmptyWidgetComponent} from '../empty-widget/empty-widget.component';
 
 @Component({
-  standalone: true,
-  imports: [NgChartsModule, CommonModule, LoadingWidgetComponent, EmptyWidgetComponent],
-  selector: 'donut-chart-widget',
-  templateUrl: './donut-chart-widget.component.html',
-  styleUrls: ['./donut-chart-widget.component.scss']
+    imports: [NgChartsModule, CommonModule, LoadingWidgetComponent, EmptyWidgetComponent],
+    selector: 'donut-chart-widget',
+    templateUrl: './donut-chart-widget.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./donut-chart-widget.component.scss']
 })
-export class DonutChartWidgetComponent extends DashboardWidgetComponent implements OnInit {
+export class DonutChartWidgetComponent extends DashboardWidgetComponent<'doughnut'> implements OnInit {
 
   doughnutChartDatasets: ChartConfiguration<'doughnut'>['data']['datasets'] = [];
 

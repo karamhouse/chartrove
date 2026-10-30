@@ -1,16 +1,17 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {ReportMedicalHistoryEditorComponent} from '../../components/report-medical-history-editor/report-medical-history-editor.component';
 import {forkJoin} from 'rxjs';
 import {ResourceGraphResponse} from '../../models/fasten/resource-graph-response';
 // import {ReportEditorRelatedComponent} from '../../components/report-editor-related/report-editor-related.component';
 
 @Component({
-  selector: 'app-medical-history',
-  templateUrl: './medical-history.component.html',
-  styleUrls: ['./medical-history.component.scss']
+    selector: 'app-medical-history',
+    templateUrl: './medical-history.component.html',
+    styleUrls: ['./medical-history.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class MedicalHistoryComponent implements OnInit {
   loading: boolean = false
@@ -64,6 +65,12 @@ export class MedicalHistoryComponent implements OnInit {
 
     let encounterIds = this.allEncountersIds.slice((this.currentPage-1) * this.pageSize, this.currentPage * this.pageSize)
 
+    if (encounterIds.length === 0) {
+      this.encounters = []
+      this.loading = false
+      return
+    }
+
     this.fastenApi.getResourceGraph(null, encounterIds).subscribe((graphResponse: ResourceGraphResponse) => {
         this.loading = false
 
@@ -115,13 +122,6 @@ export class MedicalHistoryComponent implements OnInit {
 
   }
 
-  //
-  // openEditorRelated(): void {
-  //   const modalRef = this.modalService.open(ReportMedicalHistoryEditorComponent, {
-  //     size: 'xl',
-  //   });
-  //   modalRef.componentInstance.conditions = this.conditions;
-  // }
 
 
   // recPopulateResourceLookup(resourceFhir: ResourceFhir) {

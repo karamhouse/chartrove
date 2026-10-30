@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpBackend, HttpClient, HttpHeaders} from '@angular/common/http';
+import { HttpBackend, HttpClient, HttpHeaders } from '@angular/common/http';
 import {Observable, fromEvent} from 'rxjs';
 import {takeUntil, timeout} from 'rxjs/operators';
 import {Patient} from 'fhir/r4';

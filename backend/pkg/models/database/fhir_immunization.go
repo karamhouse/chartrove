@@ -34,7 +34,7 @@ type FhirImmunization struct {
 	   * [SupplyRequest](supplyrequest.html): When the request was made
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date" json:"date,omitempty"`
 	// Returns immunizaton dose number
 	// https://hl7.org/fhir/r4/search.html#token
 	DoseNumber datatypes.JSON `gorm:"column:doseNumber;type:text;serializer:json" json:"doseNumber,omitempty"`
@@ -88,7 +88,7 @@ type FhirImmunization struct {
 	Manufacturer datatypes.JSON `gorm:"column:manufacturer;type:text;serializer:json" json:"manufacturer,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated" json:"metaLastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`
@@ -109,7 +109,7 @@ type FhirImmunization struct {
 	Reaction datatypes.JSON `gorm:"column:reaction;type:text;serializer:json" json:"reaction,omitempty"`
 	// When reaction started
 	// https://hl7.org/fhir/r4/search.html#date
-	ReactionDate *time.Time `gorm:"column:reactionDate;type:datetime" json:"reactionDate,omitempty"`
+	ReactionDate *time.Time `gorm:"column:reactionDate" json:"reactionDate,omitempty"`
 	// Reason why the vaccine was administered
 	// https://hl7.org/fhir/r4/search.html#token
 	ReasonCode datatypes.JSON `gorm:"column:reasonCode;type:text;serializer:json" json:"reasonCode,omitempty"`

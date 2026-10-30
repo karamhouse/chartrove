@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -13,18 +13,18 @@ import { parseFullName } from 'parse-full-name';
 import { uuidV4 } from '../../../lib/utils/uuid';
 
 @Component({
-  selector: 'app-add-practitioner',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    NgbTooltipModule,
-    HighlightModule,
-    NlmTypeaheadComponent
-  ],
-  templateUrl: './practitioner-create.component.html',
-  styleUrls: ['./practitioner-create.component.scss']
+    selector: 'app-add-practitioner',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        FormsModule,
+        NgbTooltipModule,
+        HighlightModule,
+        NlmTypeaheadComponent
+    ],
+    templateUrl: './practitioner-create.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./practitioner-create.component.scss']
 })
 export class PractitionerCreateComponent implements OnInit {
   debugMode: boolean = false;
@@ -58,7 +58,7 @@ export class PractitionerCreateComponent implements OnInit {
         "count_by": {"field": "*"}
       }
     }).subscribe((resp: ResponseWrapper) => {
-      this.totalPractitioners = resp.data?.[0].value || 0;
+      this.totalPractitioners = resp.data?.[0]?.value ?? 0;
     });
   }
 

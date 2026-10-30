@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {NgbActiveModal, NgbDatepickerModule, NgbNavModule, NgbTooltipModule, NgbTypeaheadModule} from '@ng-bootstrap/ng-bootstrap';
 import {CommonModule} from '@angular/common';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
@@ -18,20 +18,20 @@ import {PractitionerModel} from '../../../lib/models/resources/practitioner-mode
 import {parseFullName}  from 'parse-full-name'
 
 @Component({
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    NlmTypeaheadComponent,
-    HighlightModule,
-    NgbTooltipModule,
-    NgbNavModule,
-    FhirDatatableModule
-  ],
-  selector: 'app-medical-record-wizard-add-practitioner',
-  templateUrl: './medical-record-wizard-add-practitioner.component.html',
-  styleUrls: ['./medical-record-wizard-add-practitioner.component.scss']
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        FormsModule,
+        NlmTypeaheadComponent,
+        HighlightModule,
+        NgbTooltipModule,
+        NgbNavModule,
+        FhirDatatableModule
+    ],
+    selector: 'app-medical-record-wizard-add-practitioner',
+    templateUrl: './medical-record-wizard-add-practitioner.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./medical-record-wizard-add-practitioner.component.scss']
 })
 export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
   @Input() debugMode: boolean = false;
@@ -63,7 +63,7 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
         "count_by": {"field": "*"}
       }
     }).subscribe((resp: ResponseWrapper) => {
-      this.totalPractitioners = resp.data?.[0].value
+      this.totalPractitioners = resp.data?.[0]?.value ?? 0
     })
   }
   changeTab(id: string) {

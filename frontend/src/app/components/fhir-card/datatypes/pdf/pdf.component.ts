@@ -1,14 +1,14 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {BinaryModel} from '../../../../../lib/models/resources/binary-model';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {CommonModule} from "@angular/common";
+
 
 @Component({
-  standalone: true,
-  imports: [CommonModule],
-  selector: 'fhir-pdf',
-  templateUrl: './pdf.component.html',
-  styleUrls: ['./pdf.component.scss']
+    imports: [],
+    selector: 'fhir-pdf',
+    templateUrl: './pdf.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./pdf.component.scss']
 })
 export class PdfComponent implements OnInit {
   @Input() displayModel: BinaryModel

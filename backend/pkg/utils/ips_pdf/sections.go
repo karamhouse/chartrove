@@ -1,6 +1,7 @@
 package ips_pdf
 
 import (
+	_ "embed"
 	"fmt"
 	"strings"
 
@@ -14,10 +15,16 @@ import (
 	"github.com/johnfercher/maroto/v2/pkg/components/row"
 	"github.com/johnfercher/maroto/v2/pkg/components/text"
 	"github.com/johnfercher/maroto/v2/pkg/consts/align"
+	"github.com/johnfercher/maroto/v2/pkg/consts/extension"
 	"github.com/johnfercher/maroto/v2/pkg/consts/fontstyle"
 	"github.com/johnfercher/maroto/v2/pkg/core"
 	"github.com/johnfercher/maroto/v2/pkg/props"
 )
+
+// Keep the existing Fasten logo available to installed server and desktop binaries.
+//
+//go:embed assets/fasten_logo.jpg
+var fastenLogo []byte
 
 func getDocumentHeader(data *ips.InternationalPatientSummaryExportData) []core.Row {
 
@@ -27,7 +34,7 @@ func getDocumentHeader(data *ips.InternationalPatientSummaryExportData) []core.R
 				text.New(fmt.Sprintf("Patient Health Summary; Generated: %s", data.GenerationDate.Format("2006-01-02")), props.Text{Top: 3}),
 				text.New(fmt.Sprintf("ID: %s", *data.Composition.Identifier.Value), props.Text{Top: 8}),
 			),
-			image.NewFromFileCol(4, "backend/pkg/utils/ips_pdf/assets/fasten_logo.jpg", props.Rect{Percent: 80, Center: true}),
+			image.NewFromBytesCol(4, fastenLogo, extension.Jpg, props.Rect{Percent: 80, Center: true}),
 		),
 		row.New().Add(
 			col.New(12).Add(

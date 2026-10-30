@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import {CommonModule} from '@angular/common';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+
 import {RouterModule} from '@angular/router';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, RouterModule],
-  selector: 'empty-widget',
-  templateUrl: './empty-widget.component.html',
-  styleUrls: ['./empty-widget.component.scss']
+    imports: [RouterModule],
+    selector: 'empty-widget',
+    templateUrl: './empty-widget.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./empty-widget.component.scss']
 })
 export class EmptyWidgetComponent implements OnInit {
 

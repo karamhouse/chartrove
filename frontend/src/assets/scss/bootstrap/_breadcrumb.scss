@@ -20,7 +20,7 @@
 
     a {
       color: $gray-900;
-      @include hover-focus() { color: $az-color-primary; }
+      &:hover, &:focus { color: $az-color-primary; }
     }
 
     &.active { color: $az-color-primary; }

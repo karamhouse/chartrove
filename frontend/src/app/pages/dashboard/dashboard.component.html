@@ -28,11 +28,13 @@
 
       <div class="az-dashboard-nav">
         <nav class="nav">
-          <a *ngFor="let dashboardConfig of dashboardConfigs; let i = index"
-             class="nav-link"
-             [class.active]="selectedDashboardConfigNdx === i"
-             (click)="changeSelectedDashboard(i)"
-          >{{dashboardConfig.title}}</a>
+          @for (dashboardConfig of dashboardConfigs; track dashboardConfig; let i = $index) {
+            <a
+              class="nav-link"
+              [class.active]="selectedDashboardConfigNdx === i"
+              (click)="changeSelectedDashboard(i)"
+            >{{dashboardConfig.title}}</a>
+          }
         </nav>
 
         <nav class="nav">
@@ -48,9 +50,11 @@
           <div class="alert alert-info" role="alert">
             <strong>Description:</strong> {{dashboardConfigs?.[selectedDashboardConfigNdx]?.description}}
             <br/>
-            <span *ngIf="dashboardConfigs?.[selectedDashboardConfigNdx]?.source">
-              <strong>Source:</strong> <a [href]="dashboardConfigs?.[selectedDashboardConfigNdx]?.source" externalLink> {{dashboardConfigs?.[selectedDashboardConfigNdx]?.source}}</a>
-            </span>
+            @if (dashboardConfigs?.[selectedDashboardConfigNdx]?.source) {
+              <span>
+                <strong>Source:</strong> <a [href]="$safeNavigationMigration(dashboardConfigs?.[selectedDashboardConfigNdx]?.source)" externalLink> {{dashboardConfigs?.[selectedDashboardConfigNdx]?.source}}</a>
+              </span>
+            }
           </div>
         </div>
       </div>
@@ -65,9 +69,7 @@
 <ng-template #addDashboard let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Add Dashboard</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-      <span aria-hidden="true">×</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
     <p>
@@ -93,29 +95,36 @@
             type="url"
             [(ngModel)]="dashboardLocation"
             #dashboardLocationField="ngModel"
-          />
+            />
         </div>
       </div>
 
-      <div *ngIf="dashboardLocationField.invalid && (dashboardLocationField.dirty || dashboardLocationField.touched)"
-           class="alert alert-danger">
-
-        <div *ngIf="dashboardLocationField.errors?.['required']">
-          Dashboard Location is required.
+      @if (dashboardLocationField.invalid && (dashboardLocationField.dirty || dashboardLocationField.touched)) {
+        <div
+          class="alert alert-danger">
+          @if (dashboardLocationField.errors?.['required']) {
+            <div>
+              Dashboard Location is required.
+            </div>
+          }
+          @if (dashboardLocationField.errors?.['pattern']) {
+            <div>
+              Dashboard Location must be a valid github gist url.
+            </div>
+          }
         </div>
-        <div *ngIf="dashboardLocationField.errors?.['pattern']">
-          Dashboard Location must be a valid github gist url.
-        </div>
-      </div>
+      }
 
-      <div *ngIf="dashboardLocationError" class="alert alert-danger">
-        {{dashboardLocationError}}
-      </div>
+      @if (dashboardLocationError) {
+        <div class="alert alert-danger">
+          {{dashboardLocationError}}
+        </div>
+      }
 
     </form>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn  btn-outline-indigo" [disabled]="addDashboardLoading" (click)="addDashboardLocation()">Add</button>
+    <button type="button" class="btn btn-outline-indigo" [disabled]="addDashboardLoading" (click)="addDashboardLocation()">Add</button>
   </div>
 </ng-template>
 
@@ -123,9 +132,7 @@
 <ng-template #dashboardSettings let-modal>
   <div class="modal-header">
     <h4 class="modal-title">{{dashboardConfigs?.[selectedDashboardConfigNdx]?.title}} Settings</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-      <span aria-hidden="true">×</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
     <div class="row">
@@ -142,18 +149,20 @@
         <div (click)="toggleEditableGrid()" [class.on]="!this.gridEditDisabled" class="az-toggle"><span></span></div>
       </div><!-- col -->
     </div>
-    <div *ngIf="dashboardConfigs?.[selectedDashboardConfigNdx]?.source" class="row row-xs align-items-center mg-b-20">
-      <div class="col-12">
-        <h6>Refresh</h6>
-        <p>Click to refresh your dashboard configuration. Only applicable to remote dashboards.</p>
-      </div><!-- col -->
-      <div class="col-4">
-        <button ngbTooltip="not yet implemented" class="btn btn-outline-indigo">Refresh</button>
-      </div><!-- col -->
-    </div>
+    @if (dashboardConfigs?.[selectedDashboardConfigNdx]?.source) {
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-12">
+          <h6>Refresh</h6>
+          <p>Click to refresh your dashboard configuration. Only applicable to remote dashboards.</p>
+        </div><!-- col -->
+        <div class="col-4">
+          <button ngbTooltip="not yet implemented" class="btn btn-outline-indigo">Refresh</button>
+        </div><!-- col -->
+      </div>
+    }
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-danger mr-auto" ngbTooltip="not yet implemented">Delete</button>
+    <button type="button" class="btn btn-outline-danger me-auto" ngbTooltip="not yet implemented">Delete</button>
     <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
   </div>
 </ng-template>

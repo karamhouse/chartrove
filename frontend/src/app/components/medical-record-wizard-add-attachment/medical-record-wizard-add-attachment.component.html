@@ -1,13 +1,15 @@
 <div class="modal-header">
   <h4 class="modal-title" id="modal-attachment">New Attachment</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()"><span aria-hidden="true">×</span></button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body">
 
-  <div *ngIf="debugMode" class="alert alert-warning">
-    <pre><code  [highlight]="newAttachmentForm.getRawValue() | json"></code></pre>
-    <strong>New Attachment Form Status: {{ newAttachmentForm.status }}</strong>
-  </div>
+  @if (debugMode) {
+    <div class="alert alert-warning">
+      <pre><code  [highlight]="newAttachmentForm.getRawValue() | json"></code></pre>
+      <strong>New Attachment Form Status: {{ newAttachmentForm.status }}</strong>
+    </div>
+  }
 
   <div class="row row-sm">
     <ng-container [formGroup]="newAttachmentForm">

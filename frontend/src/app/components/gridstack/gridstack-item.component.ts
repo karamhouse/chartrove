@@ -3,9 +3,9 @@
  * Copyright (c) 2022 Alain Dumesny - see GridStack root license
  */
 
-import { Component, ElementRef, Input, ViewChild, ViewContainerRef, OnDestroy } from '@angular/core';
-import { GridItemHTMLElement, GridStackNode } from 'gridstack';
-import {CommonModule} from '@angular/common';
+import { Component, ElementRef, Input, ViewChild, ViewContainerRef, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import type { GridItemHTMLElement, GridStackNode } from 'gridstack';
+
 
 /** store element to Ng Class pointer back */
 export interface GridItemCompHTMLElement extends GridItemHTMLElement {
@@ -16,10 +16,9 @@ export interface GridItemCompHTMLElement extends GridItemHTMLElement {
  * HTML Component Wrapper for gridstack items, in combination with GridstackComponent for parent grid
  */
 @Component({
-  standalone: true,
-  imports: [CommonModule],
-  selector: 'gridstack-item',
-  template: `
+    imports: [],
+    selector: 'gridstack-item',
+    template: `
     <div class="grid-stack-item-content">
       <!-- where dynamic items go based on component types, or sub-grids, etc...) -->
       <ng-template #container></ng-template>
@@ -28,10 +27,10 @@ export interface GridItemCompHTMLElement extends GridItemHTMLElement {
       <!-- fallback HTML content from GridStackWidget content field if used instead -->
       {{options.content}}
     </div>`,
-  styles: [`
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styles: [`
     :host { display: block; }
-  `],
-  // changeDetection: ChangeDetectionStrategy.OnPush, // IFF you want to optimize and control when ChangeDetection needs to happen...
+  `]
 })
 export class GridstackItemComponent implements OnDestroy {
 

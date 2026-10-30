@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {BinaryModel} from '../../../../../lib/models/resources/binary-model';
 import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {Router, RouterModule} from '@angular/router';
@@ -15,29 +15,29 @@ import {MarkdownComponent} from "../../datatypes/markdown/markdown.component";
 import {BinaryTextComponent} from "../../datatypes/binary-text/binary-text.component";
 import {DicomComponent} from "../../datatypes/dicom/dicom.component";
 import {HighlightModule} from "ngx-highlightjs";
-import {HttpClient, HttpClientModule} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {AuthService} from "../../../../services/auth.service";
 import {RtfComponent} from '../../datatypes/rtf/rtf.component';
 
 @Component({
-  standalone: true,
-  imports: [
-    NgbCollapseModule,
-    CommonModule,
-    PdfComponent,
-    ImgComponent,
-    HtmlComponent,
-    MarkdownComponent,
-    RtfComponent,
-    BinaryTextComponent,
-    DicomComponent,
-    HighlightModule,
-    RouterModule
-  ],
-  providers: [FastenApiService, AuthService],
-  selector: 'fhir-binary',
-  templateUrl: './binary.component.html',
-  styleUrls: ['./binary.component.scss']
+    imports: [
+        NgbCollapseModule,
+        CommonModule,
+        PdfComponent,
+        ImgComponent,
+        HtmlComponent,
+        MarkdownComponent,
+        RtfComponent,
+        BinaryTextComponent,
+        DicomComponent,
+        HighlightModule,
+        RouterModule
+    ],
+    providers: [FastenApiService, AuthService],
+    selector: 'fhir-binary',
+    templateUrl: './binary.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./binary.component.scss']
 })
 export class BinaryComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: BinaryModel

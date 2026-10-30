@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
@@ -7,9 +7,11 @@ import {ResourceType} from '../../../lib/models/constants';
 import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-model';
 
 @Component({
-  selector: 'app-resource-detail',
-  templateUrl: './resource-detail.component.html',
-  styleUrls: ['./resource-detail.component.scss']
+    selector: 'app-resource-detail',
+    templateUrl: './resource-detail.component.html',
+    styleUrls: ['./resource-detail.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ResourceDetailComponent implements OnInit {
   loading: boolean = false

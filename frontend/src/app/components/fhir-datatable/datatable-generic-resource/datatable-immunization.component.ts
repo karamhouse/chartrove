@@ -1,10 +1,12 @@
-import {Component} from '@angular/core';
+import {Component, ChangeDetectionStrategy} from '@angular/core';
 import {GenericColumnDefn, DatatableGenericResourceComponent} from './datatable-generic-resource.component';
 
 @Component({
-  selector: 'fhir-datatable-immunization',
-  templateUrl: './datatable-generic-resource.component.html',
-  styleUrls: ['./datatable-generic-resource.component.scss']
+    selector: 'fhir-datatable-immunization',
+    templateUrl: './datatable-generic-resource.component.html',
+    styleUrls: ['./datatable-generic-resource.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class DatatableImmunizationComponent extends DatatableGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [

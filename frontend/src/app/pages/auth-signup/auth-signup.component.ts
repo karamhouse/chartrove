@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {User} from '../../models/fasten/user';
 import {Router} from '@angular/router';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
@@ -6,9 +6,11 @@ import {ToastService} from '../../services/toast.service';
 import {AuthService} from '../../services/auth.service';
 
 @Component({
-  selector: 'app-auth-signup',
-  templateUrl: './auth-signup.component.html',
-  styleUrls: ['./auth-signup.component.scss']
+    selector: 'app-auth-signup',
+    templateUrl: './auth-signup.component.html',
+    styleUrls: ['./auth-signup.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class AuthSignupComponent implements OnInit {
   loading: boolean = false

@@ -3,9 +3,9 @@ form-wizard {
     .card-header {
       .nav {
         .nav-item {
-          border-bottom-color: theme-color(primary);
+          border-bottom-color: map-get($theme-colors, primary);
           &.active {
-            border-bottom-color: darken(theme-color(primary), 25%) !important;
+            border-bottom-color: darken(map-get($theme-colors, primary), 25%) !important;
           }
         }
       }

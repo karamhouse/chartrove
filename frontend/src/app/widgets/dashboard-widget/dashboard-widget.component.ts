@@ -1,8 +1,8 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {ChartConfiguration, ChartDataset, ChartOptions} from 'chart.js';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
+import {ChartConfiguration, ChartDataset, ChartOptions, ChartType} from 'chart.js';
 import {DashboardWidgetConfig} from '../../models/widget/dashboard-widget-config';
 import {NgChartsModule} from 'ng2-charts';
-import {CommonModule} from '@angular/common';
+
 import {NgbDatepickerModule} from '@ng-bootstrap/ng-bootstrap';
 import {DashboardWidgetComponentInterface} from '../dashboard-widget-component-interface';
 import {FastenApiService} from '../../services/fasten-api.service';
@@ -17,13 +17,13 @@ import fhirpath from 'fhirpath';
 import {map} from 'rxjs/operators';
 
 @Component({
-  standalone: true,
-  imports: [NgChartsModule, CommonModule, NgbDatepickerModule, LoadingWidgetComponent],
-  selector: 'app-dashboard-widget',
-  templateUrl: './dashboard-widget.component.html',
-  styleUrls: ['./dashboard-widget.component.scss'],
+    imports: [NgChartsModule, NgbDatepickerModule, LoadingWidgetComponent],
+    selector: 'app-dashboard-widget',
+    templateUrl: './dashboard-widget.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./dashboard-widget.component.scss']
 })
-export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponentInterface {
+export class DashboardWidgetComponent<TType extends ChartType = ChartType> implements OnInit, DashboardWidgetComponentInterface {
 
   @Input() widgetConfig: DashboardWidgetConfig;
   loading: boolean = true;
@@ -47,7 +47,7 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
   chartDatasetsDefaults = [];
   chartDatasets: ChartConfiguration<'line'>['data']['datasets'] = [];
   chartLabels: any[] | string[] = [];
-  chartOptions: ChartOptions = {}
+  chartOptions = {} as ChartOptions<TType>
   // chartColors: any;
 
   constructor(public fastenApi: FastenApiService) {

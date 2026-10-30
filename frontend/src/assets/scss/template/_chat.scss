@@ -170,7 +170,7 @@
       .media-body p { color: $body-color; }
     }
 
-    @include hover-focus() {
+    &:hover, &:focus {
       cursor: pointer;
       background-color: #fcfcfc;
       border-top-color: $gray-200;
@@ -283,7 +283,7 @@
       &::before { width: auto; }
     }
 
-    @include hover-focus() {
+    &:hover, &:focus {
       color: $az-color-primary;
     }
 
@@ -430,7 +430,7 @@
     @include media-breakpoint-up(sm) { margin-left: 20px; }
     @include media-breakpoint-up(md) { margin: 0 20px; }
 
-    @include hover-focus() { box-shadow: none; }
+    &:hover, &:focus { box-shadow: none; }
   }
 }
 

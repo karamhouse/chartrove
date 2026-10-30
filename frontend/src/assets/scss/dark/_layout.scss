@@ -11,7 +11,7 @@
                     >.nav-link {
                         color: var(--dark-text-white-transparent-color);
 
-                        @include hover() {
+                        &:hover {
                             color: var(--dark-text-white-color);
 
                             i {

@@ -10,14 +10,16 @@
     </button>
   </div>
 
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()"><span aria-hidden="true">×</span></button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body">
 
-  <div *ngIf="debugMode" class="alert alert-warning">
-    <pre><code  [highlight]="newPractitionerForm.getRawValue() | json"></code></pre>
-    <strong>New Practitioner Form Status: {{ newPractitionerForm.status }}</strong>
-  </div>
+  @if (debugMode) {
+    <div class="alert alert-warning">
+      <pre><code  [highlight]="newPractitionerForm.getRawValue() | json"></code></pre>
+      <strong>New Practitioner Form Status: {{ newPractitionerForm.status }}</strong>
+    </div>
+  }
 
   <div ngbNav #nav="ngbNav" [(activeId)]="activeId">
     <ng-container ngbNavItem="find">
@@ -42,7 +44,9 @@
             <form [formGroup]="newPractitionerTypeaheadForm">
               <app-nlm-typeahead formControlName="data" searchType="MedicalContactIndividual" [debugMode]="debugMode"></app-nlm-typeahead>
             </form>
-            <span *ngFor="let extId of newPractitionerForm.controls.identifier.getRawValue()" class="badge badge-pill badge-primary">{{extId.type?.coding[0].code}}: {{extId.value}}</span>
+            @for (extId of newPractitionerForm.controls.identifier.getRawValue(); track extId) {
+              <span class="badge rounded-pill text-bg-primary">{{extId.type?.coding[0].code}}: {{extId.value}}</span>
+            }
           </div><!-- col -->
           <ng-container [formGroup]="newPractitionerForm">
             <div class="col-6 mg-t-10 mg-lg-t-0">
@@ -103,7 +107,7 @@
     'text-dark': !debugMode,
     'btn-dark':debugMode,
     'text-white':debugMode
-     }" type="button" class="btn float-left" (click)="debugMode = !debugMode">
+     }" type="button" class="btn float-start" (click)="debugMode = !debugMode">
     <i class="fas fa-bug"></i>
   </button>
   <button type="button" [class.disabled]="!submitEnabled" class="btn btn-az-primary" (click)="submit()">Add Practitioner</button>

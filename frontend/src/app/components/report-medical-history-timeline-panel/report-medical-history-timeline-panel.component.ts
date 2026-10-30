@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {EncounterModel} from '../../../lib/models/resources/encounter-model';
 import {RecResourceRelatedDisplayModel} from '../../../lib/utils/resource_related_display_model';
@@ -6,12 +6,13 @@ import {DiagnosticReportModel} from '../../../lib/models/resources/diagnostic-re
 import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-model';
 import {MedicalRecordWizardComponent} from '../medical-record-wizard/medical-record-wizard.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {ReportMedicalHistoryEditorComponent} from '../report-medical-history-editor/report-medical-history-editor.component';
 
 @Component({
-  selector: 'app-report-medical-history-timeline-panel',
-  templateUrl: './report-medical-history-timeline-panel.component.html',
-  styleUrls: ['./report-medical-history-timeline-panel.component.scss']
+    selector: 'app-report-medical-history-timeline-panel',
+    templateUrl: './report-medical-history-timeline-panel.component.html',
+    styleUrls: ['./report-medical-history-timeline-panel.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ReportMedicalHistoryTimelinePanelComponent implements OnInit {
   @Input() resourceFhir: ResourceFhir
@@ -40,7 +41,6 @@ export class ReportMedicalHistoryTimelinePanelComponent implements OnInit {
 
 
     const modalRef = this.modalService.open(MedicalRecordWizardComponent, {
-    // const modalRef = this.modalService.open(ReportMedicalHistoryEditorComponent, {
       size: 'xl',
     });
     modalRef.componentInstance.existingEncounter = this.displayModel;

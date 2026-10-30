@@ -95,7 +95,7 @@
     border-color: $gray-300;
     background-color: #fff;
 
-    @include hover-focus() {
+    &:hover, &:focus {
       color: $gray-900;
       background-color: $gray-100;
     }
@@ -138,7 +138,7 @@
     height: 36px;
     background-color: transparent;
 
-    @include hover-focus() {
+    &:hover, &:focus {
       background-color: $gray-200;
     }
 
@@ -188,7 +188,7 @@
     &::after { display: none; }
   }
 
-  @include hover-focus() {
+  &:hover, &:focus {
     background-color: $gray-100;
   }
 
