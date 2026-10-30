@@ -15,6 +15,7 @@
 	],
 		"settings": {
 		"makefile.configureOnOpen": false,
-		"nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix"
+		"nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix",
+		"trivy.secretScanning": true
 	}
 }
