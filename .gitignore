@@ -1,85 +1,52 @@
-# Created by .ignore support plugin (hsz.mobi)
-### JetBrains template
-# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
-# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
-
-# User-specific stuff
-.idea/**/workspace.xml
-.idea/**/tasks.xml
-.idea/**/dictionaries
-.idea/**/shelf
-.idea/dataSources.xml
-
-# Sensitive or high-churn files
-.idea/**/dataSources/
+.cache/
+.direnv/
+.DS_Store
+.idea_modules/
 .idea/**/dataSources.ids
 .idea/**/dataSources.local.xml
-.idea/**/sqlDataSources.xml
-.idea/**/dynamic.xml
-.idea/**/uiDesigner.xml
+.idea/**/dataSources/
 .idea/**/dbnavigator.xml
-
-# Gradle
+.idea/**/dictionaries
+.idea/**/dynamic.xml
 .idea/**/gradle.xml
 .idea/**/libraries
-
-# CMake
-cmake-build-debug/
-cmake-build-release/
-
-# Mongo Explorer plugin
 .idea/**/mongoSettings.xml
-
-# File-based project format
-*.iws
-
-# IntelliJ
-out/
-
-# VS Code files for those working on multiple tools
+.idea/**/shelf
+.idea/**/sqlDataSources.xml
+.idea/**/tasks.xml
+.idea/**/uiDesigner.xml
+.idea/**/workspace.xml
+.idea/dataSources.xml
+.idea/httpRequests
+.idea/replstate.xml
 .vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
 !.vscode/settings.json
 !.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-# mpeltonen/sbt-idea plugin
-.idea_modules/
-
-# JIRA plugin
-atlassian-ide-plugin.xml
-
-# Cursive Clojure plugin
-.idea/replstate.xml
-
-# Crashlytics plugin (for Android Studio and IntelliJ)
-com_crashlytics_export_strings.xml
-crashlytics.properties
-crashlytics-build.properties
-fabric.properties
-
-# Editor-based Rest Client
-.idea/httpRequests
-
-# direnv
-.direnv/
-
-/dist/
-vendor
-test.go
+*.iws
 /.couchdb
-
-config.dev.yaml
-.cache/
+/dist/
+atlassian-ide-plugin.xml
+backend/.DS_Store
+backend/resources/related_versions.json
 cache/
+certs/
+cmake-build-debug/
+cmake-build-release/
+com_crashlytics_export_strings.xml
+config.dev.yaml
+crashlytics-build.properties
+crashlytics.properties
+docs/superpowers/.DS_Store
+fabric.properties
 fasten-*.db
 fasten-*.db-shm
 fasten-*.db-wal
 fasten.db
 fasten.db-shm
 fasten.db-wal
-
-backend/resources/related_versions.json
 frontend/documentation.json
-
-certs/
+out/
+test.go
+vendor
