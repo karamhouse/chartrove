@@ -22,12 +22,14 @@ RUN --mount=type=cache,target=/tmp/lock,sharing=locked \
 #########################################################################################################
 # Backend Build
 #########################################################################################################
-FROM golang:1.21 as backend-build
+FROM golang:1.27.3-bookworm AS backend-build
 
 WORKDIR /go/src/github.com/fastenhealth/fasten-onprem
 COPY . .
 
 RUN --mount=type=cache,target=/tmp/lock,sharing=locked \
+    --mount=type=cache,target=/go/pkg/mod,sharing=locked \
+    --mount=type=cache,target=/root/.cache/go-build,sharing=locked \
     go mod vendor \
     && go install github.com/golang/mock/mockgen@v1.6.0 \
     && go generate ./... \

@@ -5,6 +5,10 @@ This records independent checks on October 28–29, 2026, starting at main
 ledger; this document describes reproduction and technical decisions, not a
 second backlog.
 
+The observations below are chronological. The [publication checkpoint](#publication-checkpoint)
+records the final build repairs; [PR #323](https://github.com/karamhouse/chartrove/pull/323)
+is the authoritative publication and merge record.
+
 The dated [backlog review](MAINTENANCE_BACKLOG_REVIEW.md) retains the complete
 classification for review before publication to GitHub.
 
@@ -962,6 +966,45 @@ Relevant upstream records include
 [form-data](https://github.com/advisories/GHSA-fjxv-7rqg-78g4), and
 [Elliptic](https://github.com/advisories/GHSA-vjh7-7g9h-fjfh).
 The compatibility passes above do not resolve this remaining security backlog.
+
+## Publication checkpoint
+
+Align the backend Docker image, devcontainer and disabled cloud workflow with
+the already-tested Go 1.27.3 toolchain. The image uses
+`golang:1.27.3-bookworm`; both modules retain their Go 1.26 minimum. JSONC and
+YAML parsing pass. This does not enable or validate the inherited cloud deployment.
+
+A fresh Linux arm64 backend build exposes missing checksums for JWX's optional
+`dsig-secp256k1` dependency before it reaches tests. Explicitly record the already
+selected v1.0.0 dependency and its checksums in both module graphs, including the
+desktop graph's missing secp256k1 v4.4.1 archive checksum. Both `go mod verify`
+commands and root vendoring pass. Comparing complete module selections before
+and after the repair finds no version or replacement changes: 258 dependencies
+in the root graph and 374 in the desktop graph. The optional module is absent
+from the default static backend import graph; token algorithms are unchanged.
+
+Add BuildKit module and compilation caches so a failed later build step does not
+discard those downloads. After retaining the Go base image and seeding the cache
+from the verified, current-graph local module downloads, the actual Dockerfile's
+`backend-build` target passes vendoring, generation, vet, all 14 tested packages,
+and static linking. The database package finishes in 219.066 seconds under the
+unchanged 20-minute Docker timeout. No assertions or test selection are relaxed.
+The build uses a tracked-source-only context without local health data.
+
+Compare 234 tracked backend Go files and module manifests with the resulting
+image: the only difference is MockGen shortening its `Source` header comment
+from `backend/pkg/database/interface.go` to `interface.go`. Executable source is
+identical. A separate image using the production distroless base and backend
+copy/configuration steps passes the existing `--help` smoke command, without
+rebuilding or copying frontend assets. Static-linker glibc warnings remain;
+this is CLI startup evidence, not a complete deployed-container acceptance test.
+
+The earlier frontend, encrypted native-backend and native smoke results remain
+applicable to the unchanged application source. The retained macOS ZIP still
+has SHA-256 `e5001df397e63baf4aca4fbe989657b356a1351a9802d351a00ec92205026a5f`.
+The 148 frontend advisory IDs remain a separate backlog. Actions stay disabled;
+their absence supplies no CI assurance. No production data migration or workflow
+enablement is part of this publication checkpoint.
 
 ## Dependency migration order
 
