@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-05",
+  "purpose": "Historical catalog provenance for planning; not a production provider-availability assertion",
+  "source_repository": "https://github.com/andhines/fasten-sources",
+  "source_repo_role": "public 2024 historical fork of an upstream generated library; original repo is not publicly accessible via the connected account",
+  "source_revision": "1bcac8a26c88dadd3267e5557505614b445711b9",
+  "source_committer_date_utc": "2024-11-30T01:07:41Z",
+  "repository_license_detected": "none",
+  "permission_to_redistribute_source_catalog": "unverified; do not bulk-copy or publish derived data until rights reviewed",
+  "platform_definition_count": 39,
+  "platform_definition_listing_path": "definitions/platform",
+  "catalog_ingestion_status": "not_ingested; files are large, hosted data may differ, licensing and current accuracy unresolved",
+  "blobs": [
+    {
+      "path": "catalog/brands.json",
+      "git_blob_sha": "64744309b23891616ab65d1cede1fc501ba8fb3c",
+      "bytes": 27887452,
+      "url": "https://github.com/andhines/fasten-sources/blob/1bcac8a26c88dadd3267e5557505614b445711b9/catalog/brands.json",
+      "included_in_chartrove": false
+    },
+    {
+      "path": "catalog/endpoints.json",
+      "git_blob_sha": "56e338043c0de1285b579dc6e9f8e445acfb11c0",
+      "bytes": 8493365,
+      "url": "https://github.com/andhines/fasten-sources/blob/1bcac8a26c88dadd3267e5557505614b445711b9/catalog/endpoints.json",
+      "included_in_chartrove": false
+    },
+    {
+      "path": "catalog/portals.json",
+      "git_blob_sha": "d13f5b586f00d2c916efb75dbdb78b50061cbe5c",
+      "bytes": 24394642,
+      "url": "https://github.com/andhines/fasten-sources/blob/1bcac8a26c88dadd3267e5557505614b445711b9/catalog/portals.json",
+      "included_in_chartrove": false
+    }
+  ],
+  "notes": [
+    "Names from platform YAML filenames are captured only as historical source references.",
+    "Source may include vendor OAuth or institution metadata; no secret, credential, client registration or private patient data is imported.",
+    "Production connection eligibility requires independent current discovery, own approved registration and explicit authorization."
+  ]
+}
